@@ -1107,7 +1107,9 @@
 
 
 
-export const dynamic = "force-dynamic";
+// Events and blog posts come from the CMS; the page is cached and rebuilt at
+// most hourly, which also refreshes the upcoming/previous events split.
+export const revalidate = 3600;
 
 import Link from "next/link";
 import Image from "next/image";
@@ -1124,7 +1126,8 @@ import { site } from "@/lib/data/site";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getPublishedEvents } from "@/lib/firebase/events";
 import { EventItem } from "@/lib/data/types";
-import { getPublishedPosts, BlogPost } from "@/lib/firebase/blogs";
+import type { BlogPost } from "@/lib/firebase/blogs";
+import { blogDisplayTitle, blogPath, getBlogPosts } from "@/lib/blog/seo";
 import LocationMap from "@/components/LocationMap";
 
 const featuredGalleryPhotos = [
@@ -1146,7 +1149,10 @@ const featuredGalleryPhotos = [
 ];
 
 export const metadata = buildMetadata({
-  title: "Chaitanya Raj Psychology & Counselling | Psychologist in Navi Mumbai",
+  // The layout's title template doesn't apply to the root page, so the brand
+  // is written out here.
+  title: "Psychologist & Counsellor in Navi Mumbai | Chaitanya Raj",
+  absoluteTitle: true,
   description:
     "Psychologist in Navi Mumbai. Evidence based counselling, clinical hypnotherapy and support for anxiety, depression, stress and trauma. 25+ years' experience.",
   path: "/"
@@ -1163,7 +1169,7 @@ export default async function HomePage() {
   let blogPosts: BlogPost[] = [];
 
   try {
-    blogPosts = await getPublishedPosts();
+    blogPosts = await getBlogPosts();
   } catch (error) {
     console.error("Failed to fetch blog posts:", error);
   }
@@ -1333,7 +1339,7 @@ export default async function HomePage() {
 
 <div className="mx-auto max-w-7xl px-6 md:px-10">
 
-  <p className="eyebrow text-white/60">
+  <p className="eyebrow text-white/80">
     What brings people in
   </p>
 
@@ -1432,7 +1438,7 @@ export default async function HomePage() {
 
           <div>
 
-            <p className="eyebrow text-white/60">
+            <p className="eyebrow text-white/80">
               For Organisations
             </p>
 
@@ -1564,7 +1570,7 @@ export default async function HomePage() {
                         href={event.registrationLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 font-mono text-xs uppercase tracking-widest text-accent"
+                        className="mt-2 font-mono text-xs uppercase tracking-widest text-accent-ink"
                       >
                         Reserve a spot →
                       </a>
@@ -1603,7 +1609,7 @@ export default async function HomePage() {
 
               <Link
                 key={post.id}
-                href={`/blog/${post.slug}`}
+                href={blogPath(post.id)}
                 className="card flex flex-col overflow-hidden"
               >
 
@@ -1644,14 +1650,14 @@ export default async function HomePage() {
                   </p>
 
                   <h3 className="font-display text-lg text-primary-dark">
-                    {post.title}
+                    {blogDisplayTitle(post)}
                   </h3>
 
                   <p className="flex-1 text-sm leading-relaxed text-ink-soft">
                     {post.excerpt}
                   </p>
 
-                  <span className="mt-2 font-mono text-xs uppercase tracking-widest text-accent">
+                  <span className="mt-2 font-mono text-xs uppercase tracking-widest text-accent-ink">
                     Read more →
                   </span>
 

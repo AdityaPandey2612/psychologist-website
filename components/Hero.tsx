@@ -1223,7 +1223,6 @@
 // }
 
 
-"use client";
 
 import Link from "next/link";
 import { site } from "@/lib/data/site";
@@ -1238,7 +1237,7 @@ export default function Hero() {
             Healing Begins with a Conversation
           </h1>
           <p className="text-ink-soft text-lg leading-relaxed mb-8 max-w-md">
-          Hero paragraph Led by Lt Col Rajesh Sharma (Retd), a psychologist in
+          Led by Lt Col Rajesh Sharma (Retd), a psychologist in
           Navi Mumbai with over 25 years of clinical experience. Evidence based
           support for anxiety, depression, stress, trauma, and more, in Vashi,
           Belapur, and online.
@@ -1326,65 +1325,6 @@ function BreathingTriangle() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes breathScale {
-          0% { transform: scale(1); }
-          30.77% { transform: scale(1.045); }
-          53.85% { transform: scale(1.045); }
-          100% { transform: scale(1); }
-        }
-        .breath-scale {
-          animation: breathScale 13s ease-in-out infinite;
-        }
-
-        /* line reveal and dot position share identical keyTimes (0 / 33.33% / 50% / 100%)
-           so they can never drift out of sync — same animation engine, same timeline */
-        @keyframes breathDraw {
-          0% { stroke-dashoffset: 100; }
-          30.77% { stroke-dashoffset: 66.67; }
-          53.85% { stroke-dashoffset: 33.33; }
-          100% { stroke-dashoffset: 0; }
-        }
-        .breath-draw {
-          animation: breathDraw 13s linear infinite;
-        }
-
-        @keyframes breathDot {
-          0% { offset-distance: 0%; }
-          30.77% { offset-distance: 33.33%; }
-          53.85% { offset-distance: 66.67%; }
-          100% { offset-distance: 100%; }
-        }
-        .breath-dot {
-          animation: breathDot 13s linear infinite;
-        }
-
-        /* switches locked to the exact same 0% / 33.33% / 50% / 100% marks as the
-           line reveal and dot, and linear like them — no easing curve to drift against */
-        @keyframes inhaleLabel {
-          0% { opacity: 1; transform: translateY(0); }
-          29.5% { opacity: 1; transform: translateY(0); }
-          30.77% { opacity: 0; transform: translateY(-2px); }
-          100% { opacity: 0; }
-        }
-        @keyframes holdLabel {
-          0%, 30.77% { opacity: 0; transform: translateY(2px); }
-          32% { opacity: 1; transform: translateY(0); }
-          52.6% { opacity: 1; transform: translateY(0); }
-          53.85% { opacity: 0; transform: translateY(-2px); }
-          100% { opacity: 0; }
-        }
-        @keyframes exhaleLabel {
-          0%, 53.85% { opacity: 0; transform: translateY(2px); }
-          55% { opacity: 1; transform: translateY(0); }
-          99% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-2px); }
-        }
-        .label-inhale { animation: inhaleLabel 13s linear infinite; }
-        .label-hold { animation: holdLabel 13s linear infinite; }
-        .label-exhale { animation: exhaleLabel 13s linear infinite; }
-      `}</style>
     </div>
   );
 }

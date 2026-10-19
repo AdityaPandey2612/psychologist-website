@@ -3,8 +3,9 @@ import Link from "next/link";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata = buildMetadata({
-  title: "Fees | Session Pricing",
-  description: "Session fees and payment information for Chaitanya Raj Psychology & Counselling in Vashi, Navi Mumbai.",
+  title: "Session Fees and Payment Options",
+  description:
+    "Session fees for individual, couples and online counselling at Chaitanya Raj in Vashi, Navi Mumbai, with payment by UPI, bank transfer or cash.",
   path: "/fees"
 });
 
@@ -17,7 +18,7 @@ const fees = [
 
 export default function FeesPage() {
   return (
-    <Section eyebrow="Fees" title="Session pricing">
+    <Section eyebrow="Fees" title="Session pricing" titleAs="h1">
       <div className="max-w-2xl">
         <p className="text-ink-soft leading-relaxed mb-8">
           Fees are kept simple and consistent. If cost is a barrier to getting support, mention
@@ -31,7 +32,7 @@ export default function FeesPage() {
             </div>
           ))}
         </div>
-        <p className="text-sm text-ink-soft/70 mt-6">
+        <p className="text-sm text-ink-soft mt-6">
           Payment is accepted via UPI, bank transfer, or cash at the time of each session.
         </p>
         <Link href="/contact" className="btn-primary inline-flex mt-8">

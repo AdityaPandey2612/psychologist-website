@@ -6,9 +6,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Online Clinical  Psychologist for Global Clients | Therapy & Counselling",
+  title: "Online Therapy for International Clients",
   description:
-    "Looking for an online clinical psychologist? Get confidential, personalised oonline therapy, counselling & clinical hypnotherapy for international clinets. Bok a consultation",
+    "Confidential online therapy, counselling and clinical hypnotherapy for international clients, with sessions held by video. Book a consultation today.",
   path: "/online-therapy-international-clients",
   image: "/founder.jpg"
 });
@@ -75,7 +75,8 @@ export default function InternationalClientsPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-[1.08fr_0.92fr] md:px-10">
           <div className="max-w-3xl">
             <p className="eyebrow">Online Therapy · International Clients</p>
-            <h1 className="mt-5 text-5xl leading-[1.05] md:text-7xl">Professional psychological support, wherever you are.</h1>
+            {/* 36px below 640px: "psychological" is wider than a 320px screen at 48px. */}
+            <h1 className="mt-5 text-4xl leading-[1.05] break-words sm:text-5xl md:text-7xl">Professional psychological support, wherever you are.</h1>
             <p className="mt-7 max-w-2xl text-xl leading-relaxed text-ink-soft">
               Online clinical psychology, counselling and clinical hypnotherapy for clients seeking personalised psychological support while living away from home or outside India.
             </p>
@@ -126,7 +127,7 @@ export default function InternationalClientsPage() {
         <div className="grid gap-6 sm:grid-cols-2">
           {approach.map((item, index) => (
             <div key={item.title} className="card p-7">
-              <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">0{index + 1}</p>
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent-ink">0{index + 1}</p>
               <h3 className="mt-4 font-display text-2xl text-primary-dark">{item.title}</h3>
               <p className="mt-3 leading-relaxed text-ink-soft">{item.text}</p>
             </div>

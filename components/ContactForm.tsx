@@ -248,12 +248,12 @@ export default function ContactForm() {
         />
       </div>
 
-      {status === "error" && <p className="text-sm text-accent">{errorMsg}</p>}
+      {status === "error" && <p className="text-sm text-accent-ink">{errorMsg}</p>}
 
       <button type="submit" disabled={status === "loading"} className="btn-primary w-full sm:w-auto">
         {status === "loading" ? "Sending..." : "Send message"}
       </button>
-      <p className="text-xs text-ink-soft/70">
+      <p className="text-xs text-ink-soft">
         Everything shared here is confidential. If this is a medical emergency, please contact
         your nearest emergency services directly rather than using this form.
       </p>

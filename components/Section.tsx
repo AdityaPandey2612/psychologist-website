@@ -63,6 +63,8 @@ import type { ReactNode } from "react";
 type SectionProps = {
   eyebrow?: string;
   title?: string;
+  // Use "h1" when this section's title is the page's main heading.
+  titleAs?: "h1" | "h2";
   children: ReactNode;
   className?: string;
 };
@@ -70,6 +72,7 @@ type SectionProps = {
 export default function Section({
   eyebrow,
   title,
+  titleAs: Heading = "h2",
   children,
   className = ""
 }: SectionProps) {
@@ -84,7 +87,7 @@ export default function Section({
           )}
           <div className="divider mb-4" />
           {title && (
-            <h2 className="text-3xl text-primary-dark">{title}</h2>
+            <Heading className="text-3xl text-primary-dark">{title}</Heading>
           )}
         </div>
       )}

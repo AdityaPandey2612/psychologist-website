@@ -67,7 +67,14 @@ import Link from "next/link";
 import { Condition } from "@/lib/data/conditions";
 import IconTile from "@/components/IconTile";
 
-export default function ConditionCard({ condition }: { condition: Condition }) {
+export default function ConditionCard({
+  condition,
+  headingAs: Heading = "h3"
+}: {
+  condition: Condition;
+  // Card titles sit one level below the surrounding section heading.
+  headingAs?: "h2" | "h3";
+}) {
   return (
     <Link
       href={`/conditions/${condition.slug}`}
@@ -87,9 +94,9 @@ export default function ConditionCard({ condition }: { condition: Condition }) {
         <IconTile slug={condition.slug} variant="card" />
       )}
       <div className="p-6 flex flex-col gap-2 flex-1">
-        <h3 className="text-xl text-primary-dark font-display">{condition.name}</h3>
+        <Heading className="text-xl text-primary-dark font-display">{condition.name}</Heading>
         <p className="text-ink-soft text-sm leading-relaxed flex-1">{condition.shortDescription}</p>
-        <span className="font-mono text-xs uppercase tracking-widest text-accent mt-1">
+        <span className="font-mono text-xs uppercase tracking-widest text-accent-ink mt-1">
           Learn more →
         </span>
       </div>

@@ -1,6 +1,3 @@
-export const dynamic = "force-dynamic";
-
-
 import Section from "@/components/Section";
 import Image from "next/image";
 import PlaceholderImage from "@/components/PlaceholderImage";
@@ -13,8 +10,11 @@ import {
   GalleryPhoto,
 } from "@/lib/firebase/gallery";
 
+// Albums come from the CMS; the page is cached and refreshed hourly.
+export const revalidate = 3600;
+
 export const metadata = buildMetadata({
-  title: "Gallery: Workshops, Training & Sessions in Navi Mumbai",
+  title: "Gallery: Workshops and Training Sessions",
   description:
     "Photos from corporate wellness workshops, hypnotherapy training cohorts and group sessions run by Chaitanya Raj across Navi Mumbai. Take a look inside.",
   path: "/gallery",
@@ -39,7 +39,7 @@ export default async function GalleryPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "Gallery", path: "/gallery" }]} />
-      <Section eyebrow="Gallery" title="From our events">
+      <Section eyebrow="Gallery" title="From our events" titleAs="h1">
         <p className="text-ink-soft max-w-2xl mb-12 leading-relaxed">
           A look back at camps, outings, open houses and community sessions — grouped into
           albums by event.

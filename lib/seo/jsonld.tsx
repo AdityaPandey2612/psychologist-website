@@ -1,4 +1,8 @@
 import { site } from "@/lib/data/site";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo/metadata";
+
+const ORGANIZATION_ID = `${site.url}/#organization`;
+const FOUNDER_ID = `${site.url}/about/the-founder#person`;
 
 function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
@@ -10,25 +14,36 @@ function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
+const postalAddress = (address: { street: string; locality: string; region: string; postalCode: string }) => ({
+  "@type": "PostalAddress",
+  streetAddress: address.street,
+  addressLocality: address.locality,
+  addressRegion: address.region,
+  postalCode: address.postalCode,
+  addressCountry: site.address.country
+});
+
 export function LocalBusinessJsonLd() {
+  // The second clinic is listed without coordinates: lib/data/site.ts marks
+  // its geo values as still to be confirmed.
+  const branches = site.locations.filter((l) => l.address.street !== site.address.street);
+
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
         "@type": "MedicalBusiness",
+        "@id": ORGANIZATION_ID,
         name: site.name,
-        image: `${site.url}/og-default.jpg`,
+        image: DEFAULT_OG_IMAGE,
+        logo: `${site.url}/logo.png`,
         url: site.url,
         telephone: site.phone,
         email: site.email,
         priceRange: "₹₹",
         address: {
-          "@type": "PostalAddress",
-          streetAddress: site.address.street,
-          addressLocality: "Navi Mumbai",
-          addressRegion: site.address.region,
-          postalCode: site.address.postalCode,
-          addressCountry: site.address.country
+          ...postalAddress(site.address),
+          addressLocality: "Navi Mumbai"
         },
         geo: {
           "@type": "GeoCoordinates",
@@ -36,6 +51,13 @@ export function LocalBusinessJsonLd() {
           longitude: site.geo.lng
         },
         openingHours: "Mo-Sa 10:00-19:00",
+        founder: { "@id": FOUNDER_ID },
+        department: branches.map((branch) => ({
+          "@type": "MedicalClinic",
+          name: `${site.name}, ${branch.name}`,
+          telephone: site.phone,
+          address: postalAddress(branch.address)
+        })),
         sameAs: [site.social.facebook, site.social.instagram, site.social.linkedin]
       }}
     />
@@ -48,10 +70,12 @@ export function PersonJsonLd() {
       data={{
         "@context": "https://schema.org",
         "@type": "Person",
+        "@id": FOUNDER_ID,
         name: site.founder,
         jobTitle: "Clinical Hypnotherapist & Counselling Psychologist",
-        worksFor: { "@type": "Organization", name: site.name },
-        url: `${site.url}/about`
+        worksFor: { "@id": ORGANIZATION_ID },
+        url: `${site.url}/about/the-founder`,
+        sameAs: [site.social.linkedin]
       }}
     />
   );
@@ -71,7 +95,7 @@ export function BreadcrumbJsonLd({
           "@type": "ListItem",
           position: i + 1,
           name: item.name,
-          item: `${site.url}${item.path}`
+          item: item.path === "/" ? site.url : `${site.url}${item.path}`
         }))
       }}
     />
@@ -103,14 +127,15 @@ export function ArticleJsonLd({
   description,
   path,
   datePublished,
-  author
+  image
 }: {
   title: string;
   description: string;
   path: string;
   datePublished: string;
-  author: string;
+  image?: string;
 }) {
+  const url = `${site.url}${path}`;
   return (
     <JsonLd
       data={{
@@ -118,38 +143,56 @@ export function ArticleJsonLd({
         "@type": "Article",
         headline: title,
         description,
-        url: `${site.url}${path}`,
+        url,
+        mainEntityOfPage: url,
+        image: image ?? DEFAULT_OG_IMAGE,
         datePublished,
-        author: { "@type": "Organization", name: author },
-        publisher: {
-          "@type": "Organization",
-          name: site.name,
-          logo: { "@type": "ImageObject", url: `${site.url}/logo.png` }
-        }
+        // The CMS doesn't store edit dates, so the publish date is the latest known change.
+        dateModified: datePublished,
+        author: { "@type": "Organization", name: site.name, url: site.url },
+        publisher: { "@id": ORGANIZATION_ID, "@type": "Organization", name: site.name, logo: { "@type": "ImageObject", url: `${site.url}/logo.png` } }
       }}
     />
   );
 }
 
-export function MedicalTherapyJsonLd({
+// Psychological approaches are marked up as PsychologicalTreatment. Techniques
+// the practice itself describes as complementary or outside mainstream
+// clinical psychology are marked up as a plain Service instead.
+export function TherapyJsonLd({
   name,
   description,
-  path
+  path,
+  complementary
 }: {
   name: string;
   description: string;
   path: string;
+  complementary?: boolean;
 }) {
+  const url = `${site.url}${path}`;
   return (
     <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "MedicalTherapy",
-        name,
-        description,
-        url: `${site.url}${path}`,
-        provider: { "@type": "MedicalBusiness", name: site.name }
-      }}
+      data={
+        complementary
+          ? {
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name,
+              description,
+              url,
+              serviceType: name,
+              provider: { "@id": ORGANIZATION_ID },
+              areaServed: "Navi Mumbai"
+            }
+          : {
+              "@context": "https://schema.org",
+              "@type": "PsychologicalTreatment",
+              name,
+              description,
+              url
+            }
+      }
     />
   );
 }

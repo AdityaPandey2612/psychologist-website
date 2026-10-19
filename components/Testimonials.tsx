@@ -113,7 +113,7 @@ export default async function Testimonials() {
                     <p className="text-sm font-medium text-primary-dark">
                       {review.author_name}
                     </p>
-                    <div className="flex text-accent text-xs">
+                    <div className="flex text-accent-ink text-xs">
                       {Array.from({ length: 5 }).map((_, star) => (
                         <span key={star}>{star < review.rating ? "★" : "☆"}</span>
                       ))}
@@ -126,7 +126,7 @@ export default async function Testimonials() {
         </div>
       </div>
 
-      <p className="mt-8 text-center text-xs text-ink-soft/60">
+      <p className="mt-8 text-center text-xs text-ink-soft">
         {data.rating.toFixed(1)} ★ average from {data.userRatingsTotal} Google reviews
       </p>
     </Section>

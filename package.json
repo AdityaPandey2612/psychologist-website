@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seo:check": "node scripts/seo/seo-check.mjs",
+    "seo:browser": "node scripts/seo/mobile-a11y-check.mjs",
+    "seo:consent": "node scripts/seo/consent-csp-check.mjs",
+    "seo:lighthouse": "node scripts/seo/lighthouse.mjs"
   },
   "dependencies": {
     "firebase": "^12.16.0",

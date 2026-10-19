@@ -1,11 +1,13 @@
-export const dynamic = "force-dynamic";
-
 import Link from "next/link";
 import Image from "next/image";
 import Section from "@/components/Section";
 import PlaceholderImage from "@/components/PlaceholderImage";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getPublishedPosts, BlogPost } from "@/lib/firebase/blogs";
+import type { BlogPost } from "@/lib/firebase/blogs";
+import { blogDisplayTitle, blogPath, getBlogPosts } from "@/lib/blog/seo";
+
+// Posts come from the CMS; the list is cached and refreshed every 5 minutes.
+export const revalidate = 300;
 
 export const metadata = buildMetadata({
   title: "Blog: Psychology, Therapy & Hypnotherapy Insights",
@@ -17,13 +19,13 @@ export default async function BlogListPage() {
   let posts: BlogPost[] = [];
 
   try {
-    posts = await getPublishedPosts();
+    posts = await getBlogPosts();
   } catch (error) {
     console.error("Failed to fetch blog posts:", error);
   }
 
   return (
-    <Section eyebrow="Blog" title="Insights on psychological wellbeing">
+    <Section eyebrow="Blog" title="Insights on psychological wellbeing" titleAs="h1">
       {posts.length === 0 ? (
         <p className="text-ink-soft">No posts published yet.</p>
       ) : (
@@ -31,16 +33,16 @@ export default async function BlogListPage() {
           {posts.map((post) => (
             <Link
               key={post.id}
-              href={`/blog/${post.slug}`}
+              href={blogPath(post.id)}
               className="group overflow-hidden rounded-3xl border border-primary/10 bg-white transition hover:-translate-y-1 hover:shadow-xl"
             >
               {post.coverImageUrl ? (
                 <div className="relative aspect-[4/3] w-full">
                   <Image
                     src={post.coverImageUrl}
-                    alt={post.title}
+                    alt=""
                     fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
                   />
                 </div>
@@ -56,7 +58,7 @@ export default async function BlogListPage() {
                     year: "numeric",
                   })}
                 </p>
-                <h2 className="mt-2 text-xl text-primary-dark">{post.title}</h2>
+                <h2 className="mt-2 text-xl text-primary-dark">{blogDisplayTitle(post)}</h2>
                 <p className="mt-3 text-sm leading-relaxed text-ink-soft">{post.excerpt}</p>
               </div>
             </Link>

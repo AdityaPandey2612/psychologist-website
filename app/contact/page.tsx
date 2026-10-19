@@ -129,7 +129,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Book a Consultation | Psychologist in Vashi, Navi Mumbai",
+  title: "Book a Consultation in Vashi, Navi Mumbai",
   description:
     "Book an in-person or online session at Chaitanya Raj, Gold City, Sector 19D, Vashi, Navi Mumbai. Open Mon-Sat, 10am-7pm. Call +91 96284 93677.",
   path: "/contact",
@@ -137,7 +137,7 @@ export const metadata = buildMetadata({
 
 export default function ContactPage() {
   return (
-    <Section eyebrow="Contact" title="Let's talk">
+    <Section eyebrow="Contact" title="Let's talk" titleAs="h1">
       <div className="grid lg:grid-cols-5 gap-12">
 
         {/* Left Column */}
@@ -160,7 +160,7 @@ export default function ContactPage() {
                 <span className="font-medium text-ink">Phone: </span>
                 <a
                   href={`tel:${site.phone}`}
-                  className="hover:text-accent"
+                  className="inline-block py-0.5 hover:text-accent-ink"
                 >
                   {site.phoneDisplay}
                 </a>
@@ -170,7 +170,7 @@ export default function ContactPage() {
                 <span className="font-medium text-ink">Email: </span>
                 <a
                   href={`mailto:${site.email}`}
-                  className="hover:text-accent"
+                  className="inline-block py-0.5 [overflow-wrap:anywhere] hover:text-accent-ink"
                 >
                   {site.email}
                 </a>
@@ -184,9 +184,8 @@ export default function ContactPage() {
           </div>
 
           {/* Map */}
-          <div className="h-[320px] overflow-hidden rounded-2xl">
-            <LocationMap />
-          </div>
+          {/* Contact details are listed above, so only the clinic switcher and map are shown. */}
+          <LocationMap compact />
 
         </div>
 

@@ -43,7 +43,14 @@ import Link from "next/link";
 import { Therapy } from "@/lib/data/therapies";
 import IconTile from "@/components/IconTile";
 
-export default function TherapyCard({ therapy }: { therapy: Therapy }) {
+export default function TherapyCard({
+  therapy,
+  headingAs: Heading = "h3"
+}: {
+  therapy: Therapy;
+  // Card titles sit one level below the surrounding section heading.
+  headingAs?: "h2" | "h3";
+}) {
   return (
     <Link
       href={`/therapies/${therapy.slug}`}
@@ -51,9 +58,9 @@ export default function TherapyCard({ therapy }: { therapy: Therapy }) {
     >
       <IconTile slug={therapy.slug} variant="card" />
       <div className="p-6 flex flex-col gap-2 flex-1">
-        <h3 className="text-xl text-primary-dark font-display">{therapy.name}</h3>
+        <Heading className="text-xl text-primary-dark font-display">{therapy.name}</Heading>
         <p className="text-ink-soft text-sm leading-relaxed flex-1">{therapy.shortDescription}</p>
-        <span className="font-mono text-xs uppercase tracking-widest text-accent mt-1">
+        <span className="font-mono text-xs uppercase tracking-widest text-accent-ink mt-1">
           Learn more →
         </span>
       </div>

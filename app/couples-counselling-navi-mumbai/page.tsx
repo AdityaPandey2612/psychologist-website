@@ -6,9 +6,9 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Couple Counselling & Therapy in Navi Mumbai | Vashi & CBD Belapur",
+  title: "Couples Counselling in Navi Mumbai",
   description:
-    "Looking for Couples counselling in in Navi Mumbai? Get confidential relationship therapy in Vashi & CBD Belapur for communication, trust, conflict and connection.",
+    "Confidential couples counselling in Vashi and CBD Belapur, Navi Mumbai, and online, for communication, trust, conflict and reconnecting as partners.",
   path: "/couples-counselling-navi-mumbai",
   image: "/images/relationship-counselling-navi-mumbai.png"
 });
@@ -26,6 +26,36 @@ const concerns = [
   "Separation or relationship uncertainty",
   "Long-distance marriage or living apart",
   "Premarital relationship concerns"
+];
+
+// Supporting pages for couples and relationship searches; this page is the
+// main landing page and links out to them (they link back here).
+const furtherReading = [
+  {
+    href: "/conditions/relationship-counselling-navi-mumbai",
+    label: "Relationship counselling",
+    blurb: "Support for difficulties with a partner, spouse or family, individually or together."
+  },
+  {
+    href: "/therapies/couples-and-relationship-counselling",
+    label: "How couples counselling sessions work",
+    blurb: "Joint sessions, the cycle behind repeated conflict, and tools for de-escalating."
+  },
+  {
+    href: "/blog/how-to-fix-a-relationship-before-its-too-late",
+    label: "How to fix a relationship before it's too late",
+    blurb: "Signs that it may be time to seek counselling."
+  },
+  {
+    href: "/blog/feeling-unheard-in-your-marriage-the-silent-problem-behind-most-divorces",
+    label: "Feeling unheard in your marriage",
+    blurb: "An article on what it means to feel unheard by your partner."
+  },
+  {
+    href: "/blog/intimacy-problems-in-marriage-how-to-reconnect",
+    label: "Intimacy problems in marriage",
+    blurb: "Why they happen and how couples reconnect."
+  }
 ];
 
 const sessionPoints = [
@@ -78,7 +108,7 @@ export default function CouplesCounsellingPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-[1.05fr_0.95fr] md:px-10">
           <div className="max-w-3xl">
             <p className="eyebrow">Couple Counselling · Vashi &amp; CBD Belapur</p>
-            <h1 className="mt-5 text-5xl leading-[1.05] md:text-7xl">
+            <h1 className="mt-5 text-5xl leading-[1.05] break-words md:text-7xl">
               When the relationship has become difficult, you do not have to work through it alone.
             </h1>
             <p className="mt-7 max-w-2xl text-xl leading-relaxed text-ink-soft">
@@ -148,7 +178,7 @@ export default function CouplesCounsellingPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sessionPoints.map((point, index) => (
             <div key={point} className="card p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">0{index + 1}</p>
+              <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent-ink">0{index + 1}</p>
               <p className="mt-4 font-display text-lg text-primary-dark">{point}</p>
             </div>
           ))}
@@ -213,6 +243,19 @@ export default function CouplesCounsellingPage() {
           </div>
         </div>
       </section>
+
+      <Section eyebrow="Further reading" title="Related support and articles">
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {furtherReading.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href} className="card flex h-full flex-col gap-2 p-6 hover:border-accent/40">
+                <span className="font-display text-lg text-primary-dark">{link.label}</span>
+                <span className="text-sm leading-relaxed text-ink-soft">{link.blurb}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <section className="bg-primary-dark py-20 text-white md:py-24">
         <div className="mx-auto max-w-5xl px-6 text-center md:px-10">

@@ -44,7 +44,7 @@ import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { mediaHighlights } from "@/lib/data/about";
 
 export const metadata = buildMetadata({
-  title: "Media Highlights | Chaitanya Raj Psychology, Navi Mumbai",
+  title: "Media Highlights and Press Coverage",
   description: "Press features, interviews and media appearances by Lt Col Rajesh Sharma (Retd) of Chaitanya Raj Psychology & Counselling, Navi Mumbai. Explore the coverage.",
   path: "/about/media-highlights"
 });
@@ -53,7 +53,7 @@ export default function MediaHighlightsPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Media Highlights", path: "/about/media-highlights" }]} />
-      <Section eyebrow="About" title="Media Highlights">
+      <Section eyebrow="About" title="Media Highlights" titleAs="h1">
         <div className="max-w-2xl space-y-6">
           {mediaHighlights.map((m) => (
             <a key={m.title}
@@ -67,7 +67,7 @@ export default function MediaHighlightsPage() {
                 // <div className="relative aspect-video w-full overflow-hidden">
                 // <div className="relative aspect-square w-full overflow-hidden">
                 // <div className="relative h-96 w-full overflow-hidden">
-                <div className="relative h-[1077px] w-full overflow-hidden">
+                <div className="relative aspect-[861/1077] w-full overflow-hidden">
                   <Image
                     src={m.image}
                     alt={m.title}
@@ -78,15 +78,12 @@ export default function MediaHighlightsPage() {
                 </div>
               )}
               <div className="p-6 flex flex-col gap-2">
-                <p className="font-mono text-xs text-accent uppercase tracking-widest">{m.outlet} · {m.date}</p>
+                <p className="font-mono text-xs text-accent-ink uppercase tracking-widest">{m.outlet} · {m.date}</p>
                 <p className="text-xl font-display text-primary-dark">{m.title}</p>
                 <p className="text-ink-soft">{m.description}</p>
               </div>
             </a>
           ))}
-          <p className="text-sm text-ink-soft/60">
-            Placeholder entries — replace with real press mentions, links, and dates before launch.
-          </p>
         </div>
       </Section>
     </>

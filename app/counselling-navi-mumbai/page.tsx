@@ -1124,7 +1124,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Counselling in Navi Mumbai | Chaitanya Raj",
+  title: "Counselling in Navi Mumbai: Vashi & Belapur",
   description:
     "Counselling in Vashi and Belapur, Navi Mumbai. Evidence-based support for anxiety, stress, relationships and more, led by 25+ years of experience.",
   path: "/counselling-navi-mumbai"
@@ -1284,7 +1284,7 @@ export default function CounsellingPage() {
           <div className="max-w-3xl">
             <p className="eyebrow">Professional Counselling · Vashi &amp; Belapur, Navi Mumbai</p>
 
-            <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+            <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark break-words md:text-7xl">
               Counselling in Navi Mumbai
             </h1>
 
@@ -1445,7 +1445,7 @@ export default function CounsellingPage() {
                 </p>
                 <Link
                   href={item.href}
-                  className="font-mono text-xs uppercase tracking-widest text-accent mt-1"
+                  className="font-mono text-xs uppercase tracking-widest text-accent-ink mt-1"
                 >
                   {item.linkText} →
                 </Link>
