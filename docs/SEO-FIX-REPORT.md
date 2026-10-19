@@ -143,6 +143,7 @@ Every finding was checked against the live site and the code before fixing. The 
   - `X-Powered-By` removed
 - **Why `'unsafe-inline'` for scripts:** Next.js streams page data in inline scripts. Nonces would force every page to render per request and undo the static/ISR caching in L5. Hash-based CSP isn't workable with per-page inline payloads in Next 14.
 - **Caught in testing:** the first policy blocked Google Analytics hits to `analytics.google.com` and `www.google.com/g/collect` (a `*.` wildcard doesn't match the bare host). Both hosts were added before anything shipped.
+- **Development mode:** under `next dev` the policy also allows `'unsafe-eval'`, which Next.js needs for its development bundles. Without it the page never hydrated locally (the consent buttons and menu did nothing). Production builds don't include it (checked in `.next/routes-manifest.json`).
 - **Unchanged:** HSTS stays at Vercel's default (`max-age=63072000`); `includeSubDomains`/`preload` were not added, as instructed.
 - **Verification:** headers present on every response; consent/CSP test — no CSP violations on public pages or `/admin/login`; GA and (after consent) Clarity load.
 - **Limitation:** admin flows that need a login (uploads, editing) could not be exercised without credentials. Their domains (`*.googleapis.com`) are allowed. Check the browser console once on the preview deployment.

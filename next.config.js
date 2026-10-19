@@ -14,13 +14,18 @@
 // Clean blog URL → Firestore document ID (the IDs double as the old slugs).
 const blogSlugAliases = require("./lib/blog/slug-aliases.json");
 
+// `next dev` evaluates modules with eval() for source maps and Fast Refresh;
+// without 'unsafe-eval' the page never hydrates there. Production builds don't
+// need it.
+const isDev = process.env.NODE_ENV !== "production";
+
 // Next.js streams page data through inline <script> tags, so script-src needs
 // 'unsafe-inline' unless every page is rendered per request with a nonce,
 // which would disable static/ISR caching. Third parties: Google Analytics,
 // Microsoft Clarity, Firebase (admin), Web3Forms (contact form), Google Maps.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
