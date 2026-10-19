@@ -30,7 +30,7 @@ import { conditions } from "@/lib/data/conditions";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata = buildMetadata({
-  title: "Conditions We Treat | Psychologist in Navi Mumbai",
+  title: "Conditions We Treat in Navi Mumbai",
   description:
     "Anxiety, depression, stress, trauma, grief and more — explore the conditions treated at our Vashi, Navi Mumbai practice.",
   path: "/conditions"
@@ -42,10 +42,10 @@ export default function ConditionsPage() {
 
   return (
     <>
-      <Section eyebrow="For Individuals" title="What we help with">
+      <Section eyebrow="For Individuals" title="What we help with" titleAs="h1">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {individualConditions.map((c) => (
-            <ConditionCard key={c.slug} condition={c} />
+            <ConditionCard key={c.slug} condition={c} headingAs="h2" />
           ))}
         </div>
       </Section>

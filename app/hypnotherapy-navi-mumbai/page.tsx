@@ -988,7 +988,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Hypnotherapist in Navi Mumbai | Chaitanya Raj",
+  title: "Clinical Hypnotherapist in Navi Mumbai",
   description:
     "Clinical hypnotherapy in Vashi and Belapur, Navi Mumbai, led by an Academy of Hypnosis India lifetime member. 25+ years of experience.",
   path: "/hypnotherapy-navi-mumbai"
@@ -1095,7 +1095,8 @@ export default function HypnotherapyPage() {
           <div className="max-w-3xl">
             <p className="eyebrow">Clinical Hypnotherapy · Vashi &amp; Belapur, Navi Mumbai</p>
 
-            <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+            {/* 36px below 640px: "Hypnotherapist" is wider than a 320–390px screen at 48px. */}
+            <h1 className="mt-5 text-4xl leading-[1.05] text-primary-dark break-words sm:text-5xl md:text-7xl">
               Hypnotherapist in Navi Mumbai
             </h1>
 

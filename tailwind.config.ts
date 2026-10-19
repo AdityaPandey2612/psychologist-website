@@ -343,6 +343,9 @@ const config: Config = {
         primary: "#1F5C56",
         "primary-dark": "#123A36",
         accent: "#E0794F",
+        // Same hue as accent, dark enough for small text on the light
+        // surfaces (≥4.5:1 on bg, surface-soft and white).
+        "accent-ink": "#AB471E",
         gold: "#F0B860"
       },
 

@@ -80,6 +80,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingSocials from "@/components/Floatingocials";
+import AnalyticsConsent from "@/components/AnalyticsConsent";
+import { consentBootstrapScript } from "@/lib/analyticsConsent";
 import { LocalBusinessJsonLd } from "@/lib/seo/jsonld";
 import { site } from "@/lib/data/site";
 import Script from "next/script";
@@ -88,7 +90,8 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  // Italic isn't used; loading it added a ~46 KB preloaded font to every page.
+  style: ["normal"],
   display: "swap",
 });
 
@@ -132,17 +135,21 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${publicSans.variable} ${plexMono.variable}`}
+      // The consent script below sets a data attribute on <html> before hydration.
+      suppressHydrationWarning
     >
-      <head>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: consentBootstrapScript }} />
+        {/* Analytics loads after hydration so it doesn't block the page. */}
         <Script
           id="google-analytics"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-NRB8977V2M"
         />
 
         <Script
           id="google-analytics-config"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         >
           {`
             window.dataLayer = window.dataLayer || [];
@@ -152,26 +159,19 @@ export default function RootLayout({
           `}
         </Script>
 
-        <Script
-          id="microsoft-clarity"
-          strategy="afterInteractive"
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-surface focus:px-5 focus:py-3 focus:text-primary-dark focus:shadow-lg"
         >
-          {`
-            (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "yyoyal8o77");
-          `}
-        </Script>
-      </head>
-
-      <body>
+          Skip to content
+        </a>
         <LocalBusinessJsonLd />
         <Header />
-        <main>{children}</main>
+        <main id="main-content">{children}</main>
         <Footer />
         <FloatingSocials />
+        {/* Microsoft Clarity is loaded only after the visitor allows it. */}
+        <AnalyticsConsent />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { FAQJsonLd } from "@/lib/seo/jsonld";
 
 export const metadata = buildMetadata({
-  title: "Frequently Asked Questions",
+  title: "Frequently Asked Questions About Therapy",
   description: "Answers to common questions about therapy, hypnotherapy, confidentiality and what to expect at Chaitanya Raj Psychology & Counselling.",
   path: "/faq"
 });
@@ -35,7 +35,7 @@ export default function FAQPage() {
   return (
     <>
       <FAQJsonLd items={faqs} />
-      <Section eyebrow="FAQ" title="Common questions">
+      <Section eyebrow="FAQ" title="Common questions" titleAs="h1">
         <div className="max-w-2xl space-y-8">
           {faqs.map((f) => (
             <div key={f.question}>

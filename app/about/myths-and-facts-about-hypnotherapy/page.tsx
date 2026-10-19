@@ -4,7 +4,7 @@ import { BreadcrumbJsonLd, FAQJsonLd } from "@/lib/seo/jsonld";
 import { hypnotherapyMyths } from "@/lib/data/about";
 
 export const metadata = buildMetadata({
-  title: "Hypnotherapy Myths & Facts: What It Really Involves",
+  title: "Hypnotherapy Myths and Facts Explained",
   description: "Common myths about hypnotherapy answered by a clinical hypnotherapist in Navi Mumbai, including safety, loss of control and what a session actually feels like.",
   path: "/about/myths-and-facts-about-hypnotherapy"
 });
@@ -16,7 +16,7 @@ export default function MythsAndFactsPage() {
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Myths and Facts about Hypnotherapy", path: "/about/myths-and-facts-about-hypnotherapy" }]} />
       <FAQJsonLd items={faqItems} />
-      <Section eyebrow="About" title="Myths and Facts about Hypnotherapy">
+      <Section eyebrow="About" title="Myths and Facts about Hypnotherapy" titleAs="h1">
         <div className="max-w-2xl space-y-8">
           {hypnotherapyMyths.map((m) => (
             <div key={m.myth} className="card p-6">

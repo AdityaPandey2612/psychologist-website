@@ -5,8 +5,9 @@ import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { vastuConsultation } from "@/lib/data/about";
 
 export const metadata = buildMetadata({
-  title: "Vastu Consultation",
-  description: "Vastu consultation services offered alongside psychological support at Chaitanya Raj Psychology & Counselling.",
+  title: "Vastu Consultation in Navi Mumbai",
+  description:
+    "Vastu consultation offered at Chaitanya Raj in Navi Mumbai as a complementary service alongside psychological support, never as a substitute for clinical care.",
   path: "/about/vastu-consultation"
 });
 
@@ -14,7 +15,7 @@ export default function VastuConsultationPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Vastu Consultation", path: "/about/vastu-consultation" }]} />
-      <Section eyebrow="About" title="Vastu Consultation">
+      <Section eyebrow="About" title="Vastu Consultation" titleAs="h1">
         <div className="max-w-2xl space-y-8">
           <p className="text-lg text-ink-soft leading-relaxed">{vastuConsultation.intro}</p>
           <div>
@@ -22,7 +23,7 @@ export default function VastuConsultationPage() {
             <ul className="space-y-2">
               {vastuConsultation.whatToExpect.map((s) => (
                 <li key={s} className="flex gap-3 text-ink-soft">
-                  <span className="text-gold mt-1">•</span>
+                  <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden="true" />
                   <span>{s}</span>
                 </li>
               ))}

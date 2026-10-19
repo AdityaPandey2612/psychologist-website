@@ -458,7 +458,7 @@ export default function FounderPage() {
               Founder & Lead Psychologist
             </p>
 
-            <h1 className="max-w-3xl text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+            <h1 className="max-w-3xl text-5xl leading-[1.05] text-primary-dark break-words md:text-7xl">
               Meet Our Founder
             </h1>
 

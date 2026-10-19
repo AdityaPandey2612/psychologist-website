@@ -257,9 +257,9 @@ export const conditions: Condition[] = [
     name: "Relationships",
     audience: "individual",
     shortDescription: "Conflict, distance, or communication that's grown careful and guarded.",
-    metaTitle: "Relationship & Couples Counselling in Vashi, Navi Mumbai",
+    metaTitle: "Relationship Counselling in Navi Mumbai",
     metaDescription:
-      "Counselling for couples facing conflict, distance or communication breakdown, in Vashi and Belapur, Navi Mumbai. In-person or online. Book a session.",
+      "Counselling for difficulties with a partner, spouse or family, in Vashi and Belapur, Navi Mumbai. Individual or joint sessions, in person or online.",
     image: "/images/conditions/relationship-counselling-navi-mumbai.png",
     imageAlt: "Placeholder — replace with a descriptive alt text for relationship counselling navi mumbai",
     intro:

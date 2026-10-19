@@ -434,9 +434,18 @@
     @apply transition-colors duration-200;
   }
 
+  /* Dark teal on the light surfaces (11:1) and gold on the dark ones (7:1);
+     the old coral outline was below the 3:1 needed for focus indicators. */
   :focus-visible {
-    outline: 2px solid #E0794F;
+    outline: 2px solid #123A36;
     outline-offset: 3px;
+  }
+
+  .bg-primary :focus-visible,
+  .bg-primary-dark :focus-visible,
+  .section-primary :focus-visible,
+  .section-dark :focus-visible {
+    outline-color: #F0B860;
   }
 }
 
@@ -459,7 +468,7 @@
   }
 
   .eyebrow {
-    @apply font-mono uppercase tracking-[0.14em] text-sm font-bold text-accent;
+    @apply font-mono uppercase tracking-[0.14em] text-sm font-bold text-accent-ink;
   }
 
   .divider {
@@ -526,15 +535,89 @@
   .hero-panel.tone-rose { background: linear-gradient(160deg, #F7EBEE 0%, #E2C4CC 100%); }
 }
 
+/* Homepage hero breathing guide (components/Hero.tsx): 4s inhale, 3s hold,
+   6s exhale. The line, dot and labels share the same keyframe marks so they
+   stay in sync. */
+@keyframes breathScale {
+  0% { transform: scale(1); }
+  30.77% { transform: scale(1.045); }
+  53.85% { transform: scale(1.045); }
+  100% { transform: scale(1); }
+}
+.breath-scale {
+  animation: breathScale 13s ease-in-out infinite;
+}
+
+@keyframes breathDraw {
+  0% { stroke-dashoffset: 100; }
+  30.77% { stroke-dashoffset: 66.67; }
+  53.85% { stroke-dashoffset: 33.33; }
+  100% { stroke-dashoffset: 0; }
+}
+.breath-draw {
+  animation: breathDraw 13s linear infinite;
+}
+
+@keyframes breathDot {
+  0% { offset-distance: 0%; }
+  30.77% { offset-distance: 33.33%; }
+  53.85% { offset-distance: 66.67%; }
+  100% { offset-distance: 100%; }
+}
+.breath-dot {
+  animation: breathDot 13s linear infinite;
+}
+
+@keyframes inhaleLabel {
+  0% { opacity: 1; transform: translateY(0); }
+  29.5% { opacity: 1; transform: translateY(0); }
+  30.77% { opacity: 0; transform: translateY(-2px); }
+  100% { opacity: 0; }
+}
+@keyframes holdLabel {
+  0%, 30.77% { opacity: 0; transform: translateY(2px); }
+  32% { opacity: 1; transform: translateY(0); }
+  52.6% { opacity: 1; transform: translateY(0); }
+  53.85% { opacity: 0; transform: translateY(-2px); }
+  100% { opacity: 0; }
+}
+@keyframes exhaleLabel {
+  0%, 53.85% { opacity: 0; transform: translateY(2px); }
+  55% { opacity: 1; transform: translateY(0); }
+  99% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-2px); }
+}
+.label-inhale { animation: inhaleLabel 13s linear infinite; }
+.label-hold { animation: holdLabel 13s linear infinite; }
+.label-exhale { animation: exhaleLabel 13s linear infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .animate-breathe,
   .animate-breatheRing,
-  .animate-drift {
+  .animate-drift,
+  .breath-scale,
+  .breath-draw,
+  .breath-dot,
+  .label-inhale,
+  .label-hold,
+  .label-exhale {
     animation: none !important;
   }
+
+  /* Static guide: full outline, no moving dot, first label only. */
+  .breath-draw { stroke-dashoffset: 0; }
+  .breath-dot,
+  .label-hold,
+  .label-exhale { opacity: 0; }
 }
 
 .blog-content {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Analytics consent banner (components/AnalyticsConsent.tsx): hidden once a
+   choice is stored; the attribute is set before first paint. */
+html[data-analytics-consent] .consent-banner {
+  display: none;
 }

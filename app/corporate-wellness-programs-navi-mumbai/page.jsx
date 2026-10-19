@@ -640,7 +640,7 @@ export default function CorporateWellnessPage() {
         Corporate Wellness & Organisational Psychology
       </p>
 
-      <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+      <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark break-words md:text-7xl">
         Corporate Wellness Programs in Navi Mumbai, Mumbai & Pan India
       </h1>
 
@@ -768,7 +768,8 @@ export default function CorporateWellnessPage() {
               Employee Assistance Program
             </p>
 
-            <h2 className="mt-5 text-4xl leading-tight text-white md:text-6xl">
+            {/* 48px at 768–1023px: "organisation" overflowed the half-width column at 60px. */}
+            <h2 className="mt-5 text-4xl leading-tight text-white break-words md:text-5xl lg:text-6xl">
   Confidential support for the people behind your organisation.
 </h2>
 

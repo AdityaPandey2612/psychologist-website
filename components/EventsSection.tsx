@@ -205,7 +205,7 @@ export default function EventsSection() {
                     href={event.registrationLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 font-mono text-xs uppercase tracking-widest text-accent"
+                    className="mt-2 font-mono text-xs uppercase tracking-widest text-accent-ink"
                   >
                     Reserve a spot →
                   </a>
@@ -214,7 +214,7 @@ export default function EventsSection() {
 
                   <Link
                     href="/contact"
-                    className="mt-2 font-mono text-xs uppercase tracking-widest text-accent"
+                    className="mt-2 font-mono text-xs uppercase tracking-widest text-accent-ink"
                   >
                     Learn more →
                   </Link>

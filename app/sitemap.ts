@@ -250,160 +250,76 @@
 
 import { MetadataRoute } from "next";
 
-import { site } from "@/lib/data/site";
 import { conditions } from "@/lib/data/conditions";
 import { therapies } from "@/lib/data/therapies";
-import { blogPosts } from "@/lib/data/blog";
 import { trainingPrograms } from "@/lib/data/training";
 import { caseStudies } from "@/lib/data/caseStudies";
+import { blogPath, getBlogPosts } from "@/lib/blog/seo";
+import { canonicalUrl } from "@/lib/seo/metadata";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = site.url.replace(/\/$/, "");
+// Rebuilt at most hourly so newly published blog posts appear without a deploy.
+export const revalidate = 3600;
 
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/`,
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about/the-founder`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about/chaitanya-raj`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about/myths-and-facts-about-hypnotherapy`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/about/media-highlights`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/about/our-team`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/about/vastu-consultation`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/conditions`,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/therapies`,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/counselling-navi-mumbai`,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/couples-counselling-navi-mumbai`,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/online-therapy-international-clients`,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/training-and-mentorship`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/case-studies`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/fees`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/faq`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/testimonials`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
-  ];
+type Entry = MetadataRoute.Sitemap[number];
 
-  const conditionPages: MetadataRoute.Sitemap = conditions.map(
-    (condition) => ({
-      url: `${baseUrl}/conditions/${condition.slug}`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    })
-  );
+const entry = (
+  path: string,
+  changeFrequency: Entry["changeFrequency"],
+  priority: number,
+  lastModified?: string
+): Entry => ({
+  url: canonicalUrl(path),
+  changeFrequency,
+  priority,
+  ...(lastModified ? { lastModified } : {}),
+});
 
-  const therapyPages: MetadataRoute.Sitemap = therapies.map((therapy) => ({
-    url: `${baseUrl}/therapies/${therapy.slug}`,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
+// Indexable routes only. Left out on purpose: /privacy-policy and
+// /about/our-team (noindex), /admin and /api.
+const staticPages: MetadataRoute.Sitemap = [
+  entry("/", "monthly", 1),
+  entry("/about", "monthly", 0.8),
+  entry("/about/the-founder", "monthly", 0.8),
+  entry("/about/chaitanya-raj", "monthly", 0.7),
+  entry("/about/myths-and-facts-about-hypnotherapy", "monthly", 0.7),
+  entry("/about/media-highlights", "monthly", 0.6),
+  entry("/about/vastu-consultation", "monthly", 0.5),
+  entry("/conditions", "monthly", 0.9),
+  entry("/therapies", "monthly", 0.9),
+  entry("/counselling-navi-mumbai", "monthly", 0.9),
+  entry("/couples-counselling-navi-mumbai", "monthly", 0.9),
+  entry("/hypnotherapy-navi-mumbai", "monthly", 0.9),
+  entry("/online-therapy-international-clients", "monthly", 0.9),
+  entry("/corporate-wellness-programs-navi-mumbai", "monthly", 0.8),
+  entry("/training-and-mentorship", "monthly", 0.8),
+  entry("/case-studies", "monthly", 0.7),
+  entry("/blog", "weekly", 0.8),
+  entry("/gallery", "monthly", 0.6),
+  entry("/fees", "monthly", 0.6),
+  entry("/faq", "monthly", 0.6),
+  entry("/testimonials", "monthly", 0.6),
+  entry("/contact", "monthly", 0.8),
+];
 
-  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: "yearly",
-    priority: 0.6,
-  }));
+const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
 
-  const trainingPages: MetadataRoute.Sitemap = trainingPrograms.map(
-    (program) => ({
-      url: `${baseUrl}/training-and-mentorship/${program.slug}`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    })
-  );
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const conditionPages = conditions.map((c) => entry(`/conditions/${c.slug}`, "monthly", 0.8));
+  const therapyPages = therapies.map((t) => entry(`/therapies/${t.slug}`, "monthly", 0.7));
+  const trainingPages = trainingPrograms.map((p) => entry(`/training-and-mentorship/${p.slug}`, "monthly", 0.7));
+  const caseStudyPages = caseStudies.map((c) => entry(`/case-studies/${c.slug}`, "yearly", 0.6));
 
-  const caseStudyPages: MetadataRoute.Sitemap = caseStudies.map(
-    (caseStudy) => ({
-      url: `${baseUrl}/case-studies/${caseStudy.slug}`,
-      changeFrequency: "yearly",
-      priority: 0.6,
-    })
-  );
+  // Blog posts live in Firestore. The CMS records a publish date but no
+  // modification date, so lastModified is the publish date.
+  let blogPages: MetadataRoute.Sitemap = [];
+  try {
+    const posts = await getBlogPosts();
+    blogPages = posts.map((post) =>
+      entry(blogPath(post.id), "yearly", 0.6, isIsoDate(post.publishedDate) ? post.publishedDate : undefined)
+    );
+  } catch (error) {
+    console.error("Sitemap: failed to load blog posts:", error);
+  }
 
   return [
     ...staticPages,
