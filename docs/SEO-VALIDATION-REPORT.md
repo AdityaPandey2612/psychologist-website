@@ -214,7 +214,7 @@ All **71 sitemap pages** were checked at **8 widths** (320, 360, 375, 390, 414, 
 | Re-check after that fix | `/corporate-wellness-programs-navi-mumbai`, `/blog/what-actually-happens-in-a-past-life-regression-session-and-why-people-sometimes-cry-halfway-through`, `/online-therapy-international-clients`, `/hypnotherapy-navi-mumbai` — 0 px at all 8 widths |
 
 Earlier runs on the 17-page sample also caught, and led to fixes for:
-- footer social icons at 768–1024 px
+- footer social icons at 768–1024 px (the icons were later removed when the floating bar returned on mobile)
 - the 48 px H1s on the hypnotherapy page (320–390 px) and the online-therapy page (320 px)
 
 The overflow detector reports the outermost element past the edge and, when no element box is past the edge, the text run that is.

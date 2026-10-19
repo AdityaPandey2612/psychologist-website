@@ -329,11 +329,10 @@ const styles: Record<SocialName, { bg: string | null; icon: ReactElement }> = {
   },
 };
 
-// Shown from 1280px up, where it sits clear of the content column; on smaller
-// screens it covered body text, and the same links are in the footer.
+// z-30 keeps the open mobile menu (header, z-40) and the consent banner above it.
 export default function FloatingSocials() {
   return (
-    <aside aria-label="Social media" className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3 xl:flex">
+    <aside aria-label="Social media" className="fixed right-4 top-1/2 z-30 flex -translate-y-1/2 flex-col gap-3">
       {socialLinks.map(({ name, href }) => (
         <a
           key={name}

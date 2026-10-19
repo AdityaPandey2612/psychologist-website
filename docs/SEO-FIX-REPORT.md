@@ -85,8 +85,7 @@ Every finding was checked against the live site and the code before fixing. The 
   1. Footer email link in a half-width column (right edge at 415 px on a 375 px screen) — every page, 320–768 px.
   2. Desktop navigation: 10 items at 1,126 px inside a 1,104 px container, so the header overflowed from 1024 px up to ~1,900 px and pushed **Book a session** off-screen at 1024–1440 px.
   3. Hero H1s at 48 px on the hypnotherapy and online-therapy pages ("Hypnotherapist", "psychological" are wider than a 320–390 px screen).
-  4. New footer social icons at 768–1024 px, caught in testing.
-- **Fix:** the contact column spans the full width on mobile and the email may wrap; the header container widens, the full navigation shows from 1280 px with shorter labels between 1280 and 1535 px ("Training", "International", "Corporate" — same links), the hamburger menu is used below 1280 px, and the last two dropdowns open leftwards. Those two hero H1s use 36 px below 640 px (the size the homepage and condition pages already use on mobile); all hero H1s get `break-words` as a safety net. Social icons wrap. The floating social bar now shows from 1280 px, where it no longer covers body text; the same links are in the footer. `overflow-x: hidden` was not used.
+- **Fix:** the contact column spans the full width on mobile and the email may wrap; the header container widens, the full navigation shows from 1280 px with shorter labels between 1280 and 1535 px ("Training", "International", "Corporate" — same links), the hamburger menu is used below 1280 px, and the last two dropdowns open leftwards. Those two hero H1s use 36 px below 640 px (the size the homepage and condition pages already use on mobile); all hero H1s get `break-words` as a safety net. The floating social bar stays visible on every screen size, as the site owner wants it on mobile. It is a fixed element, so it adds no horizontal scroll, and it sits below the open mobile menu. On narrow screens it still covers the right edge of the text, as it did before. `overflow-x: hidden` was not used.
 - **Files:** `components/Footer.tsx`, `components/Header.tsx`, `components/Floatingocials.tsx`, `lib/data/socialLinks.ts`, hero pages.
 - **Verification:** validation report §7 — all 71 sitemap pages at 320, 360, 375, 390, 414, 768, 1024 and 1440 px: 0 px overflow (the one page that still overflowed in the first full run was fixed and re-checked).
 
@@ -224,7 +223,7 @@ New descriptions of 126–159 characters for `/about/our-team`, `/privacy-policy
 
 ### L8 — LinkedIn URL · FIXED (destination unverified)
 - **Floating bar:** `?utm_source=share_via&utm_content=profile&utm_medium=member_ios` was removed from the LinkedIn link, and `?igsh=…&utm_source=qr` from the Instagram link.
-- **Shared list:** the links now live in one list (`lib/data/socialLinks.ts`) used by the floating bar and the footer.
+- **Shared list:** the links now live in one list (`lib/data/socialLinks.ts`) used by the floating bar.
 - **Verification:** LinkedIn answered automated requests with HTTP 429, so the destination is **unverified**. Open the link in a browser to confirm it.
 
 ---
@@ -304,3 +303,25 @@ New descriptions of 126–159 characters for `/about/our-team`, `/privacy-policy
 - INP was not measured (no CrUX/PSI field data access).
 - Decide whether Google Analytics also needs consent (e.g. GA Consent Mode v2 for EEA/UK visitors); it currently loads for everyone with first-party cookies.
 - ESLint isn't configured in the project (`next lint` asks to set it up); enabling it means adding `eslint` and `eslint-config-next`.
+
+---
+
+## 7. Google Search Console follow-up (report of 19 Oct 2026)
+
+Each URL in the Search Console export was re-checked on the live site and on the `dev` build (redirect chains followed hop by hop, with a Googlebot user agent).
+
+| GSC issue | URLs | Live now | After `dev` is merged | Still needs a person |
+|---|---|---|---|---|
+| Blocked due to other 4xx (first seen 10 Oct, last crawl 13 Oct) | 25 | All 16 new-site pages, including the homepage, return **200** to a Googlebot user agent. Of the 7 old WordPress URLs, 6 return 404 (`/contact/` already reaches `/contact`). | Old WordPress URLs 301 to their new pages. The fake blog post stays 404 and is out of the sitemap. | Find what returned 4xx on 10–13 Oct; the cause isn't visible from outside. **Vercel's firewall is active on this project:** `/wp-*` and `.php` requests get `X-Vercel-Mitigated: challenge`. Check Vercel → Firewall (Attack Challenge Mode, Bot Protection, custom rules), Usage and Deployments for 10–13 Oct. Then URL Inspection → Live Test on `https://www.chaitanyaraj.com/` and **Validate fix**. |
+| Not found (404) | 25 | Still 404 | 19 now redirect (301) to the closest page. The other six stay as they are on purpose, because a redirect to an unrelated page is treated as a soft 404: `/feed`, the junk test posts `/blog/awd` and `/blog/ewkwjebfljksneef`, the never-published placeholder `/blog/supporting-a-partner-through-depression`, and the `/*` and `/wp-admin/*` entries (the latter is a firewall 403). | **Validate fix** after deploying. |
+| Page with redirect | 7 | Expected (http → https, trailing slash). | Unchanged. The sitemap now lists only final URLs. | `http://chaitanyaraj.com` takes two hops (Vercel domain setting). |
+| Blocked due to access forbidden (403) | 4 | `wp-json`, `wp-content`, `wp-admin`: 403 from Vercel's firewall challenge | Unchanged — these are leftovers from the old WordPress site, not pages. | Nothing required. Optionally mark as fixed/ignore in GSC. |
+| Duplicate without user-selected canonical | 2 | `/online-therapy-international-clients` already has a self-referencing canonical. `/therapies/clinical-hypnotherapy` no longer exists (404). | `/therapies/clinical-hypnotherapy` → 301 → `/hypnotherapy-navi-mumbai`. | **Validate fix**. |
+| Blocked by robots.txt | 1 (`/privacy-policy`) | robots.txt no longer blocks it. The page is intentionally `noindex` (placeholder policy). | Unchanged. | Nothing. |
+| Crawled, currently not indexed | 10 | 5 old WordPress URLs return 404. The other 5 are font files (`.woff2`). | The 5 old URLs 301 to their new pages. One font file was removed (unused italic). | Fonts don't need action: Google lists them because it fetches them to render pages. Blocking `/_next/static/media/` in robots.txt isn't recommended because rendering uses them. |
+| Discovered, not indexed | 1 | Placeholder post that never existed | Removed from the sitemap. | Nothing. |
+| Sitemaps: 11 "Couldn't fetch" | 13 submitted | Current sitemap has 61 URLs, 3 of them 404 | Sitemap has 71 URLs, all 200 | In GSC → Sitemaps, **remove** every entry except `https://www.chaitanyaraj.com/sitemap.xml` (including the apex `https://chaitanyaraj.com/sitemap.xml`), then resubmit it. |
+| Spam PHP sitemaps (`trust.php`, `godsend.php`, …) | 10 | Not served: Vercel returns a firewall 403 challenge, and the files don't exist in this project. | Unchanged | Make sure the **old WordPress hosting account is closed or cleaned**. Those files came from a compromise of that server, not this site. |
+| Core Web Vitals: not enough data | – | Not an error; too little Chrome traffic for field data. | – | Use PageSpeed Insights lab data meanwhile. |
+
+**Redirect hops on production:** an old WordPress URL on the bare domain will take three hops after deployment (Vercel apex → www, Next.js trailing slash, then the 301). Google follows up to 10 hops. To get a single hop, these redirects would have to move to Vercel's edge (`vercel.json`), which can only be tested after deploying.

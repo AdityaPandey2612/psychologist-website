@@ -54,6 +54,43 @@ const securityHeaders = [
   },
 ];
 
+// URLs from the old WordPress site (and two mistyped new-site URLs) that
+// Google still crawls, mapped to their closest current page. Paths are written
+// without a trailing slash because Next.js strips it before redirects run.
+// Old URLs with no equivalent (/feed, deleted test posts) are left to 404.
+const legacyRedirects = {
+  "/anxiety": "/conditions/anxiety-therapy-navi-mumbai",
+  "/anxiety-2": "/conditions/anxiety-therapy-navi-mumbai",
+  "/insomnia": "/conditions/sleep-disorder-counselling-navi-mumbai",
+  "/grief": "/conditions/grief-counselling-navi-mumbai",
+  "/sexual-dysfunctions": "/conditions/sexual-dysfunction-counselling-navi-mumbai",
+  "/drug-or-alcohol-abuse": "/conditions/addiction-counselling-navi-mumbai",
+  "/anger-management-classes-in-navi-mumbai": "/conditions/anger-management-counselling-navi-mumbai",
+  "/stammering": "/conditions/stammering-therapy-navi-mumbai",
+  "/best-past-life-regression-therapy-in-mumbai": "/conditions/best-past-life-regression-therapy-in-navi-mumbai",
+  "/best-past-life-regression-therapy-in-navi-mumbai": "/conditions/best-past-life-regression-therapy-in-navi-mumbai",
+  "/behaviour-modification-therapy": "/therapies/behaviour-modification-therapy",
+  "/best-cognitive-behavioral-therapist-in-mumbai": "/therapies/cognitive-behavioural-therapy",
+  "/spirit-release-therapy-srt": "/therapies/spirit-release-therapy",
+  "/age-regression": "/therapies/age-regression",
+  "/hypnosis": "/hypnotherapy-navi-mumbai",
+  "/therapies/clinical-hypnotherapy": "/hypnotherapy-navi-mumbai",
+  "/hypnosis-training-course-in-mumbai": "/training-and-mentorship",
+  "/past-life-regression-therapy-teacher-training": "/training-and-mentorship",
+  "/past-life-regression-course-in-mumbai": "/training-and-mentorship/basic-training-in-hypnosis-and-plrt",
+  "/founder": "/about/the-founder",
+  "/about-me": "/about/the-founder",
+  "/chaitanya-raj": "/about/chaitanya-raj",
+  // The team page is a placeholder (noindex), so send visitors to About.
+  "/our-team": "/about",
+  "/vastu-consultation": "/about/vastu-consultation",
+  "/myths-and-facts-2": "/about/myths-and-facts-about-hypnotherapy",
+  "/price-list": "/fees",
+  "/aversion-to-sex": "/blog/aversion-to-sex",
+  "/how-to-stop-negative-thoughts": "/blog/how-to-stop-negative-thoughts",
+  "/dealing-with-aggressive-people": "/blog/dealing-with-aggressive-people",
+};
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -77,11 +114,17 @@ const nextConfig = {
   },
 
   async redirects() {
-    return Object.entries(blogSlugAliases).map(([slug, documentId]) => ({
+    const blogSlugs = Object.entries(blogSlugAliases).map(([slug, documentId]) => ({
       source: `/blog/${documentId}`,
       destination: `/blog/${slug}`,
       statusCode: 301,
     }));
+    const legacy = Object.entries(legacyRedirects).map(([source, destination]) => ({
+      source,
+      destination,
+      statusCode: 301,
+    }));
+    return [...blogSlugs, ...legacy];
   },
 };
 
