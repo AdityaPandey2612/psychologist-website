@@ -1,5 +1,6 @@
 import Section from "@/components/Section";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { vastuConsultation } from "@/lib/data/about";
@@ -11,7 +12,13 @@ export const metadata = buildMetadata({
   path: "/about/vastu-consultation"
 });
 
+// Hidden on request: the page returns 404 and is left out of the sitemap
+// and navigation. Set this to true to publish it again.
+const PAGE_VISIBLE = false;
+
 export default function VastuConsultationPage() {
+  if (!PAGE_VISIBLE) notFound();
+
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Vastu Consultation", path: "/about/vastu-consultation" }]} />

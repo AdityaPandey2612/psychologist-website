@@ -58,7 +58,12 @@ export function LocalBusinessJsonLd() {
           telephone: site.phone,
           address: postalAddress(branch.address)
         })),
-        sameAs: [site.social.facebook, site.social.instagram, site.social.linkedin]
+        sameAs: [
+          site.social.facebook,
+          site.social.instagram,
+          site.social.instagramMeditation,
+          site.social.linkedin
+        ]
       }}
     />
   );

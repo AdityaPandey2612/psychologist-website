@@ -57,7 +57,8 @@ const securityHeaders = [
 // URLs from the old WordPress site (and two mistyped new-site URLs) that
 // Google still crawls, mapped to their closest current page. Paths are written
 // without a trailing slash because Next.js strips it before redirects run.
-// Old URLs with no equivalent (/feed, deleted test posts) are left to 404.
+// Old URLs with no equivalent (/feed, deleted test posts, the hidden Vastu
+// page) are left to 404.
 const legacyRedirects = {
   "/anxiety": "/conditions/anxiety-therapy-navi-mumbai",
   "/anxiety-2": "/conditions/anxiety-therapy-navi-mumbai",
@@ -81,9 +82,8 @@ const legacyRedirects = {
   "/founder": "/about/the-founder",
   "/about-me": "/about/the-founder",
   "/chaitanya-raj": "/about/chaitanya-raj",
-  // The team page is a placeholder (noindex), so send visitors to About.
+  // The team page is hidden (it returns 404), so send visitors to About.
   "/our-team": "/about",
-  "/vastu-consultation": "/about/vastu-consultation",
   "/myths-and-facts-2": "/about/myths-and-facts-about-hypnotherapy",
   "/price-list": "/fees",
   "/aversion-to-sex": "/blog/aversion-to-sex",

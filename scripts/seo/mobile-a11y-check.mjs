@@ -37,7 +37,7 @@ const CANONICAL_ORIGIN = "https://www.chaitanyaraj.com";
 const VIEWPORTS = String(args.viewports ?? "320,360,375,390,414,768,1024,1440").split(",").map(Number);
 const AXE_VIEWPORTS = [375, 1440];
 const DEFAULT_PAGES = [
-  "/", "/about", "/about/the-founder", "/about/our-team", "/conditions",
+  "/", "/about", "/about/the-founder", "/conditions",
   "/conditions/anxiety-therapy-navi-mumbai", "/therapies", "/therapies/cognitive-behavioural-therapy",
   "/counselling-navi-mumbai", "/couples-counselling-navi-mumbai", "/online-therapy-international-clients",
   "/hypnotherapy-navi-mumbai", "/blog", "/case-studies/insomnia", "/fees", "/contact", "/gallery",

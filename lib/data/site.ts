@@ -50,6 +50,8 @@ export const site = {
   social: {
     facebook: "https://www.facebook.com/CRmentalhealthservices",
     instagram: "https://www.instagram.com/rajeshbits/",
+    // The CBD Belapur meditation centre's account, linked from the floating bar.
+    instagramMeditation: "https://www.instagram.com/rajmeditation/",
     linkedin: "https://www.linkedin.com/in/lt-col-rajesh-sharma-retd-06b4621b7/"
   },
   locations: [
