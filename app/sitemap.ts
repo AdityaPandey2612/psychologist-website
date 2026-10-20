@@ -274,8 +274,8 @@ const entry = (
   ...(lastModified ? { lastModified } : {}),
 });
 
-// Indexable routes only. Left out on purpose: /privacy-policy and
-// /about/our-team (noindex), /admin and /api.
+// Indexable routes only. Left out on purpose: /privacy-policy (noindex), the
+// hidden /about/our-team and /about/vastu-consultation pages, /admin and /api.
 const staticPages: MetadataRoute.Sitemap = [
   entry("/", "monthly", 1),
   entry("/about", "monthly", 0.8),
@@ -283,7 +283,6 @@ const staticPages: MetadataRoute.Sitemap = [
   entry("/about/chaitanya-raj", "monthly", 0.7),
   entry("/about/myths-and-facts-about-hypnotherapy", "monthly", 0.7),
   entry("/about/media-highlights", "monthly", 0.6),
-  entry("/about/vastu-consultation", "monthly", 0.5),
   entry("/conditions", "monthly", 0.9),
   entry("/therapies", "monthly", 0.9),
   entry("/counselling-navi-mumbai", "monthly", 0.9),

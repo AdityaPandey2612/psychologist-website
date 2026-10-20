@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import Section from "@/components/Section";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
@@ -13,7 +14,13 @@ export const metadata = buildMetadata({
   noIndex: true
 });
 
+// Hidden on request: the page returns 404 and is left out of the sitemap
+// and navigation. Set this to true to publish it again.
+const PAGE_VISIBLE = false;
+
 export default function OurTeamPage() {
+  if (!PAGE_VISIBLE) notFound();
+
   return (
     <>
       <BreadcrumbJsonLd items={[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Our Team", path: "/about/our-team" }]} />
