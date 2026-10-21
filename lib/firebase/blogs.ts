@@ -400,6 +400,7 @@ export type BlogPost = {
   metaDescription?: string;
   focusKeyword?: string;
   relatedConditions?: string[];
+  relatedTherapies?: string[];
   faqs?: BlogFAQ[];
 };
 
@@ -457,6 +458,7 @@ export async function createPost(data: {
   metaDescription?: string;
   focusKeyword?: string;
   relatedConditions?: string[];
+  relatedTherapies?: string[];
   faqs?: BlogFAQ[];
 }): Promise<string> {
   const finalSlug = data.slug?.trim() ? slugify(data.slug) : slugify(data.title);
@@ -472,6 +474,7 @@ export async function createPost(data: {
     metaDescription: data.metaDescription || data.excerpt,
     focusKeyword: data.focusKeyword || "",
     relatedConditions: data.relatedConditions || [],
+    relatedTherapies: data.relatedTherapies || [],
     faqs: data.faqs || [],
     createdAt: serverTimestamp(),
   };
@@ -497,6 +500,7 @@ export async function updatePost(
     metaDescription?: string;
     focusKeyword?: string;
     relatedConditions?: string[];
+    relatedTherapies?: string[];
     faqs?: BlogFAQ[];
   }
 ) {
@@ -510,6 +514,7 @@ export async function updatePost(
     metaDescription: data.metaDescription || data.excerpt,
     focusKeyword: data.focusKeyword || "",
     relatedConditions: data.relatedConditions || [],
+    relatedTherapies: data.relatedTherapies || [],
     faqs: data.faqs || [],
   };
   if (data.coverImageUrl) payload.coverImageUrl = data.coverImageUrl;
