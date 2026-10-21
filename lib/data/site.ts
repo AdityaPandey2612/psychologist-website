@@ -73,7 +73,7 @@ export const site = {
         region: "Maharashtra",
         postalCode: "400614",
       },
-      geo: { lat: 19.030884, lng: 73.034096 }, // ← replace with coords from Google Maps
+      geo: { lat: 19.030793, lng: 73.0342282 }, // Google Maps pin for the CBD Belapur centre
     },
   ],
 };
