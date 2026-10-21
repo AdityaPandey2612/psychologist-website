@@ -276,39 +276,38 @@ export const mediaHighlights = [
 
 export const hypnotherapyMyths = [
   {
-    myth:
-      "Hypnotherapy means losing control or being made to do things against your will.",
+    myth: "Hypnotherapy means losing control or being made to do things against your will.",
 
     fact:
-      "In clinical hypnotherapy, you remain aware and in control throughout. It is a state of focused, guided relaxation — not the loss-of-control experience associated with stage hypnosis, and you can stop at any point."
+      "In clinical hypnotherapy you stay awake and aware throughout, and you keep control of how you respond. Research shows people can resist suggestions they don't want to follow, and you can end the session whenever you wish. The loss-of-control images people associate with hypnosis come from stage shows and films, not clinical practice."
   },
 
   {
     myth: "Only certain kinds of people can be hypnotised.",
 
     fact:
-      "Most people can enter a hypnotic state to some degree with a trained practitioner. Depth of response varies, but it isn't a fixed personality trait limited to a small group."
+      "Most people respond to hypnotic suggestion to a moderate or high degree, while a smaller group respond less. Responsiveness is not linked to weakness, gullibility or low intelligence. Expectations and willingness to take part make a real difference, and responsiveness can improve with understanding and practice."
   },
 
   {
-    myth: "You could get 'stuck' in hypnosis.",
+    myth: "You could get \"stuck\" in hypnosis.",
 
     fact:
-      "A hypnotic state is simply a state of deep relaxation and focused attention. It always ends naturally, whether or not the session is formally 'closed' by the practitioner."
+      "Hypnosis is not sleep or unconsciousness. You remain aware of your surroundings and in control of your responses, so you can come out of it whenever you choose."
   },
 
   {
     myth: "Hypnotherapy is not a recognised clinical technique.",
 
     fact:
-      "Clinical hypnotherapy is recognised by the British Psychological Society as an effective therapeutic technique when practised by a trained clinician, and is used alongside — not instead of — established approaches like CBT."
+      "Hypnosis has been studied in clinical research for decades. Reviews of trials show benefits for conditions such as chronic pain, irritable bowel syndrome, anxiety and depression, and adding hypnosis to cognitive behavioural therapy (CBT) has been found to improve outcomes compared with CBT alone. It is not a cure-all, not everyone benefits, and it is best used alongside established treatments, not instead of them."
   },
 
   {
     myth: "You won't remember anything from the session.",
 
     fact:
-      "Most clients remember the session clearly. Hypnotic amnesia is uncommon and not a goal of clinical hypnotherapy."
+      "Most clients stay aware during hypnosis and remember their sessions. Temporary forgetting can happen only when it is specifically suggested, and it is not a goal of our sessions."
   }
 ];
 
