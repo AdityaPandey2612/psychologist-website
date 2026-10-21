@@ -658,6 +658,7 @@ import AdminGuard from "../../AdminGuard";
 import { storage } from "@/lib/firebase/storage";
 import { createPost } from "@/lib/firebase/blogs";
 import { conditions } from "@/lib/data/conditions";
+import { therapies } from "@/lib/data/therapies";
 import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -688,6 +689,7 @@ export default function NewBlogPostPage() {
   const [focusKeyword, setFocusKeyword] = useState("");
 
   const [relatedConditions, setRelatedConditions] = useState<string[]>([]);
+  const [relatedTherapies, setRelatedTherapies] = useState<string[]>([]);
 
   const [faqs, setFaqs] = useState<{ tempId: number; q: string; a: string }[]>([]);
   const faqIdRef = useRef(0);
@@ -717,6 +719,16 @@ export default function NewBlogPostPage() {
     setRelatedConditions(relatedConditions.filter((s) => s !== condSlug));
   }
 
+  function addTherapy(therapySlug: string) {
+    if (!relatedTherapies.includes(therapySlug)) {
+      setRelatedTherapies([...relatedTherapies, therapySlug]);
+    }
+  }
+
+  function removeTherapy(therapySlug: string) {
+    setRelatedTherapies(relatedTherapies.filter((s) => s !== therapySlug));
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -743,6 +755,7 @@ export default function NewBlogPostPage() {
         metaDescription,
         focusKeyword,
         relatedConditions,
+        relatedTherapies,
         faqs: faqs
           .filter((f) => f.q.trim() && f.a.trim())
           .map(({ q, a }) => ({ q: q.trim(), a: a.trim() })),
@@ -902,6 +915,57 @@ export default function NewBlogPostPage() {
                         <button
                           type="button"
                           onClick={() => removeCondition(condSlug)}
+                          className="text-primary-dark/50 hover:text-primary-dark"
+                          aria-label="Remove"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-primary-dark/10 bg-sand/50 p-6 space-y-4">
+              <p className="text-sm font-semibold text-primary-dark">
+                Related Therapies — how we help
+              </p>
+              <p className="text-xs text-ink-soft/70">
+                Select the therapy(ies) this post relates to. Each one shows as a button on the
+                live post, linking straight to that therapy's page.
+              </p>
+
+              <select
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) addTherapy(e.target.value);
+                }}
+                className="w-full rounded-xl border border-primary-dark/15 px-4 py-3 outline-none focus:border-primary"
+              >
+                <option value="">+ Add a therapy…</option>
+                {therapies
+                  .filter((t) => !relatedTherapies.includes(t.slug))
+                  .map((t) => (
+                    <option key={t.slug} value={t.slug}>
+                      {t.name}
+                    </option>
+                  ))}
+              </select>
+
+              {relatedTherapies.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {relatedTherapies.map((therapySlug) => {
+                    const t = therapies.find((x) => x.slug === therapySlug);
+                    return (
+                      <span
+                        key={therapySlug}
+                        className="inline-flex items-center gap-2 rounded-full bg-primary-dark/10 px-3 py-1 text-xs text-primary-dark"
+                      >
+                        {t ? t.name : therapySlug}
+                        <button
+                          type="button"
+                          onClick={() => removeTherapy(therapySlug)}
                           className="text-primary-dark/50 hover:text-primary-dark"
                           aria-label="Remove"
                         >

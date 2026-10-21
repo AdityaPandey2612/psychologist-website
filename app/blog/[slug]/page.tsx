@@ -15,6 +15,7 @@ import {
   publicBlogSlug
 } from "@/lib/blog/seo";
 import { conditions } from "@/lib/data/conditions";
+import { therapies } from "@/lib/data/therapies";
 import FAQAccordion from "@/components/FAQAccordion";
 
 // Posts come from the CMS; pages are cached and refreshed every 5 minutes.
@@ -60,6 +61,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const relatedConditions = (post.relatedConditions ?? [])
     .map((condSlug) => conditions.find((c) => c.slug === condSlug))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
+  const relatedTherapies = (post.relatedTherapies ?? [])
+    .map((therapySlug) => therapies.find((t) => t.slug === therapySlug))
+    .filter((t): t is NonNullable<typeof t> => Boolean(t));
   const relatedLinks = blogRelatedLinks(post);
 
   const faqs = post.faqs ?? [];
@@ -140,7 +144,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   </div>
 )}
 
-        {(relatedConditions.length > 0 || relatedLinks.length > 0) && (
+        {(relatedConditions.length > 0 || relatedTherapies.length > 0 || relatedLinks.length > 0) && (
           <div className="mt-16 border-t border-primary-dark/10 pt-10">
             <h2 className="eyebrow mb-4">What can help</h2>
             <div className="flex flex-wrap gap-3">
@@ -162,6 +166,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     className="inline-flex min-h-11 items-center rounded-full border border-primary-dark/20 bg-white px-5 py-2.5 text-sm font-medium text-primary-dark transition hover:bg-primary-dark hover:text-white"
                   >
                     {condition.name}
+                  </Link>
+                ))}
+              {relatedTherapies
+                .filter((therapy) => !relatedLinks.some((l) => l.href === `/therapies/${therapy.slug}`))
+                .map((therapy) => (
+                  <Link
+                    key={therapy.slug}
+                    href={`/therapies/${therapy.slug}`}
+                    className="inline-flex min-h-11 items-center rounded-full border border-primary-dark/20 bg-white px-5 py-2.5 text-sm font-medium text-primary-dark transition hover:bg-primary-dark hover:text-white"
+                  >
+                    {therapy.name}
                   </Link>
                 ))}
             </div>

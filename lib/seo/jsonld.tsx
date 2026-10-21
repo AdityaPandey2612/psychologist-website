@@ -24,8 +24,6 @@ const postalAddress = (address: { street: string; locality: string; region: stri
 });
 
 export function LocalBusinessJsonLd() {
-  // The second clinic is listed without coordinates: lib/data/site.ts marks
-  // its geo values as still to be confirmed.
   const branches = site.locations.filter((l) => l.address.street !== site.address.street);
 
   return (
@@ -56,7 +54,12 @@ export function LocalBusinessJsonLd() {
           "@type": "MedicalClinic",
           name: `${site.name}, ${branch.name}`,
           telephone: site.phone,
-          address: postalAddress(branch.address)
+          address: postalAddress(branch.address),
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: branch.geo.lat,
+            longitude: branch.geo.lng
+          }
         })),
         sameAs: [
           site.social.facebook,
