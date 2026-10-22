@@ -48,6 +48,7 @@ export function LocalBusinessJsonLd() {
           latitude: site.geo.lat,
           longitude: site.geo.lng
         },
+        hasMap: site.locations[0]!.mapUrl,
         openingHours: "Mo-Sa 10:00-19:00",
         founder: { "@id": FOUNDER_ID },
         department: branches.map((branch) => ({
@@ -59,7 +60,8 @@ export function LocalBusinessJsonLd() {
             "@type": "GeoCoordinates",
             latitude: branch.geo.lat,
             longitude: branch.geo.lng
-          }
+          },
+          hasMap: branch.mapUrl
         })),
         sameAs: [
           site.social.facebook,

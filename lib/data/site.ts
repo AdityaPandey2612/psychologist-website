@@ -64,6 +64,11 @@ export const site = {
         postalCode: "400703",
       },
       geo: { lat: 19.0771, lng: 72.9987 },
+      // Searched rather than pinned by coordinates, so the embed shows the
+      // building Google itself knows, with its name card.
+      mapQuery: "Gold City, Sector 19D, Vashi, Navi Mumbai, Maharashtra 400703",
+      mapUrl:
+        "https://www.google.com/maps/search/?api=1&query=Gold+City%2C+Sector+19D%2C+Vashi%2C+Navi+Mumbai%2C+Maharashtra+400703",
     },
     {
       name: "Belapur",
@@ -74,6 +79,10 @@ export const site = {
         postalCode: "400614",
       },
       geo: { lat: 19.030793, lng: 73.0342282 }, // Google Maps pin for the CBD Belapur centre
+      mapQuery:
+        "Rajesh Sharma Meditation Center, G-3, Lane-6, Sector 9, CBD Belapur, Navi Mumbai, Maharashtra 400614",
+      mapUrl:
+        "https://www.google.com/maps/place/Rajesh+Sharma+Meditation+Center,+G-3,+Lane-6,+Sector+9,+CBD+Belapur,+Navi+Mumbai,+Maharashtra+400614/@19.030793,73.0342282,16z/data=!4m6!3m5!1s0x3be7c3b0743853dd:0x62fdd094149b234d!8m2!3d19.030793!4d73.0342282!16s%2Fg%2F11xng_zhp4",
     },
   ],
 };
