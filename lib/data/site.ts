@@ -64,11 +64,10 @@ export const site = {
         postalCode: "400703",
       },
       geo: { lat: 19.0771, lng: 72.9987 },
-      // Searched rather than pinned by coordinates, so the embed shows the
-      // building Google itself knows, with its name card.
-      mapQuery: "Gold City, Sector 19D, Vashi, Navi Mumbai, Maharashtra 400703",
-      mapUrl:
-        "https://www.google.com/maps/search/?api=1&query=Gold+City%2C+Sector+19D%2C+Vashi%2C+Navi+Mumbai%2C+Maharashtra+400703",
+      // There is no Google listing for this clinic, only a dropped pin, and a
+      // name search shows no marker, so the map is pinned by coordinates.
+      mapQuery: "19.0771,72.9987",
+      mapUrl: "https://www.google.com/maps/search/?api=1&query=19.0771%2C72.9987",
     },
     {
       name: "Belapur",
