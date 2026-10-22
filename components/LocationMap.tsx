@@ -59,6 +59,14 @@ export default function LocationMap({ compact = false }: { compact?: boolean }) 
             {active.address.street}<br />
             {active.address.locality}, {active.address.region} {active.address.postalCode}
           </p>
+          <a
+            href={active.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block py-0.5 text-sm underline underline-offset-4 hover:text-accent-ink"
+          >
+            Open in Google Maps
+          </a>
         </div>
       </div>
 
@@ -66,7 +74,7 @@ export default function LocationMap({ compact = false }: { compact?: boolean }) 
         <iframe
           key={active.name}
           title={`${active.name} location map`}
-          src={`https://www.google.com/maps?q=${active.geo.lat},${active.geo.lng}&z=17&output=embed`}
+          src={`https://www.google.com/maps?q=${encodeURIComponent(active.mapQuery)}&ll=${active.geo.lat},${active.geo.lng}&z=17&output=embed`}
           width="100%"
           height="100%"
           style={{ border: 0 }}

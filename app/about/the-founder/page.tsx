@@ -391,6 +391,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import Section from "@/components/Section";
+import LocationMap from "@/components/LocationMap";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { PersonJsonLd, BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { founder } from "@/lib/data/about";
@@ -808,6 +809,14 @@ export default function FounderPage() {
 
         </div>
 
+      </Section>
+
+      {/* =====================================================
+          LOCATIONS
+      ====================================================== */}
+
+      <Section eyebrow="Find us" title="Where you can meet him">
+        <LocationMap />
       </Section>
 
       {/* =====================================================
