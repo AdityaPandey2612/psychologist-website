@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { embeddedServiceAccount } from "./serviceAccount";
 
 // Persistence boundary for the assessment system. Application code talks to the
 // small DocStore interface; there are three implementations:
@@ -151,7 +152,8 @@ const globalForStore = globalThis as typeof globalThis & { __assessmentStore?: D
 
 export function hasFirestoreCredentials(): boolean {
   return Boolean(
-    process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
+    embeddedServiceAccount() ||
+      process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
       (process.env.FIREBASE_ADMIN_CLIENT_EMAIL && process.env.FIREBASE_ADMIN_PRIVATE_KEY) ||
       process.env.GOOGLE_APPLICATION_CREDENTIALS,
   );

@@ -343,9 +343,11 @@ describe("thumbnails", () => {
     delete process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
     delete process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
     delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    process.env.ASSESSMENT_IGNORE_EMBEDDED_KEY = "1"; // the key kept in source would otherwise count as credentials
     try {
       await assert.rejects(saveThumbnail(PNG, { contentType: "image/png", extension: "png" }), (e: unknown) => e instanceof ApiError && e.status === 503 && /credentials/.test(e.message));
     } finally {
+      delete process.env.ASSESSMENT_IGNORE_EMBEDDED_KEY;
       if (keep.json !== undefined) process.env.FIREBASE_SERVICE_ACCOUNT_JSON = keep.json;
       if (keep.email !== undefined) process.env.FIREBASE_ADMIN_CLIENT_EMAIL = keep.email;
       if (keep.creds !== undefined) process.env.GOOGLE_APPLICATION_CREDENTIALS = keep.creds;

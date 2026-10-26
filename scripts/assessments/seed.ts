@@ -49,7 +49,13 @@ async function main() {
   for (const id of ids) {
     const existing = (await listAssessments(store)).find((a) => a.templateId === id);
     if (existing && !force) {
-      console.log(`- ${id}: already there as "${existing.slug}" (${existing.status}). Skipped (use --force for another copy).`);
+      if (publish && existing.status !== "published") {
+        const published = await publishAssessment(store, existing.id, user);
+        console.log(`- ${id}: "${existing.slug}" was a draft; published it (version ${published.assessment.version}).`);
+        console.log(`  Public page:  /assessments/${existing.slug}`);
+      } else {
+        console.log(`- ${id}: already there as "${existing.slug}" (${existing.status}). Skipped (use --force for another copy).`);
+      }
       continue;
     }
     const { assessment, report } = await createAssessment(store, { templateId: id }, user);

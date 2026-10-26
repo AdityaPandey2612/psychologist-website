@@ -1,5 +1,6 @@
 import { applicationDefault, cert, getApps, initializeApp, type ServiceAccount } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { embeddedServiceAccount } from "./serviceAccount";
 import type { DocStore, Where } from "./store";
 
 // Firestore implementation of DocStore using the Admin SDK. The Admin SDK
@@ -20,7 +21,8 @@ function readServiceAccount(): ServiceAccount | null {
       privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, "\n"),
     };
   }
-  return null;
+  // Last resort: the key kept in source (see serviceAccount.ts). Environment variables win over it.
+  return embeddedServiceAccount();
 }
 
 const APP_NAME = "assessments-admin";
