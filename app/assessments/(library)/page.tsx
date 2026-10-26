@@ -1,7 +1,6 @@
 import Link from "next/link";
 import AssessmentLibrary from "@/components/assessments/AssessmentLibrary";
 import { PageBrand } from "@/components/assessments/FormBrand";
-import Section from "@/components/Section";
 import { listPublished } from "@/lib/assessments/server/service";
 import { getStore } from "@/lib/assessments/server/store";
 import type { PublicSummary } from "@/lib/assessments/types";
@@ -12,9 +11,8 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const revalidate = 60;
 
 export const metadata = buildMetadata({
-  title: "Self-Checks for Self-Reflection",
-  description:
-    "Short, guided self-check assessments on listening, communication and personal growth, with personalised results. Free, no account needed.",
+  title: "Self-Assessments",
+  description: "Self-assessments by Chaitanya Raj.",
   path: "/assessments",
 });
 
@@ -35,16 +33,12 @@ export default async function AssessmentsPage() {
       <BreadcrumbJsonLd
         items={[
           { name: "Home", path: "/" },
-          { name: "Self-checks", path: "/assessments" },
+          { name: "Self-Assessments", path: "/assessments" },
         ]}
       />
       <PageBrand />
-      <Section eyebrow="Self-reflection" title="Self-checks" titleAs="h1" className="!pt-8">
-        <p className="-mt-4 mb-10 max-w-2xl text-lg leading-relaxed text-ink-soft">
-          Short, guided self-checks to help you reflect on how you listen, communicate and relate to others. Each one needs no account, takes a few minutes and ends with personalised results.
-          They are tools for self-reflection — not a diagnosis, and not a substitute for professional support.
-        </p>
-
+      <section className="mx-auto max-w-6xl px-6 pb-16 pt-8">
+        <h1 className="sr-only">Self-Assessments</h1>
         {unavailable ? (
           <div className="card mx-auto max-w-xl p-8 text-center">
             <h2 className="text-2xl text-primary-dark">Self-checks aren&apos;t available right now</h2>
@@ -56,7 +50,7 @@ export default async function AssessmentsPage() {
         ) : (
           <AssessmentLibrary assessments={items} />
         )}
-      </Section>
+      </section>
     </>
   );
 }

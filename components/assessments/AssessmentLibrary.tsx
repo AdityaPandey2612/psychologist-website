@@ -8,6 +8,9 @@ import AssessmentCard from "./AssessmentCard";
 import styles from "./assessments.module.css";
 import { cx, inputClass } from "./ui";
 
+/** With only a few assessments there is nothing to search, so the search box and count stay hidden. */
+const SEARCH_FROM = 7;
+
 /** Searchable, filterable grid of published assessments. */
 export default function AssessmentLibrary({ assessments }: { assessments: PublicSummary[] }) {
   const [query, setQuery] = useState("");
@@ -29,6 +32,7 @@ export default function AssessmentLibrary({ assessments }: { assessments: Public
   }, [assessments, query, category]);
 
   const filtering = query.trim() !== "" || category !== "all";
+  const showToolbar = assessments.length >= SEARCH_FROM;
 
   if (assessments.length === 0) {
     return (
@@ -44,6 +48,7 @@ export default function AssessmentLibrary({ assessments }: { assessments: Public
 
   return (
     <div>
+      {showToolbar && (
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="relative w-full md:max-w-md">
           <label htmlFor="assessment-search" className="sr-only">
@@ -82,12 +87,15 @@ export default function AssessmentLibrary({ assessments }: { assessments: Public
           </div>
         )}
       </div>
+      )}
 
+      {showToolbar && (
       <p className="mt-5 text-sm text-ink-soft" role="status" aria-live="polite">
         {filtered.length === assessments.length && !filtering
           ? `${filtered.length} self-check${filtered.length === 1 ? "" : "s"} available`
           : `Showing ${filtered.length} of ${assessments.length} self-check${assessments.length === 1 ? "" : "s"}`}
       </p>
+      )}
 
       {filtered.length === 0 ? (
         <div className="card mt-6 p-8 text-center">

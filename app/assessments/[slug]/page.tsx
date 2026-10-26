@@ -1,15 +1,13 @@
-import { ArrowRight, Clock, ListChecks, Lock, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { PageBrand } from "@/components/assessments/FormBrand";
-import { AssessmentIcon, Badge } from "@/components/assessments/ui";
+import { FormHeader, IntroHighlights, NoticeBox } from "@/components/assessments/FormBrand";
 import Section from "@/components/Section";
-import { sharingOffered } from "@/lib/assessments/definition";
-import { isMailConfigured } from "@/lib/assessments/server/mail";
 import { getPublishedBySlug } from "@/lib/assessments/server/service";
 import { getStore } from "@/lib/assessments/server/store";
+import { fillTokens } from "@/lib/assessments/text";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -71,113 +69,53 @@ export default async function AssessmentDetailPage({ params }: Params) {
   const { summary, version } = found;
   const def = version.definition;
   const startHref = `/assessments/${summary.slug}/start`;
-
-  const privacy = [
-    "No account is needed. We ask for your name and email so your results can be shown to you.",
-    "Your answers are used to calculate your results and aren't shown publicly. Your results appear on a private link that only you have.",
-    def.email.enabled && isMailConfigured() ? "You can choose to receive your results by email. It's optional, and your results stay on screen either way." : null,
-    sharingOffered(def) ? "You may also choose to share your results with the practice. This is optional and off unless you tick it." : null,
-    def.peer.enabled ? "Optionally, you can invite someone you trust for their view. Their answers are anonymous and shown to you only as an average." : null,
-    "Answers are saved on your own device as you go, so you can pause and come back.",
-  ].filter((x): x is string => Boolean(x));
+  // Same {{minutes}} / {{questions}} / {{sections}} values the form uses for the introduction text.
+  const tokens = {
+    minutes: summary.estimatedMinutes,
+    questions: def.sections.flatMap((s) => s.questions).filter((q) => q.type !== "info").length,
+    sections: def.sections.length,
+  };
 
   return (
     <>
       <BreadcrumbJsonLd
         items={[
           { name: "Home", path: "/" },
-          { name: "Self-checks", path: "/assessments" },
+          { name: "Self-Assessments", path: "/assessments" },
           { name: summary.title, path: `/assessments/${summary.slug}` },
         ]}
       />
-      <PageBrand />
-      <Section eyebrow={`Self-check · ${summary.categoryName}`} title={summary.title} titleAs="h1" className="!pt-8">
-        <div className="-mt-4 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
-          <div>
-            <p className="max-w-2xl text-lg leading-relaxed text-ink-soft">{summary.description}</p>
-
-            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
-              <li className="inline-flex items-center gap-1.5">
-                <Clock aria-hidden="true" className="h-4 w-4" />
-                About {summary.estimatedMinutes} minutes
-              </li>
-              <li className="inline-flex items-center gap-1.5">
-                <ListChecks aria-hidden="true" className="h-4 w-4" />
-                Up to {summary.questionCount} question{summary.questionCount === 1 ? "" : "s"} in {summary.sectionCount} section{summary.sectionCount === 1 ? "" : "s"}
-              </li>
-              <li>
-                <Badge tone={summary.tier === "premium" ? "gold" : "primary"}>{summary.tier === "premium" ? "Premium" : "Free"}</Badge>
-              </li>
-            </ul>
-
-            <div className="card mt-8 p-6 sm:p-8">
-              <h2 className="text-2xl text-primary-dark">What to expect</h2>
-              <ol className="mt-4 space-y-3 leading-relaxed text-ink">
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="font-display text-primary">1.</span>
-                  Enter your name and email, and choose what you&apos;re comfortable with.
-                </li>
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="font-display text-primary">2.</span>
-                  Answer one short section at a time — you can go back and change answers.
-                </li>
-                <li className="flex gap-3">
-                  <span aria-hidden="true" className="font-display text-primary">3.</span>
-                  See your personalised results straight away{def.scoring.practicePlan.enabled ? ", including a practice plan" : ""}.
-                </li>
-              </ol>
-              {def.intro.body && (
-                <div className="mt-6 space-y-3 border-t border-primary/10 pt-6 text-ink">
-                  <Paragraphs text={def.intro.body} />
-                </div>
-              )}
-            </div>
-
-            <div className="card mt-6 p-6 sm:p-8">
-              <h2 className="flex items-center gap-2 text-2xl text-primary-dark">
-                <Lock aria-hidden="true" className="h-5 w-5" />
-                Your privacy
-              </h2>
-              <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-ink">
-                {privacy.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <p className="mt-5 text-sm leading-relaxed text-ink-soft">
-                Read our{" "}
-                <Link href="/privacy-policy" className="font-medium text-primary-dark underline underline-offset-4">
-                  privacy policy
-                </Link>
-                .
-              </p>
-            </div>
-
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-soft">{def.results.disclaimer}</p>
-          </div>
-
-          <aside aria-label="Start this self-check" className="card p-6 lg:sticky lg:top-28">
-            <span className="icon-tile tone-teal">
-              <AssessmentIcon name={summary.icon} />
-            </span>
-            <p className="mt-4 font-display text-xl text-primary-dark">Ready when you are</p>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">Find a quiet moment. There are no right or wrong answers.</p>
-            <Link href={startHref} className="btn-primary mt-5 min-h-11 w-full">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+        <Link href="/assessments" className="mb-5 inline-flex min-h-11 items-center text-sm font-medium text-primary-dark hover:underline">
+          ← All self-checks
+        </Link>
+        <h1 className="sr-only">{summary.title}</h1>
+        {/* Only what the practice's own document says: title, subtitle, introduction, highlights and the disclaimer. */}
+        <div className="overflow-hidden rounded-2xl border border-primary/15 bg-surface shadow-[0_1px_2px_rgba(18,58,54,0.05)]">
+          <FormHeader title={summary.title} subtitle={fillTokens(def.intro.subtitle ?? "", tokens)} badge={def.intro.badge ?? ""} />
+          <div className="px-5 pb-8 pt-6 max-sm:pr-14 sm:px-8">
+            {def.intro.body && (
+              <div className="space-y-3 text-ink">
+                <Paragraphs text={def.intro.body} />
+              </div>
+            )}
+            {(def.intro.highlights?.length ?? 0) > 0 && (
+              <div className="mt-6">
+                <IntroHighlights items={def.intro.highlights} vars={tokens} />
+              </div>
+            )}
+            {def.intro.disclaimer?.trim() && (
+              <div className="mt-5">
+                <NoticeBox>{fillTokens(def.intro.disclaimer, tokens)}</NoticeBox>
+              </div>
+            )}
+            <Link href={startHref} className="btn-primary mt-8 min-h-11 w-full sm:w-auto">
               Start self-check
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
-            <p className="mt-4 flex gap-2 text-xs leading-relaxed text-ink-soft">
-              <Sparkles aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
-              Self-reflection only — not a diagnosis.
-            </p>
-          </aside>
+          </div>
         </div>
-
-        <p className="mt-10">
-          <Link href="/assessments" className="font-medium text-primary-dark underline underline-offset-4">
-            ← All self-checks
-          </Link>
-        </p>
-      </Section>
+      </div>
     </>
   );
 }

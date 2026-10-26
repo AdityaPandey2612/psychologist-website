@@ -70,7 +70,7 @@ export function FormHeader({
         <BrandLogo className="w-48 sm:w-64" priority />
       </div>
       <div aria-hidden="true" className="mt-6 h-4 bg-primary-dark sm:h-5" />
-      <div className="px-5 pt-7 sm:px-8">
+      <div className="px-5 pt-7 max-sm:pr-14 sm:px-8">
         <p className="font-display text-3xl leading-tight text-primary-dark sm:text-4xl">{title}</p>
         {subtitle && <p className="mt-2 text-lg text-ink-soft">{subtitle}</p>}
         {badge && <p className="mt-3 text-sm font-semibold tracking-wide text-primary">&bull; {badge} &bull;</p>}

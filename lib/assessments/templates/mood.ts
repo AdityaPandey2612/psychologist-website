@@ -366,7 +366,7 @@ export const MOOD_META: AssessmentMeta = {
   title: "Chaitanya Raj Mood Self-Assessment",
   slug: "mood-self-assessment",
   description:
-    "A 5–7 minute, 21-question reflection on how you have been feeling over the past two weeks, with a private results summary and guidance on whether talking to someone could help.",
+    "A 5–7 minute, 21-question reflection on how you have been feeling over the past Months, with a private results summary and guidance on whether talking to someone could help.",
   category: "emotional-awareness",
   icon: "heart",
   tier: "free",
