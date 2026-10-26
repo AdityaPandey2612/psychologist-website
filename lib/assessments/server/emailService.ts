@@ -137,7 +137,7 @@ export async function deliverResultEmail(
     definition: version.definition,
     resultUrl: `${publicBaseUrl()}/assessments/results/${submission.accessToken}`,
     siteName: SITE_NAME,
-    logoUrl: `${publicBaseUrl()}/logo.png`,
+    logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
   });
 
   const outcome = await sendWithRetry(

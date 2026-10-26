@@ -8,8 +8,10 @@ import { cx } from "./ui";
 // banner, title block, info tiles and the notice box. Everything is plain text
 // from the assessment's introduction settings (no HTML).
 
+// public/logo-transparent.png is the practice logo (same artwork as public/logo.png) on a transparent
+// background, so it sits cleanly on white sheets, the pale page background and the email header.
 export const BRAND_LOGO = {
-  src: "/logo.png",
+  src: "/logo-transparent.png",
   width: 600,
   height: 188,
   alt: "Chaitanya Raj — Healing Mind and Body",

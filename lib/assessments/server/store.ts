@@ -50,7 +50,11 @@ export class MemoryStore implements DocStore {
 
   protected persist(): void {}
 
+  /** Called before every read or write; the file store uses it to notice outside changes. */
+  protected beforeAccess(): void {}
+
   protected table(collection: string): Record<string, unknown> {
+    this.beforeAccess();
     return (this.tables[collection] ??= {});
   }
 
@@ -97,17 +101,39 @@ export class MemoryStore implements DocStore {
   }
 }
 
-/** Development fallback: one JSON file, loaded once and rewritten on change. */
+/**
+ * Development fallback: one JSON file, rewritten on change. It re-reads the file when
+ * something else changed it (for example the seed script, `npm run assessments:seed`),
+ * so a running dev server picks the new data up and never overwrites it with a stale copy.
+ */
 export class FileStore extends MemoryStore {
   readonly kind = "file" as const;
+  private mtime = 0;
 
   constructor(private readonly file: string) {
     super();
+    this.load();
+  }
+
+  private stamp(): number {
     try {
-      this.tables = JSON.parse(fs.readFileSync(file, "utf8")) as Tables;
+      return fs.statSync(this.file).mtimeMs;
+    } catch {
+      return 0;
+    }
+  }
+
+  private load(): void {
+    try {
+      this.tables = JSON.parse(fs.readFileSync(this.file, "utf8")) as Tables;
     } catch {
       this.tables = {};
     }
+    this.mtime = this.stamp();
+  }
+
+  protected beforeAccess(): void {
+    if (this.stamp() !== this.mtime) this.load();
   }
 
   protected persist(): void {
@@ -115,6 +141,7 @@ export class FileStore extends MemoryStore {
     const tmp = `${this.file}.${process.pid}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify(this.tables, null, 2));
     fs.renameSync(tmp, this.file);
+    this.mtime = this.stamp();
   }
 }
 

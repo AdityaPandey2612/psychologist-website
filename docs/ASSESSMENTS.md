@@ -52,6 +52,21 @@ Without `SMTP_HOST`/`MAIL_FROM` the platform still works: participants see their
 `production`, a JSON file store at `.data/assessments-dev.json` is used so you can try everything locally. It is
 git-ignored and is **refused in production**.
 
+### 2.2b Adding the built-in assessments with a script
+
+```bash
+npm run assessments:seed                    # Mood Self-Assessment, added as a draft
+npm run assessments:seed -- --publish       # ...and published straight away
+npm run assessments:seed -- mood listening  # pick templates; add --force for another copy
+```
+
+The script reads `.env.local` and writes to the same storage as the site (Firestore when `FIREBASE_SERVICE_ACCOUNT_JSON` is set, otherwise the
+local development file). Run twice, it does nothing the second time. Review the scoring in the admin builder before publishing.
+
+**Keep the service-account key out of the code.** Put it in `.env.local` (git-ignored) and, for the live site, in Vercel → Settings →
+Environment Variables as `FIREBASE_SERVICE_ACCOUNT_JSON` (raw JSON or base64). Never hardcode it in a source file or commit the downloaded
+`*-firebase-adminsdk-*.json`: anything pushed to GitHub is treated as public, and Google disables service-account keys it finds there.
+
 ### 2.3 Firestore rules and indexes
 
 New collections: `assessments`, `assessmentVersions`, `assessmentSubmissions`, `assessmentPeerResponses`,

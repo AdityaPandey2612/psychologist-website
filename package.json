@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "tsx --test tests/assessments/*.test.ts",
+    "assessments:seed": "tsx scripts/assessments/seed.ts",
     "seo:check": "node scripts/seo/seo-check.mjs",
     "seo:browser": "node scripts/seo/mobile-a11y-check.mjs",
     "seo:consent": "node scripts/seo/consent-csp-check.mjs",
