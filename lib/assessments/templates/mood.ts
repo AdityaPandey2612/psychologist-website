@@ -379,7 +379,7 @@ export function moodDefinition(): AssessmentDefinition {
     ...base,
     intro: {
       heading: "Before you begin",
-      body: "This self-assessment is designed to help you reflect on how you have been feeling over the past few weeks/months. It uses questions based on the validated Beck Depression Inventory (BDI-II) framework to measure your current emotional baseline.",
+      body: "This self-assessment is designed to help you reflect on how you have been feeling over the past few Months. It uses questions based on the validated Beck Depression Inventory (BDI-II) framework to measure your current emotional baseline.",
       subtitle: "Understanding Your Emotional Wellbeing",
       badge: "Confidential & Self-Paced",
       highlights: [
