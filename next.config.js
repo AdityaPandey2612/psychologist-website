@@ -57,8 +57,9 @@ const securityHeaders = [
 // URLs from the old WordPress site (and two mistyped new-site URLs) that
 // Google still crawls, mapped to their closest current page. Paths are written
 // without a trailing slash because Next.js strips it before redirects run.
-// Old URLs with no equivalent (/feed, deleted test posts, the hidden Vastu
-// page) are left to 404.
+// Old URLs with no equivalent (the hidden Vastu page) are left to 404. The
+// WordPress feed and deleted test/draft posts go to the blog index so Search
+// Console stops reporting them as "Not found".
 const legacyRedirects = {
   "/anxiety": "/conditions/anxiety-therapy-navi-mumbai",
   "/anxiety-2": "/conditions/anxiety-therapy-navi-mumbai",
@@ -89,6 +90,11 @@ const legacyRedirects = {
   "/aversion-to-sex": "/blog/aversion-to-sex",
   "/how-to-stop-negative-thoughts": "/blog/how-to-stop-negative-thoughts",
   "/dealing-with-aggressive-people": "/blog/dealing-with-aggressive-people",
+  "/sexual-physical-or-emotional-abuse": "/conditions/abuse-trauma-counselling-navi-mumbai",
+  "/feed": "/blog",
+  "/blog/supporting-a-partner-through-depression": "/blog/understanding-depression-signs-research-and-real-stories",
+  "/blog/awd": "/blog",
+  "/blog/ewkwjebfljksneef": "/blog",
 };
 
 /** @type {import('next').NextConfig} */
