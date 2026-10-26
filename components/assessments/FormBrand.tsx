@@ -31,6 +31,16 @@ export function BrandLogo({ className, priority = false }: { className?: string;
   );
 }
 
+/** Practice logo and a teal rule at the top of the library and assessment pages. */
+export function PageBrand() {
+  return (
+    <div className="mx-auto max-w-6xl px-6 pt-10">
+      <BrandLogo className="w-44 sm:w-56" priority />
+      <div aria-hidden="true" className="mt-4 h-1.5 rounded-full bg-primary-dark" />
+    </div>
+  );
+}
+
 /**
  * Top of the form. The full version centres the logo above a teal banner and
  * the title block; the compact version is a slim bar for the question pages.

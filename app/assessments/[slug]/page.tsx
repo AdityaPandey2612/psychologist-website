@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { PageBrand } from "@/components/assessments/FormBrand";
 import { AssessmentIcon, Badge } from "@/components/assessments/ui";
 import Section from "@/components/Section";
 import { sharingOffered } from "@/lib/assessments/definition";
@@ -89,7 +90,8 @@ export default async function AssessmentDetailPage({ params }: Params) {
           { name: summary.title, path: `/assessments/${summary.slug}` },
         ]}
       />
-      <Section eyebrow={`Self-check · ${summary.categoryName}`} title={summary.title} titleAs="h1">
+      <PageBrand />
+      <Section eyebrow={`Self-check · ${summary.categoryName}`} title={summary.title} titleAs="h1" className="!pt-8">
         <div className="-mt-4 grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
           <div>
             <p className="max-w-2xl text-lg leading-relaxed text-ink-soft">{summary.description}</p>
