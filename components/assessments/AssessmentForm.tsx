@@ -120,6 +120,8 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
     [form.sections, visibility],
   );
   const single = form.navigation.layout === "single_page";
+  // One section on one page is already introduced by the questions heading, so its own title and description are not repeated.
+  const loneSection = single && pages.length === 1;
   const steps = useMemo(() => [...(preview ? [] : ["details"]), "intro", ...(single ? ["all"] : pages.map((p) => p.id))], [preview, single, pages]);
   const activeStep = steps.includes(stepId) ? stepId : "intro";
   const stepIndex = steps.indexOf(activeStep);
@@ -643,11 +645,11 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
                   id={`sec-${page.id}-title`}
                   ref={i === 0 ? headingRef : undefined}
                   tabIndex={i === 0 ? -1 : undefined}
-                  className="text-2xl text-primary-dark focus:outline-none sm:text-3xl"
+                  className={cx("text-2xl text-primary-dark focus:outline-none sm:text-3xl", loneSection && "sr-only")}
                 >
                   {page.title}
                 </h2>
-                {page.description && <p className="mt-2 whitespace-pre-line leading-relaxed text-ink-soft">{page.description}</p>}
+                {page.description && !loneSection && <p className="mt-2 whitespace-pre-line leading-relaxed text-ink-soft">{page.description}</p>}
                 <div className="mt-6 space-y-5">
                   {page.questions.map((q) => (
                     <DynamicQuestionRenderer

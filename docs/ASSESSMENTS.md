@@ -192,7 +192,8 @@ introduction page, and the questions as numbered cards (*CATEGORY | Question 3 o
 site theme. Admins control the wording in **Settings → Introduction** (subtitle, note, tiles, notice) and give a question a
 category label in the question editor (on one-page forms it defaults to the section title). Tiles can use `{{minutes}}`,
 `{{questions}}` and `{{sections}}`; keep their text accurate — the default tiles say results are shown on a private link, not that
-answers are never stored. The logo also appears on the results page, the peer-feedback page and the result email.
+answers are never stored. On a one-page form with a single section, the section's title and description are not repeated above the
+questions (the "Assessment questions" heading introduces them; the title stays for screen readers and as the default category label). The logo also appears on the results page, the peer-feedback page and the result email.
 
 ### Participant
 

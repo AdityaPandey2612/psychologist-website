@@ -114,7 +114,7 @@ export function NoticeBox({ children }: { children: ReactNode }) {
 export function QuestionsHeading({ count, children }: { count: number; children?: ReactNode }) {
   return (
     <h2 className="border-b border-primary/15 pb-2 font-body text-xs font-semibold uppercase tracking-wider text-primary-dark sm:text-sm">
-      {children ?? "Self-check questions"} ({count} item{count === 1 ? "" : "s"})
+      {children ?? "Assessment questions"} ({count} item{count === 1 ? "" : "s"})
     </h2>
   );
 }
