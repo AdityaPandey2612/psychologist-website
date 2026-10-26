@@ -1,0 +1,34 @@
+/* Positioning rules that Tailwind utilities can't express cleanly. */
+
+.fab {
+  /* Respect the iOS home indicator. */
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Slide out of the way when the footer scrolls into view. */
+.tuckedAway {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(0.75rem);
+}
+
+/* Very short screens (landscape phones): the vertically centred social bar
+   would reach the bottom-right corner, so the button moves to the left edge. */
+@media (max-height: 430px) {
+  .fab {
+    right: auto;
+    left: 1rem;
+  }
+}
+
+/* The analytics consent banner (components/AnalyticsConsent.tsx) spans the
+   bottom of small screens and sits bottom-left on wider ones. Until the visitor
+   has chosen, don't compete with it where they would collide; the attribute on
+   <html> is set as soon as a choice is stored and the button then appears. */
+@media (max-width: 767px), (max-height: 430px) {
+  :global(html:not([data-analytics-consent])) .fab {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

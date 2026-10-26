@@ -275,6 +275,7 @@
 
 import type { ReactElement } from "react";
 import { socialLinks, type SocialName } from "@/lib/data/socialLinks";
+import AssessmentFloatingButton from "@/components/assessments/AssessmentFloatingButton";
 
 const styles: Record<SocialName, { bg: string | null; icon: ReactElement }> = {
   Instagram: {
@@ -332,6 +333,7 @@ const styles: Record<SocialName, { bg: string | null; icon: ReactElement }> = {
 // z-30 keeps the open mobile menu (header, z-40) and the consent banner above it.
 export default function FloatingSocials() {
   return (
+    <>
     <aside aria-label="Social media" className="fixed right-4 top-1/2 z-30 flex -translate-y-1/2 flex-col gap-3">
       {socialLinks.map(({ name, href }) => (
         <a
@@ -360,5 +362,8 @@ export default function FloatingSocials() {
         </a>
       ))}
     </aside>
+    {/* Client component: hides itself on /admin and /assessments, and steps aside for the footer. */}
+    <AssessmentFloatingButton />
+    </>
   );
 }

@@ -256,6 +256,8 @@ import { trainingPrograms } from "@/lib/data/training";
 import { caseStudies } from "@/lib/data/caseStudies";
 import { blogPath, getBlogPosts } from "@/lib/blog/seo";
 import { canonicalUrl } from "@/lib/seo/metadata";
+import { listPublished } from "@/lib/assessments/server/service";
+import { getStore, StoreNotConfiguredError } from "@/lib/assessments/server/store";
 
 // Rebuilt at most hourly so newly published blog posts appear without a deploy.
 export const revalidate = 3600;
@@ -298,6 +300,7 @@ const staticPages: MetadataRoute.Sitemap = [
   entry("/faq", "monthly", 0.6),
   entry("/testimonials", "monthly", 0.6),
   entry("/contact", "monthly", 0.8),
+  entry("/assessments", "weekly", 0.7),
 ];
 
 const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
@@ -320,6 +323,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap: failed to load blog posts:", error);
   }
 
+  // Published assessments live in the assessment store; skip quietly when it is not configured.
+  let assessmentPages: MetadataRoute.Sitemap = [];
+  try {
+    const published = await listPublished(await getStore());
+    assessmentPages = published.map((a) => entry(`/assessments/${a.slug}`, "monthly", 0.6, a.publishedAt.slice(0, 10)));
+  } catch (error) {
+    if (!(error instanceof StoreNotConfiguredError)) console.error("Sitemap: failed to load assessments:", error);
+  }
+
   return [
     ...staticPages,
     ...conditionPages,
@@ -327,5 +339,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogPages,
     ...trainingPages,
     ...caseStudyPages,
+    ...assessmentPages,
   ];
 }

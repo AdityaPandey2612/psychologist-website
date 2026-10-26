@@ -17,6 +17,11 @@ const adminSections = [
     description: "Create, edit, and publish articles.",
     href: "/admin/blogs",
   },
+  {
+    title: "Assessments",
+    description: "Build self-reflection assessments, set scoring and results, and review responses.",
+    href: "/admin/assessments",
+  },
 ];
 
 export default function AdminDashboard() {
