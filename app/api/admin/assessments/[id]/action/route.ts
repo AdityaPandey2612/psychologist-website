@@ -19,6 +19,7 @@ function refreshPublicPages(slug: string) {
   try {
     revalidatePath("/assessments");
     revalidatePath(`/assessments/${slug}`);
+    revalidatePath(`/assessments/${slug}/start`);
     revalidatePath("/sitemap.xml");
   } catch {
     // Not fatal: the pages still refresh on their normal schedule.

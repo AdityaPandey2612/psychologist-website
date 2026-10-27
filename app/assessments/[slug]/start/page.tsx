@@ -6,12 +6,26 @@ import { cache } from "react";
 import AssessmentForm from "@/components/assessments/AssessmentForm";
 import { toPublicForm } from "@/lib/assessments/definition";
 import { isMailConfigured } from "@/lib/assessments/server/mail";
-import { getPublishedBySlug } from "@/lib/assessments/server/service";
+import { getPublishedBySlug, listPublished } from "@/lib/assessments/server/service";
 import { getStore } from "@/lib/assessments/server/store";
 import { buildMetadata } from "@/lib/seo/metadata";
 
-// Always reads the live published version, so the form never lags behind a publish.
-export const dynamic = "force-dynamic";
+// Cached for a minute (and refreshed at once when an assessment is published or unpublished), so Start opens instantly.
+// A person who still has an older form open submits against the version they were shown.
+export const revalidate = 60;
+
+/**
+ * Lists the published assessments so their pages are built ahead of time and cached. Without this, Next renders a
+ * dynamic-route page on every request and a click on "Start" waits on the database each time. A slug published later
+ * is still rendered on first visit and cached from then on.
+ */
+export async function generateStaticParams() {
+  try {
+    return (await listPublished(await getStore())).map((a) => ({ slug: a.slug }));
+  } catch {
+    return [];
+  }
+}
 
 type Params = { params: { slug: string } };
 

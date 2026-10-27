@@ -5,13 +5,26 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { FormHeader, IntroHighlights, NoticeBox } from "@/components/assessments/FormBrand";
 import Section from "@/components/Section";
-import { getPublishedBySlug } from "@/lib/assessments/server/service";
+import { getPublishedBySlug, listPublished } from "@/lib/assessments/server/service";
 import { getStore } from "@/lib/assessments/server/store";
 import { fillTokens } from "@/lib/assessments/text";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const revalidate = 60;
+
+/**
+ * Lists the published assessments so their pages are built ahead of time and cached. Without this, Next renders a
+ * dynamic-route page on every request and a click on "Start" waits on the database each time. A slug published later
+ * is still rendered on first visit and cached from then on.
+ */
+export async function generateStaticParams() {
+  try {
+    return (await listPublished(await getStore())).map((a) => ({ slug: a.slug }));
+  } catch {
+    return [];
+  }
+}
 
 type Params = { params: { slug: string } };
 
