@@ -86,7 +86,6 @@ const blogSeo: Record<string, BlogSeo> = {
   "blogpast-life-regression-session-story-vashi": {
     related: [
       { href: "/conditions/best-past-life-regression-therapy-in-navi-mumbai", label: "Past life regression therapy in Navi Mumbai" },
-      { href: "/therapies/past-life-regression-technique", label: "How past life regression therapy works" },
     ],
   },
   "counselling-vs-therapy-vs-hypnotherapy-difference": {
@@ -96,7 +95,7 @@ const blogSeo: Record<string, BlogSeo> = {
     ],
   },
   "what-actually-happens-in-a-past-life-regression-session-and-why-people-sometimes-cry-halfway-through": {
-    related: [{ href: "/therapies/past-life-regression-technique", label: "How past life regression therapy works" }],
+    related: [{ href: "/conditions/best-past-life-regression-therapy-in-navi-mumbai", label: "Past life regression therapy in Navi Mumbai" }],
   },
   "understanding-ocd-in-adults": {
     related: [{ href: "/conditions/ocd-therapy-navi-mumbai", label: "OCD treatment in Navi Mumbai" }],

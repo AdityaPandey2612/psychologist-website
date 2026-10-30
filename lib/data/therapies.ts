@@ -527,24 +527,6 @@ export const therapies: Therapy[] = [
     goodFor: ["trauma-ptsd-counselling-navi-mumbai", "grief-counselling-navi-mumbai"]
   },
   {
-    slug: "past-life-regression-technique",
-    name: "Past-Life Regression Therapy (PLRT)",
-    complementary: true,
-    shortDescription: "A guided hypnotic technique exploring past-life narratives believed to influence present-day patterns.",
-    metaTitle: "How Past Life Regression Therapy Works | The Technique",
-    metaDescription:
-      "A plain explanation of the past life regression technique: how a session is structured, what the induction involves and how integration follows. Learn more.",
-    intro:
-      "PLRT is a hypnosis-based technique in which a client, in a guided relaxed state, explores narratives experienced as memories from a past life. It sits outside mainstream evidence-based psychology and its effects are understood by practitioners as symbolic or narrative rather than literal — many clients find the process helps surface and reframe deep-seated fears or patterns that talk therapy alone hasn't shifted, regardless of how the phenomenon itself is interpreted.",
-    whatToExpect: [
-      "A clear, honest conversation about what PLRT is and isn't before beginning",
-      "A guided hypnotic relaxation state, with you fully aware and able to stop at any point",
-      "Space to explore whatever narrative or imagery arises",
-      "A grounding and integration conversation afterward"
-    ],
-    goodFor: []
-  },
-  {
     slug: "spirit-release-therapy",
     name: "Spirit Release Therapy (SRT)",
     complementary: true,

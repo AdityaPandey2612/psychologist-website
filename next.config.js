@@ -77,6 +77,8 @@ const legacyRedirects = {
   "/age-regression": "/therapies/age-regression",
   "/hypnosis": "/hypnotherapy-navi-mumbai",
   "/therapies/clinical-hypnotherapy": "/hypnotherapy-navi-mumbai",
+  // The technique page was merged into the main Past Life Regression Therapy page.
+  "/therapies/past-life-regression-technique": "/conditions/best-past-life-regression-therapy-in-navi-mumbai",
   "/hypnosis-training-course-in-mumbai": "/training-and-mentorship",
   "/past-life-regression-therapy-teacher-training": "/training-and-mentorship",
   "/past-life-regression-course-in-mumbai": "/training-and-mentorship/basic-training-in-hypnosis-and-plrt",

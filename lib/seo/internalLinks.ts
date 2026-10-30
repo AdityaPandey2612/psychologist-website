@@ -37,7 +37,6 @@ export const conditionReading: Record<string, InternalLink[]> = {
     { href: "/blog/understanding-ocd-in-adults", label: "Understanding OCD in adults" }
   ],
   "best-past-life-regression-therapy-in-navi-mumbai": [
-    { href: "/therapies/past-life-regression-technique", label: "How past life regression therapy works" },
     {
       href: "/blog/what-actually-happens-in-a-past-life-regression-session-and-why-people-sometimes-cry-halfway-through",
       label: "What actually happens in a past life regression session"
