@@ -48,7 +48,7 @@ export function describeEmail(state: SubmissionEmailState): string {
     case "not_configured":
       return "Email delivery isn't set up on this site yet, so your results were not emailed. They're shown below.";
     default:
-      return "You chose not to receive your results by email.";
+      return "Your results were not emailed.";
   }
 }
 
@@ -90,8 +90,9 @@ export async function submitAssessment(
   if (!validation.ok) Object.assign(errors, validation.errors);
   if (Object.keys(errors).length) throw unprocessable("Please fix the highlighted answers.", { errors });
 
-  // Emailing is optional: it needs the assessment to allow it, working mail credentials, and the participant's tick.
-  const wantsEmail = consent.emailResults === true && definition.email.enabled && isMailConfigured();
+  // Emailing the results is part of taking the self-check: when the assessment has email on and the server can send,
+  // the results always go to the address the person entered (there is no box to untick).
+  const wantsEmail = definition.email.enabled && isMailConfigured();
   const shares = consent.shareWithPractice === true && sharingOffered(definition);
 
   const result: AssessmentResult = computeResult(definition, validation.clean);

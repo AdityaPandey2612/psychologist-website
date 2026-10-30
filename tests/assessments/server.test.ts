@@ -352,9 +352,23 @@ describe("result email", () => {
     assert.equal(mail.calls, 0);
   });
 
-  it("never emails someone who did not consent, and never repeats a delivered email", async () => {
+  it("emails everyone whatever the request says about emailing, and never repeats a delivered email", async () => {
     const doc = await publishedListening(store);
-    const res = await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: false } }), { wait });
+    for (const consent of [{ storeResponses: true, emailResults: false }, { storeResponses: true }]) {
+      const res = await submitAssessment(store, doc.slug, submitBody({ consent }), { wait });
+      assert.equal(res.email.status, "sent");
+    }
+    assert.equal(mail.sent.length, 2);
+    const [first] = await store.query<{ accessToken: string }>("assessmentSubmissions");
+    await resendResultEmail(store, first.accessToken, {}, { wait });
+    assert.equal(mail.sent.length, 2, "a delivered email is not repeated");
+  });
+
+  it("lets someone whose result was not emailed (the mail sign-in was missing) ask for it afterwards", async () => {
+    const doc = await publishedListening(store);
+    setMailProviderForTests(null);
+    const res = await submitAssessment(store, doc.slug, submitBody(), { wait });
+    setMailProviderForTests(mail);
     assert.equal(res.email.status, "not_requested");
     assert.equal(mail.calls, 0);
     await assert.rejects(resendResultEmail(store, res.resultToken, {}, { wait }), (e: unknown) => e instanceof ApiError && e.status === 400);
@@ -448,7 +462,7 @@ describe("result email", () => {
   it("tells the practice's own inbox even when the assessment has no extra recipients", async () => {
     const doc = await publishedListening(store); // notifications off, no recipients
     await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: false, shareWithPractice: false } }), { wait });
-    assert.equal(mail.sent.length, 0);
+    assert.equal(mail.sent.length, 1); // the participant's own email: it is not a choice
     assert.equal(mail.practice.length, 1);
     assert.match(mail.practice[0].subject, /^New self-check completed/);
   });
@@ -578,7 +592,7 @@ describe("sharing with the practice (consent)", () => {
     await submitAssessment(store, doc.slug, submitBody({ name: "Private Person", consent: { storeResponses: true, emailResults: false, shareWithPractice: false } }), { wait });
     const { rows } = await listSubmissions(store, doc.id);
     assert.deepEqual(rows.filter((r) => r.name).map((r) => r.name), ["Agreed Person"]);
-    assert.equal(mail.calls, 0); // consent alone sends nothing: notifications are separate and off
+    assert.equal(mail.sent.length, 2); // only the two participants' own emails: sharing with the practice adds none
   });
 
   it("does not offer or record consent when nobody could use it", async () => {
@@ -638,7 +652,7 @@ describe("admin data and privacy", () => {
     assert.equal(stats.totals.submissions, 2);
     assert.equal(stats.totals.averageScore, 100);
     assert.equal(stats.distribution[9].count, 2);
-    assert.equal(stats.emailStatus.not_requested, 2);
+    assert.equal(stats.emailStatus.sent, 2);
     assert.equal(stats.skills.length, 4);
     assert.equal(stats.byDay.at(-1)?.count, 2);
     const overview = await getOverview(store);

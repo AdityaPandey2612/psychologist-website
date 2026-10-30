@@ -35,8 +35,8 @@ function SetupBanners({ data }: { data: DashboardData }) {
         <Alert tone="warning">
           <p className="font-semibold">Email is switched off (no mail credentials)</p>
           <p className="mt-1">
-            The mail sign-in kept in the code is switched off here. Set <code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code> and <code>MAIL_FROM</code> on the server instead. Until then the “email my results” option is not shown to participants and no
-            email is attempted; everyone sees their results on screen.
+            The mail sign-in kept in the code is switched off here. Set <code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code> and <code>MAIL_FROM</code> on the server instead. Until then no results email is sent;
+            everyone sees their results on screen.
           </p>
         </Alert>
       )}

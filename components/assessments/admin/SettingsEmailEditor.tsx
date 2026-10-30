@@ -15,13 +15,13 @@ export function SettingsEmailEditor({ definition, onChange }: EditorProps) {
   return (
     <Panel
       title="Email results"
-      description="Emailing is optional. When it is on and the server has mail credentials, participants can tick a box to receive a summary of their results. The mail sign-in is kept on the server and never exposed to the browser (SMTP_* and MAIL_FROM in the environment take priority over it). Without any sign-in the option is simply not shown and no email is attempted."
+      description="When this is on and the server can send email, everyone who completes the self-check is emailed their results (with the PDF report attached) at the address they entered. There is no box to untick. The mail sign-in is kept on the server and never exposed to the browser (SMTP_* and MAIL_FROM in the environment take priority over it). Without any sign-in no email is attempted."
     >
       <Toggle
         checked={email.enabled}
         onChange={(enabled) => set({ enabled })}
-        label="Offer to email results"
-        description="When off, participants only see their results on screen and are not asked for email consent."
+        label="Email the results to participants"
+        description="When off, participants only see their results on screen."
       />
 
       {email.enabled && (

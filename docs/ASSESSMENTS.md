@@ -54,8 +54,8 @@ Without any sign-in the platform still works: participants see their results on 
 
 **Who gets which email, and when**
 
-* **The participant** gets their results by email, with the PDF report attached, when "Email my results to me" is ticked
-  (it starts ticked and can be unticked).
+* **The participant** always gets their results by email, with the PDF report attached, at the address they entered (there is no
+  tick box; the form says so under the email field). Turn it off per assessment under Settings -> Email.
 * **The practice's own inbox** (`OWNER_EMAIL` in `mailAccount.ts`) is told about every completed self-check. The note has the
   person's name, email, the assessment, how many questions they answered, when they finished (IST), the score and level, a
   warning when a support message was shown, and the PDF report. That full note is sent when Settings -> Privacy is **"Everything"** (the Mood Self-Assessment uses it, and its form tells people their name, email and results go to the
@@ -217,13 +217,13 @@ questions (the "Assessment questions" heading introduces them; the title stays f
 
 Floating **Take a Self-Check** button → library (search/filter) → assessment page → name, email and consent →
 intro → sections (progress, back/next, drafts kept on the device) → server validates, scores and saves → private result
-page (`/assessments/results/<secret>`) → emailed summary if they ticked the consent box.
+page (`/assessments/results/<secret>`) → emailed summary and PDF to the address they entered.
 
 ### The PDF report: a download on the result page and an attachment on the email
 
 * **A "Download PDF report" button** at the top of the participant's private result page opens `GET /api/assessments/results/<token>/pdf`. It uses the same
   private link as the result page (a wrong link answers 404), is rate limited, never cached and `noindex`.
-* **An attachment on the result email**, for people who ticked "Email my results to me". The email says "A PDF copy of your report is attached to this
+* **An attachment on the result email**, for everyone who is emailed their result. The email says "A PDF copy of your report is attached to this
   email." If the report cannot be made the email is still sent, without the attachment and without that sentence.
 
 The report holds what the result page holds, in the order of the admin's **Result sections**: the practice logo on white, a dark teal band with the headline

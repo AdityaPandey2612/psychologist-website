@@ -192,14 +192,16 @@ describe("the PDF attached to the result email", () => {
     assert.ok(logged.some((line) => /PDF report for a result email could not be made/.test(line)), "the failure is logged");
   });
 
-  it("builds the attachment inside deliverResultEmail only for people who asked for the email", async () => {
+  it("emails everyone, and builds no attachment for an old submission that opted out of the email", async () => {
     const doc = await publishedCharisma();
     await submitAssessment(store, doc.slug, body(), { wait });
-    assert.equal(mail.sent.length, 0, "no email without the person's tick");
+    assert.equal(mail.sent.length, 1, "emailed although the request said emailResults: false");
     const [submission] = await store.query<SubmissionDoc>(COL.submissions);
     const version = await store.get<never>(COL.versions, submission.versionId);
-    const state = await deliverResultEmail(store, submission, version as never, { wait });
+    const optedOut = { ...submission, consent: { ...submission.consent, emailResults: false } };
+    const state = await deliverResultEmail(store, optedOut, version as never, { wait });
     assert.equal(state.status, "not_requested");
+    assert.equal(mail.sent.length, 1, "nothing more was sent");
   });
 });
 
@@ -263,7 +265,8 @@ describe("searching and filtering submissions", () => {
     assert.deepEqual(await names({ q: "sample.org" }), ["Ravi Menon"]);
     assert.deepEqual(await names({ level: "Building Zone" }), ["Neha Kapoor"]);
     assert.deepEqual(await names({ shared: true }), ["Asha Verma", "Neha Kapoor"]);
-    assert.deepEqual(await names({ email: "not_requested" }), ["Asha Verma", "Neha Kapoor", "Ravi Menon"]);
+    assert.deepEqual(await names({ email: "sent" }), ["Asha Verma", "Neha Kapoor", "Ravi Menon"]);
+    assert.deepEqual(await names({ email: "not_requested" }), []);
     assert.deepEqual(await names({ email: "failed" }), []);
     const all = await listSubmissions(store, doc.id, {});
     assert.deepEqual([all.total, all.overall], [3, 3]);

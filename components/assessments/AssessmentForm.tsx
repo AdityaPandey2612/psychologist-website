@@ -47,7 +47,7 @@ interface DetailErrors {
   consent?: string;
 }
 
-// Emailing the results to the address just typed starts ticked (and can be unticked); the other two are only ever ticked by the person.
+// Emailing the results is not a choice (the server sends them whenever the assessment has email on); sharing with the practice is only ever ticked by the person.
 const DEFAULT_CONSENT: Consent = { storeResponses: false, emailResults: true, shareWithPractice: false };
 
 function Paragraphs({ text, className }: { text: string; className?: string }) {
@@ -285,7 +285,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
           website,
           consent: {
             storeResponses: consent.storeResponses,
-            emailResults: form.emailEnabled && consent.emailResults,
+            emailResults: form.emailEnabled,
             shareWithPractice: form.shareWithPracticeOffered && consent.shareWithPractice,
           },
         },
@@ -482,6 +482,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
                   aria-describedby={detailErrors.email ? "details-email-err" : undefined}
                   className={cx(inputClass, "mt-1.5")}
                 />
+                {form.emailEnabled && <p className="mt-1.5 text-sm text-ink-soft">Your results, with a PDF copy, will be emailed to this address, so please check it is right.</p>}
                 {detailErrors.email && (
                   <p id="details-email-err" role="alert" className="mt-1.5 text-sm font-medium text-accent-ink">
                     {detailErrors.email}
@@ -521,19 +522,6 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
                 <p id="details-consent-err" role="alert" className="text-sm font-medium text-accent-ink">
                   {detailErrors.consent}
                 </p>
-              )}
-              {form.emailEnabled && (
-                <label className="flex min-h-11 cursor-pointer items-start gap-3 text-ink">
-                  <input
-                    type="checkbox"
-                    checked={consent.emailResults}
-                    onChange={(e) => setConsent((c) => ({ ...c, emailResults: e.target.checked }))}
-                    className="mt-1 h-5 w-5 shrink-0 accent-primary"
-                  />
-                  <span className="leading-snug">
-                    Email my results to me. <span className="text-ink-soft">(Optional)</span>
-                  </span>
-                </label>
               )}
               {form.shareWithPracticeOffered && (
                 <label className="flex min-h-11 cursor-pointer items-start gap-3 text-ink">
