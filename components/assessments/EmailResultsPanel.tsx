@@ -1,7 +1,7 @@
 "use client";
 
 import { Mail, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApiClientError, apiFetch } from "@/lib/assessments/client/api";
 import type { ResultView } from "@/lib/assessments/server/submissions";
 import { Alert, Spinner } from "./ui";
@@ -16,6 +16,31 @@ export default function EmailResultsPanel({ token, email, onChange }: { token: s
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [agree, setAgree] = useState(false);
+
+  // The email is sent in the background, so the page opens at once with "on its way". While it is still pending,
+  // check back every few seconds (for about half a minute) and show whether it was sent.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const pending = email.enabled && email.status === "pending";
+  useEffect(() => {
+    if (!pending) return;
+    let tries = 0;
+    const timer = setInterval(async () => {
+      tries += 1;
+      try {
+        const view = await apiFetch<ResultView>(`/api/assessments/results/${token}`, { cache: "no-store" });
+        if (view.email.status !== "pending") {
+          clearInterval(timer);
+          onChangeRef.current(view.email);
+          return;
+        }
+      } catch {
+        // Keep the message we have; the next check may work.
+      }
+      if (tries >= 10) clearInterval(timer);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [pending, token]);
 
   if (!email.enabled) return null;
 
@@ -59,7 +84,14 @@ export default function EmailResultsPanel({ token, email, onChange }: { token: s
               <p className="mt-1">{email.message}</p>
             </Alert>
           )}
-          {email.status === "pending" && <Alert tone="info">{email.message}</Alert>}
+          {email.status === "pending" && (
+            <Alert tone="info">
+              <span className="flex items-start gap-3">
+                <Spinner label="Sending" />
+                <span>{email.message}</span>
+              </span>
+            </Alert>
+          )}
           {email.status === "failed" && (
             <Alert tone="error">
               <p className="font-semibold">Your results haven&apos;t been emailed</p>

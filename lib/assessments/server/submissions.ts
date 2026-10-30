@@ -17,6 +17,7 @@ import {
 import { validateAnswers } from "../validation";
 import { COL, versionId } from "./config";
 import { deliverAdminNotification, deliverResultEmail, MAX_ATTEMPTS, type DeliveryOptions } from "./emailService";
+import { isInlineBackground, runInBackground } from "./background";
 import { badRequest, conflict, notFound, unprocessable, ApiError } from "./http";
 import { isMailConfigured } from "./mail";
 import { renderReportPdf, reportDataFor, reportFileName } from "./pdf/reportPdf";
@@ -41,7 +42,7 @@ export function describeEmail(state: SubmissionEmailState): string {
     case "sent":
       return "Your results were accepted for delivery by our mail server. If you don't see them in a few minutes, check your spam folder.";
     case "pending":
-      return "Your email is being sent.";
+      return "Your results are on their way to your email. It usually takes less than a minute; please check your spam folder if it doesn't arrive.";
     case "failed":
       return state.error ? `We couldn't send your results email: ${state.error}` : "We couldn't send your results email.";
     case "not_configured":
@@ -129,22 +130,30 @@ export async function submitAssessment(
     return { resultToken: existing.accessToken, duplicate: true, email: { status: existing.email.status, message: describeEmail(existing.email) } };
   }
 
+  // The emails go out after the response, so the participant sees their results straight away instead of
+  // waiting for the mail server. Each email keeps its own delivery record, and the results page shows its state.
   let emailState: SubmissionEmailState = submission.email;
-  if (wantsEmail) {
-    try {
-      emailState = await deliverResultEmail(store, submission, version, options);
-    } catch (error) {
-      console.error("[assessments] Email delivery crashed:", error instanceof Error ? error.message : "unknown");
-      emailState = { status: "failed", attempts: 0, error: "The email could not be sent." };
-    }
-  }
-  if (shares) {
-    try {
-      await deliverAdminNotification(store, submission, version, options);
-    } catch (error) {
-      console.error("[assessments] Notification failed:", error instanceof Error ? error.message : "unknown");
-    }
-  }
+  const sendEmails = async () => {
+    const toParticipant = async () => {
+      if (!wantsEmail) return;
+      try {
+        emailState = await deliverResultEmail(store, submission, version, options);
+      } catch (error) {
+        console.error("[assessments] Email delivery crashed:", error instanceof Error ? error.message : "unknown");
+        emailState = { status: "failed", attempts: 0, error: "The email could not be sent." };
+      }
+    };
+    const toPractice = async () => {
+      try {
+        await deliverAdminNotification(store, submission, version, options);
+      } catch (error) {
+        console.error("[assessments] Notification failed:", error instanceof Error ? error.message : "unknown");
+      }
+    };
+    await Promise.all([toParticipant(), toPractice()]);
+  };
+  const sending = runInBackground("assessment emails", sendEmails);
+  if (isInlineBackground()) await sending;
 
   return { resultToken: submission.accessToken, duplicate: false, email: { status: emailState.status, message: describeEmail(emailState) } };
 }

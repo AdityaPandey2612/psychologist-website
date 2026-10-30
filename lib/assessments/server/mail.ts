@@ -1,10 +1,12 @@
 import nodemailer from "nodemailer";
+import { embeddedMailEnv } from "./mailAccount";
 
 // Provider-agnostic mail sending. Only SMTP is implemented (works with Gmail app
 // passwords, Brevo, Mailgun, SES SMTP, Zoho, your host's SMTP, etc.); add another
 // provider by implementing MailProvider and returning it from getMailProvider().
 //
-// Credentials come from environment variables and never reach the browser:
+// Credentials never reach the browser. They come from environment variables, and when those are not set the
+// Gmail sign-in kept in ./mailAccount is used:
 //   SMTP_HOST, SMTP_PORT (default 587), SMTP_SECURE ("true" for port 465),
 //   SMTP_USER, SMTP_PASS, MAIL_FROM (e.g. "Chaitanya Raj <no-reply@example.com>"),
 //   MAIL_REPLY_TO (optional)
@@ -94,12 +96,15 @@ export function setMailProviderForTests(provider: MailProvider | null | undefine
   providerOverride = provider;
 }
 
-/** True when SMTP credentials are present. Without them no result email is offered, requested or attempted. */
+/** True when SMTP credentials are present (set in the environment or kept in source). Without them no email is offered, requested or attempted. */
 export function isMailConfigured(): boolean {
   return getMailProvider() !== null;
 }
 
 export function getMailProvider(): MailProvider | null {
   if (providerOverride !== undefined) return providerOverride;
-  return createSmtpProvider();
+  const fromEnvironment = createSmtpProvider();
+  if (fromEnvironment) return fromEnvironment;
+  const embedded = embeddedMailEnv();
+  return embedded ? createSmtpProvider(embedded) : null;
 }

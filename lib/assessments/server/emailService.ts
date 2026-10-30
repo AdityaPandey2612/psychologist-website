@@ -2,6 +2,7 @@ import type { AssessmentVersionDoc, EmailRecordDoc, SubmissionDoc, SubmissionEma
 import { COL, publicBaseUrl, SITE_NAME } from "./config";
 import { renderAdminNotification, renderResultEmail } from "./emailTemplates";
 import { getMailProvider, type MailMessage, type SendOutcome } from "./mail";
+import { OWNER_EMAIL } from "./mailAccount";
 import { renderReportPdf, reportDataFor, reportFileName } from "./pdf/reportPdf";
 import type { DocStore } from "./store";
 
@@ -170,8 +171,9 @@ export async function deliverResultEmail(
 }
 
 /**
- * Optional notification to the practice. Only ever called when the
- * assessment is configured for it AND the participant explicitly agreed.
+ * Tells the practice that a self-check was completed. The practice's own inbox is always told; the participant's
+ * name, email, result and PDF report are included only when they agreed to share them, otherwise the note says
+ * that someone completed it and nothing more. Extra recipients set on the assessment are told as well.
  */
 export async function deliverAdminNotification(
   store: DocStore,
@@ -179,9 +181,10 @@ export async function deliverAdminNotification(
   version: AssessmentVersionDoc,
   options: DeliveryOptions = {},
 ): Promise<void> {
-  const cfg = version.definition.email.adminNotify;
-  if (!cfg.enabled || !submission.consent.shareWithPractice || cfg.recipients.length === 0) return;
   if (!getMailProvider()) return;
+  const cfg = version.definition.email.adminNotify;
+  const shared = submission.consent.shareWithPractice;
+  const recipients = [...new Set([OWNER_EMAIL, ...(cfg.enabled ? cfg.recipients : [])].map((r) => r.trim().toLowerCase()).filter(Boolean))];
   const now = options.now ?? (() => new Date());
   const wait = options.wait ?? sleep;
 
@@ -191,7 +194,7 @@ export async function deliverAdminNotification(
     submissionId: submission.id,
     assessmentId: submission.assessmentId,
     kind: "admin_notification",
-    to: cfg.recipients.join(", "),
+    to: recipients.join(", "),
     subject: "",
     status: "sending",
     attempts: 1,
@@ -200,6 +203,7 @@ export async function deliverAdminNotification(
   } satisfies EmailRecordDoc);
   if (!created) return; // already sent (or in flight) for this submission
 
+  const attachments = shared ? await reportAttachment(submission, version) : undefined;
   const rendered = renderAdminNotification({
     name: submission.respondent.name,
     email: submission.respondent.email,
@@ -207,8 +211,14 @@ export async function deliverAdminNotification(
     completedAt: new Date(submission.createdAt),
     result: submission.result,
     siteName: SITE_NAME,
+    shared,
+    attached: Boolean(attachments),
+    adminUrl: `${publicBaseUrl()}/admin/assessments/${submission.assessmentId}/submissions`,
+    logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
   });
-  const outcomes = await Promise.all(cfg.recipients.map((to) => sendWithRetry({ to, subject: rendered.subject, html: rendered.html, text: rendered.text }, wait)));
+  const outcomes = await Promise.all(
+    recipients.map((to) => sendWithRetry({ to, subject: rendered.subject, html: rendered.html, text: rendered.text, ...(attachments ? { attachments } : {}) }, wait)),
+  );
   const failed = outcomes.find((o) => !o.ok);
   await store.transact<EmailRecordDoc>(COL.emails, recordId, (cur) =>
     cur

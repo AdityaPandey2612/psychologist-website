@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import "./setup";
 import { beforeEach, describe, it } from "node:test";
 import { listeningDefinition } from "../../lib/assessments/templates/listening";
 import type { Answers, AssessmentDoc } from "../../lib/assessments/types";
 import { getOverview, getAssessmentAnalytics, getSubmissionDetail, listSubmissions, retrySubmissionEmail, deleteSubmission } from "../../lib/assessments/server/adminData";
+import { setInlineBackgroundForTests } from "../../lib/assessments/server/background";
+import { OWNER_EMAIL } from "../../lib/assessments/server/mailAccount";
 import { isMailConfigured, setMailProviderForTests, type MailMessage, type MailProvider, type SendOutcome } from "../../lib/assessments/server/mail";
 import { toPublicForm } from "../../lib/assessments/definition";
 import {
@@ -28,10 +31,17 @@ const wait = async () => {};
 
 class FakeMail implements MailProvider {
   readonly name = "fake";
+  /** Emails to participants. */
   sent: MailMessage[] = [];
+  /** Emails to the practice's own inbox (kept apart so the tests about participants stay readable). */
+  practice: MailMessage[] = [];
   outcomes: SendOutcome[] = [];
   calls = 0;
   async send(message: MailMessage): Promise<SendOutcome> {
+    if (message.to === OWNER_EMAIL) {
+      this.practice.push(message);
+      return { ok: true as const, messageId: "<practice@test>" };
+    }
     this.calls += 1;
     const next = this.outcomes.shift() ?? { ok: true as const, messageId: `<m${this.calls}@test>` };
     if (next.ok) this.sent.push(message);
@@ -371,18 +381,81 @@ describe("result email", () => {
     assert.equal(view.email.canRetry, false);
   });
 
-  it("notifies the practice only when configured AND the participant agreed", async () => {
+  it("tells the practice about every completed self-check, with details only when the participant agreed", async () => {
     const doc = await publishedListening(store);
     const def = structuredClone(doc.definition);
     def.email.adminNotify = { enabled: true, recipients: ["practice@example.com"] };
     await updateAssessment(store, doc.id, { definition: def });
     await publishAssessment(store, doc.id, user);
 
+    // Not shared: the owner and the extra recipient are told that someone finished, and nothing personal.
     await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: true, shareWithPractice: false } }), { wait });
-    assert.deepEqual(mail.sent.map((m) => m.to), ["asha@example.com"]);
+    assert.deepEqual(mail.sent.map((m) => m.to).sort(), ["asha@example.com", "practice@example.com"]);
+    assert.equal(mail.practice.length, 1);
+    const quiet = mail.practice[0];
+    assert.match(quiet.subject, /^New self-check completed/);
+    for (const part of [quiet.subject, quiet.text, quiet.html]) {
+      assert.equal(/asha/i.test(part), false, "no name or email in a note about someone who did not share");
+    }
+    assert.equal(quiet.attachments, undefined);
 
+    // Shared: the note names the person, shows the result and carries their PDF.
     await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: true, shareWithPractice: true } }), { wait });
-    assert.deepEqual(mail.sent.map((m) => m.to).sort(), ["asha@example.com", "asha@example.com", "practice@example.com"]);
+    assert.equal(mail.practice.length, 2);
+    const full = mail.practice[1];
+    assert.match(full.subject, /^New self-check result: .* \(Asha Verma\)$/);
+    assert.match(full.text, /Asha Verma \(asha@example\.com\)/);
+    assert.match(full.text, /Overall score: 100 \/ 100/);
+    assert.equal(full.attachments?.[0]?.contentType, "application/pdf");
+    assert.match(full.text, /attached as a PDF/);
+  });
+
+  it("tells the practice's own inbox even when the assessment has no extra recipients", async () => {
+    const doc = await publishedListening(store); // notifications off, no recipients
+    await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: false, shareWithPractice: false } }), { wait });
+    assert.equal(mail.sent.length, 0);
+    assert.equal(mail.practice.length, 1);
+    assert.match(mail.practice[0].subject, /^New self-check completed/);
+  });
+
+  it("does not tell the practice twice about the same submission", async () => {
+    const doc = await publishedListening(store);
+    const body = submitBody();
+    await submitAssessment(store, doc.slug, body, { wait });
+    await submitAssessment(store, doc.slug, body, { wait });
+    assert.equal(mail.practice.length, 1);
+    assert.equal(mail.sent.length, 1);
+  });
+
+  it("answers straight away and sends the emails in the background", async () => {
+    const doc = await publishedListening(store);
+    let open!: () => void;
+    const gate = new Promise<void>((resolve) => (open = resolve));
+    const slow: MailProvider = {
+      name: "slow",
+      async send(message) {
+        await gate;
+        return mail.send(message);
+      },
+    };
+    setMailProviderForTests(slow);
+    setInlineBackgroundForTests(false);
+    try {
+      const res = await submitAssessment(store, doc.slug, submitBody(), { wait });
+      assert.equal(res.email.status, "pending"); // answered while the mail server has not been reached
+      assert.equal(mail.sent.length, 0);
+      assert.match(res.email.message, /on their way/);
+      assert.equal((await getResultView(store, res.resultToken)).email.status, "pending");
+
+      open();
+      for (let i = 0; i < 100 && (await getResultView(store, res.resultToken)).email.status === "pending"; i++) await new Promise((r) => setTimeout(r, 20));
+      assert.equal((await getResultView(store, res.resultToken)).email.status, "sent");
+      assert.equal(mail.sent.length, 1);
+      assert.equal(mail.practice.length, 1);
+    } finally {
+      open();
+      setInlineBackgroundForTests(true);
+    }
   });
 });
 

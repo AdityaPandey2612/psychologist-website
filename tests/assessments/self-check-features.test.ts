@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import "./setup";
 import { beforeEach, describe, it } from "node:test";
 import { NextRequest } from "next/server";
 import { GET as pdfRoute } from "../../app/api/assessments/results/[token]/pdf/route";
@@ -7,6 +8,7 @@ import { COL } from "../../lib/assessments/server/config";
 import { deliverResultEmail } from "../../lib/assessments/server/emailService";
 import { ApiError } from "../../lib/assessments/server/http";
 import { detectImageType, MAX_THUMBNAIL_BYTES } from "../../lib/assessments/server/imageUpload";
+import { OWNER_EMAIL } from "../../lib/assessments/server/mailAccount";
 import { setMailProviderForTests, type MailMessage, type MailProvider, type SendOutcome } from "../../lib/assessments/server/mail";
 import { createAssessment, deleteAssessment, listPublished, publishAssessment, updateAssessment } from "../../lib/assessments/server/service";
 import { MemoryStore, setStoreForTests } from "../../lib/assessments/server/store";
@@ -21,8 +23,13 @@ const wait = async () => {};
 class FakeMail implements MailProvider {
   readonly name = "fake";
   sent: MailMessage[] = [];
+  practice: MailMessage[] = [];
   outcomes: SendOutcome[] = [];
   async send(message: MailMessage): Promise<SendOutcome> {
+    if (message.to === OWNER_EMAIL) {
+      this.practice.push(message);
+      return { ok: true as const, messageId: "<practice@test>" };
+    }
     const next = this.outcomes.shift() ?? { ok: true as const, messageId: "<m@test>" };
     if (next.ok) this.sent.push(message);
     return next;

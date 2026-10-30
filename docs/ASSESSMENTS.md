@@ -45,8 +45,22 @@ npm test             # unit/integration tests for scoring, logic, versions, emai
 | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Already set | Used to verify admin ID tokens. |
 | `FIREBASE_STORAGE_BUCKET` | Optional | Bucket for thumbnail uploads; defaults to `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` (already set). Uploads also need the service-account credentials above. |
 
-Without `SMTP_HOST`/`MAIL_FROM` the platform still works: participants see their results on screen and the status reads
+Email works out of the box: the Gmail sign-in of the practice's sending account is kept in `lib/assessments/server/mailAccount.ts`
+(same idea as the Firebase key: only safe while the repository stays private; to rotate it, delete the app password in the Google
+account and put the new one in `SMTP_PASS`). The variables above, when set, take priority over it. `ASSESSMENT_IGNORE_EMBEDDED_MAIL=1`
+switches the embedded sign-in off (the tests and local test copies use it, so they can never send real email).
+Without any sign-in the platform still works: participants see their results on screen and the status reads
 "Email delivery isn't set up", never "sent".
+
+**Who gets which email, and when**
+
+* **The participant** gets their results by email, with the PDF report attached, when "Email my results to me" is ticked
+  (it starts ticked and can be unticked).
+* **The practice's own inbox** (`OWNER_EMAIL` in `mailAccount.ts`) is told about every completed self-check. The note includes the
+  person's name, email, result and PDF only if they ticked "Share my results with the practice" (unticked by default);
+  otherwise it only says that someone completed it. Addresses added under Settings -> Email are told as well.
+* Both emails use the site colours and logo, and go out **after the response**: the participant sees their results at once and the
+  results page shows "on their way", then "accepted for delivery" (or the failure, with a retry button) a few seconds later.
 
 **Local development without credentials:** if no Firebase Admin credentials are present and `NODE_ENV` is not
 `production`, a JSON file store at `.data/assessments-dev.json` is used so you can try everything locally. It is
@@ -179,7 +193,7 @@ mark are **editable starter wording** (the questionnaire only promises the page)
 5. **Scoring**: enable, define skills/contexts, link scored questions, set levels (thresholds), self-perception,
    insights/misconceptions/recommendations (conditional on scores) and the practice plan.
 6. **Results**: enable/disable/reorder result sections, add custom messages, choose chart style.
-7. **Settings**: introduction, navigation, email template, practice notification (needs participant consent), peer
+7. **Settings**: introduction, navigation, email template, extra practice recipients (details only with participant consent), peer
    feedback, privacy mode.
 8. **Preview**: run the whole participant experience with your unsaved edits; nothing is stored or emailed.
 9. **Publish** (validation errors block publishing). Unpublish, archive, duplicate from the same bar.

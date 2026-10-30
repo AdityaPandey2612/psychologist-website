@@ -47,7 +47,8 @@ interface DetailErrors {
   consent?: string;
 }
 
-const NO_CONSENT: Consent = { storeResponses: false, emailResults: false, shareWithPractice: false };
+// Emailing the results to the address just typed starts ticked (and can be unticked); the other two are only ever ticked by the person.
+const DEFAULT_CONSENT: Consent = { storeResponses: false, emailResults: true, shareWithPractice: false };
 
 function Paragraphs({ text, className }: { text: string; className?: string }) {
   return (
@@ -71,7 +72,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
   const [answers, setAnswers] = useState<Answers>({});
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState<Consent>(NO_CONSENT);
+  const [consent, setConsent] = useState<Consent>(DEFAULT_CONSENT);
   const [website, setWebsite] = useState("");
   const [stepId, setStepId] = useState<string>(preview ? "intro" : "details");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -100,7 +101,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
         setAnswers(draft.answers);
         setName(draft.name);
         setEmail(draft.email);
-        setConsent({ ...NO_CONSENT, ...draft.consent });
+        setConsent({ ...DEFAULT_CONSENT, ...draft.consent });
         setStepId(draft.stepId);
         idempotencyKey.current = draft.idempotencyKey;
         setRestoredAt(draft.savedAt);
@@ -353,7 +354,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
     setAnswers({});
     setName("");
     setEmail("");
-    setConsent(NO_CONSENT);
+    setConsent(DEFAULT_CONSENT);
     setErrors({});
     setDetailErrors({});
     setSubmitError(null);

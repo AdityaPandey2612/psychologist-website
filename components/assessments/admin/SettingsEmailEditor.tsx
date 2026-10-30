@@ -15,7 +15,7 @@ export function SettingsEmailEditor({ definition, onChange }: EditorProps) {
   return (
     <Panel
       title="Email results"
-      description="Emailing is optional. When it is on and the server has mail credentials, participants can tick a box to receive a summary of their results. Without credentials (SMTP_* and MAIL_FROM, set on the server and never exposed to the browser) the option is simply not shown and no email is attempted."
+      description="Emailing is optional. When it is on and the server has mail credentials, participants can tick a box to receive a summary of their results. The mail sign-in is kept on the server and never exposed to the browser (SMTP_* and MAIL_FROM in the environment take priority over it). Without any sign-in the option is simply not shown and no email is attempted."
     >
       <Toggle
         checked={email.enabled}
@@ -59,12 +59,12 @@ export function SettingsEmailEditor({ definition, onChange }: EditorProps) {
             <Toggle
               checked={email.adminNotify.enabled}
               onChange={(enabled) => setNotify({ enabled })}
-              label="Notify the practice about completed assessments"
-              description="Sends a short summary (name, email, score) to the addresses below."
+              label="Also notify these addresses about completed assessments"
+              description="The practice inbox is always told. Addresses added here get the same note."
             />
             <Alert tone="info" className="mt-3">
-              <strong>Never automatic.</strong> Participants see a separate, unticked checkbox — “Share my results with the practice” — and a notification is sent only for those who tick it.
-              Without that consent nothing is sent to anyone but the participant.
+              <strong>Details only with consent.</strong> Participants see a separate, unticked checkbox — “Share my results with the practice”. For those who tick it, the note includes their name, email, result and PDF report.
+              For everyone else the note only says that someone completed the self-check.
             </Alert>
 
             {email.adminNotify.enabled && (
