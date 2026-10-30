@@ -56,9 +56,13 @@ Without any sign-in the platform still works: participants see their results on 
 
 * **The participant** gets their results by email, with the PDF report attached, when "Email my results to me" is ticked
   (it starts ticked and can be unticked).
-* **The practice's own inbox** (`OWNER_EMAIL` in `mailAccount.ts`) is told about every completed self-check. The note includes the
-  person's name, email, result and PDF only if they ticked "Share my results with the practice" (unticked by default);
-  otherwise it only says that someone completed it. Addresses added under Settings -> Email are told as well.
+* **The practice's own inbox** (`OWNER_EMAIL` in `mailAccount.ts`) is told about every completed self-check. The note has the
+  person's name, email, the assessment, how many questions they answered, when they finished (IST), the score and level, a
+  warning when a support message was shown, and the PDF report. That full note is sent when Settings -> Privacy is **"Everything"** (the Mood Self-Assessment uses it, and its form tells people their name, email and results go to the
+  practice) or when the person ticked "Share my results with the practice". Otherwise the note only says that someone
+  completed it. Addresses added under Settings -> Email are told as well.
+* **The PDF report** (the download, the attachment for the participant and the one for the practice) states, on its first page,
+  which assessment it is, how many questions were answered ("21 of 21") and the date.
 * Both emails use the site colours and logo, and go out **after the response**: the participant sees their results at once and the
   results page shows "on their way", then "accepted for delivery" (or the failure, with a retry button) a few seconds later.
 

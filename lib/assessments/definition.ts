@@ -921,12 +921,15 @@ export function sharingOffered(definition: Pick<AssessmentDefinition, "email" | 
  * does not offer to email results at all.
  */
 export function toPublicForm(definition: AssessmentDefinition, options: { emailAvailable?: boolean } = {}) {
+  // When the practice sees everyone's results anyway, there is nothing to ask: the form says so instead.
+  const practiceSeesResults = definition.privacy.adminViewMode === "full";
   return {
     intro: definition.intro,
     navigation: definition.navigation,
     peerEnabled: definition.peer.enabled,
     emailEnabled: definition.email.enabled && (options.emailAvailable ?? true),
-    shareWithPracticeOffered: sharingOffered(definition),
+    practiceSeesResults,
+    shareWithPracticeOffered: sharingOffered(definition) && !practiceSeesResults,
     sections: definition.sections.map((s) => ({
       id: s.id,
       title: s.title,

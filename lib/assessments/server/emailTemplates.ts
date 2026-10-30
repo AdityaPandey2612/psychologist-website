@@ -1,3 +1,4 @@
+import { describeQuestionCounts } from "../counts";
 import { escapeHtml } from "../text";
 import type { AssessmentDefinition, AssessmentResult } from "../types";
 
@@ -20,6 +21,8 @@ export interface EmailContext {
   attached?: boolean;
   assessmentTitle: string;
   completedAt: Date;
+  /** How many questions were answered; shown under the title. */
+  questions?: { answered: number; total: number };
   result: AssessmentResult;
   definition: AssessmentDefinition;
   resultUrl?: string;
@@ -82,6 +85,23 @@ function wrapEmail(o: { subject: string; siteName: string; logoUrl?: string; tit
 </td></tr></table>
 </body></html>`;
 }
+
+/** Label / value rows on a tinted card, for the practice's note. */
+function facts(rows: Array<[string, string]>): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;background:${C.bg};border-radius:14px;"><tr><td style="padding:10px 18px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows
+      .map(
+        ([label, value], i) =>
+          `<tr><td style="padding:9px 0;${i > 0 ? `border-top:1px solid ${C.line};` : ""}font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:${C.accent};font-weight:700;white-space:nowrap;vertical-align:top;" width="38%">${escapeHtml(label)}</td><td style="padding:9px 0;${i > 0 ? `border-top:1px solid ${C.line};` : ""}font-size:15px;line-height:1.5;color:${C.ink};font-weight:600;">${escapeHtml(value)}</td></tr>`,
+      )
+      .join("")}</table>
+  </td></tr></table>`;
+}
+
+const formatDateTime = (d: Date) =>
+  `${d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata" })}, ${d
+    .toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" })
+    .replace(/\s?(am|pm)/i, (m) => ` ${m.trim().toLowerCase()}`)} IST`;
 
 function button(label: string, href: string): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 8px;"><tr><td style="background:${C.primary};border-radius:999px;"><a href="${escapeHtml(href)}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(label)}</a></td></tr></table>`;
@@ -218,7 +238,7 @@ export function renderResultEmail(ctx: EmailContext): RenderedEmail {
     siteName: ctx.siteName,
     logoUrl: ctx.logoUrl,
     title: ctx.assessmentTitle,
-    subtitle: `Completed ${formatDate(ctx.completedAt)}`,
+    subtitle: `Completed ${formatDate(ctx.completedAt)}${ctx.questions ? ` · ${describeQuestionCounts(ctx.questions)}` : ""}`,
     body: html.join("\n"),
   });
 
@@ -232,8 +252,12 @@ export function renderAdminNotification(ctx: {
   completedAt: Date;
   result: AssessmentResult;
   siteName: string;
-  /** True when the participant agreed to share their results; otherwise nothing personal is included. */
+  /** True when the practice may see who this was and their result; otherwise nothing personal is included. */
   shared?: boolean;
+  /** Why the practice may see it: the participant agreed, or the self-check is set up to send every result. */
+  reason?: "agreed" | "always";
+  /** How many questions were answered. */
+  questions?: { answered: number; total: number };
   /** Set when the participant's PDF report is attached; the email then says so. */
   attached?: boolean;
   /** Link to the submissions screen in the admin. */
@@ -244,10 +268,11 @@ export function renderAdminNotification(ctx: {
   const when = formatDate(ctx.completedAt);
   const html: string[] = [];
   const text: string[] = [];
+  const counted = ctx.questions ? describeQuestionCounts(ctx.questions) : "";
 
   if (!shared) {
     const subject = `New self-check completed: ${ctx.assessmentTitle}`.slice(0, 200);
-    const line = `Someone completed "${ctx.assessmentTitle}" on ${when}. They did not choose to share their name, email or results with the practice, so none are included here.`;
+    const line = `Someone completed "${ctx.assessmentTitle}" on ${when}${counted ? ` (${counted})` : ""}. They did not choose to share their name, email or results with the practice, so none are included here.`;
     html.push(para(line));
     text.push(line, "");
     if (ctx.adminUrl) {
@@ -265,9 +290,19 @@ export function renderAdminNotification(ctx: {
 
   const { result } = ctx;
   const subject = `New self-check result: ${ctx.assessmentTitle} (${ctx.name})`.slice(0, 200);
-  const intro = `${ctx.name} (${ctx.email}) completed "${ctx.assessmentTitle}" on ${when} and agreed to share their results with the practice.`;
+  const intro = `${ctx.name} (${ctx.email}) completed "${ctx.assessmentTitle}" on ${when}.`;
   html.push(para(intro));
   text.push(intro, "");
+
+  const rows: Array<[string, string]> = [
+    ["Name", ctx.name],
+    ["Email", ctx.email],
+    ["Assessment", ctx.assessmentTitle],
+    ...(ctx.questions ? ([["Questions", counted]] as Array<[string, string]>) : []),
+    ["Completed", formatDateTime(ctx.completedAt)],
+  ];
+  html.push(facts(rows));
+  text.push(...rows.map(([label, value]) => `${label}: ${value}`), "");
 
   if (result.content.some((c) => c.kind === "support")) {
     const note = "This person's answers triggered a support message (they were shown crisis contact details). You may want to follow up.";
@@ -287,9 +322,10 @@ export function renderAdminNotification(ctx: {
     html.push(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 18px;background:${C.bg};border-radius:14px;"><tr><td style="padding:20px;" align="center">
       <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${C.accent};font-weight:700;">Overall score</div>
       <div style="font-family:Georgia,serif;font-size:42px;line-height:1.1;color:${C.dark};margin:6px 0;">${shown}<span style="font-size:18px;color:${C.soft};"> / ${outOf}</span></div>
-      ${result.level ? `<div style="font-size:17px;font-weight:600;color:${C.primary};">${escapeHtml(result.level.label)}</div>` : ""}
+      ${result.level ? `<div style="font-size:17px;font-weight:600;color:${C.primary};">${escapeHtml(result.level.label)}</div>${result.level.description ? `<div style="font-size:14px;line-height:1.5;color:${C.soft};margin-top:6px;">${escapeHtml(result.level.description)}</div>` : ""}` : ""}
     </td></tr></table>`);
     text.push(`Overall score: ${shown} / ${outOf}${result.level ? ` (${result.level.label})` : ""}`);
+    if (result.level?.description) text.push(result.level.description);
   } else {
     html.push(para("This assessment is not scored."));
     text.push("This assessment is not scored.");
@@ -310,8 +346,9 @@ export function renderAdminNotification(ctx: {
     html.push(button("Open the admin", ctx.adminUrl));
     text.push(`Open the admin: ${ctx.adminUrl}`, "");
   }
-  html.push(`<p style="margin:18px 0 0;padding-top:14px;border-top:1px solid ${C.line};font-size:12px;line-height:1.6;color:${C.soft};">Sent by ${escapeHtml(ctx.siteName)} because the participant agreed to share their results with the practice.</p>`);
-  text.push(`Sent by ${ctx.siteName} because the participant agreed to share their results with the practice.`);
+  const why = ctx.reason === "always" ? "this self-check is set up to send every result to the practice" : "the participant agreed to share their results with the practice";
+  html.push(`<p style="margin:18px 0 0;padding-top:14px;border-top:1px solid ${C.line};font-size:12px;line-height:1.6;color:${C.soft};">Sent by ${escapeHtml(ctx.siteName)} because ${escapeHtml(why)}.</p>`);
+  text.push(`Sent by ${ctx.siteName} because ${why}.`);
 
   return {
     subject,

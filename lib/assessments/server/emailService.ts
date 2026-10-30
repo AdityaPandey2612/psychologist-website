@@ -2,6 +2,7 @@ import type { AssessmentVersionDoc, EmailRecordDoc, SubmissionDoc, SubmissionEma
 import { COL, publicBaseUrl, SITE_NAME } from "./config";
 import { renderAdminNotification, renderResultEmail } from "./emailTemplates";
 import { getMailProvider, type MailMessage, type SendOutcome } from "./mail";
+import { questionCounts } from "../counts";
 import { OWNER_EMAIL } from "./mailAccount";
 import { renderReportPdf, reportDataFor, reportFileName } from "./pdf/reportPdf";
 import type { DocStore } from "./store";
@@ -60,6 +61,7 @@ async function reportAttachment(submission: SubmissionDoc, version: AssessmentVe
         completedAt: submission.createdAt,
         result: submission.result,
         definition: version.definition,
+        answers: submission.answers,
       }),
     );
     return [{ filename: reportFileName(version.meta.title, submission.respondent.name), content: Buffer.from(bytes), contentType: "application/pdf" }];
@@ -134,6 +136,7 @@ export async function deliverResultEmail(
     name: submission.respondent.name,
     assessmentTitle: version.meta.title,
     completedAt: new Date(submission.createdAt),
+    questions: questionCounts(version.definition, submission.answers),
     result: submission.result,
     definition: version.definition,
     resultUrl: `${publicBaseUrl()}/assessments/results/${submission.accessToken}`,
@@ -183,7 +186,10 @@ export async function deliverAdminNotification(
 ): Promise<void> {
   if (!getMailProvider()) return;
   const cfg = version.definition.email.adminNotify;
-  const shared = submission.consent.shareWithPractice;
+  // The practice sees who this was, with the result and the PDF, when the participant agreed or when the
+  // self-check is set up so that the practice sees everyone ("full"); otherwise it only hears that someone finished.
+  const agreed = submission.consent.shareWithPractice;
+  const shared = agreed || version.definition.privacy.adminViewMode === "full";
   const recipients = [...new Set([OWNER_EMAIL, ...(cfg.enabled ? cfg.recipients : [])].map((r) => r.trim().toLowerCase()).filter(Boolean))];
   const now = options.now ?? (() => new Date());
   const wait = options.wait ?? sleep;
@@ -212,6 +218,8 @@ export async function deliverAdminNotification(
     result: submission.result,
     siteName: SITE_NAME,
     shared,
+    reason: agreed ? "agreed" : "always",
+    questions: questionCounts(version.definition, submission.answers),
     attached: Boolean(attachments),
     adminUrl: `${publicBaseUrl()}/admin/assessments/${submission.assessmentId}/submissions`,
     logoUrl: `${publicBaseUrl()}/logo-transparent.png`,

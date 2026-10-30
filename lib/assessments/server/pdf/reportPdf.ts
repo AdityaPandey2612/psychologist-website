@@ -1,7 +1,8 @@
 import { PDFDocument, degrees, rgb, type PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { site } from "../../../data/site";
-import type { AssessmentDefinition, AssessmentResult } from "../../types";
+import { questionCounts } from "../../counts";
+import type { Answers, AssessmentDefinition, AssessmentResult } from "../../types";
 import { FONT_DATA, LOGO } from "./assets";
 import { PAGE, layoutReport, type FontKey, type Metrics, type Op, type ReportInput } from "./reportLayout";
 
@@ -101,11 +102,14 @@ export function reportDataFor(input: {
   completedAt: string;
   result: AssessmentResult;
   definition: AssessmentDefinition;
+  /** The participant's answers: the report then says how many questions were answered. */
+  answers?: Answers;
 }): ReportData {
   return {
     assessmentTitle: input.assessmentTitle,
     participantName: input.participantName,
     completedAt: input.completedAt,
+    ...(input.answers ? { questions: questionCounts(input.definition, input.answers) } : {}),
     result: input.result,
     results: input.definition.results,
     zoneMap: input.definition.scoring.zoneMap ?? null,

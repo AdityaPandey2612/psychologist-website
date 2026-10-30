@@ -52,6 +52,30 @@ describe("the PDF report layout", () => {
     assert.ok(zoneWord || first.includes("Zone"), "the zone's words are drawn on their own, in their own colour");
   });
 
+  it("states which assessment it is, how many questions were answered and when, on the first page", () => {
+    const mood = moodDefinition();
+    const answers = answersFor(mood, () => "a1");
+    const withCounts = { ...reportDataFor({ assessmentTitle: "Chaitanya Raj Mood Self-Assessment", participantName: "Asha Verma", completedAt: "2026-10-25T04:55:00.000Z", result: computeResult(mood, answers), definition: mood, answers }), brand: "Chaitanya Raj", logoRatio: 3.19 };
+    const [first] = layoutReport(withCounts, metrics);
+    const onFirstPage = texts([first]);
+    assert.ok(onFirstPage.includes("ASSESSMENT"));
+    assert.ok(onFirstPage.includes("Chaitanya Raj Mood Self-Assessment"));
+    assert.ok(onFirstPage.includes("QUESTIONS ANSWERED"));
+    assert.ok(onFirstPage.includes("21 of 21"));
+    assert.ok(onFirstPage.includes("COMPLETED"));
+    assert.ok(onFirstPage.includes("25 October 2026"));
+  });
+
+  it("counts only the questions that were asked, and says so without a count when it has no answers to count", () => {
+    const mood = moodDefinition();
+    const some = answersFor(mood, (_q, index) => (index <= 5 ? "a0" : undefined));
+    const data = { ...reportDataFor({ assessmentTitle: "Mood", participantName: "A", completedAt: "2026-10-25T04:55:00.000Z", result: computeResult(mood, some), definition: mood, answers: some }), brand: "B", logoRatio: 3.19 };
+    assert.deepEqual(data.questions, { answered: 5, total: 21 });
+    const without = { ...reportDataFor({ assessmentTitle: "Mood", participantName: "A", completedAt: "2026-10-25T04:55:00.000Z", result: computeResult(mood, some), definition: mood }), brand: "B", logoRatio: 3.19 };
+    assert.equal(without.questions, undefined);
+    assert.equal(texts(layoutReport(without, metrics)).includes("QUESTIONS ANSWERED"), false);
+  });
+
   it("follows the admin's sections in order, each with what the result page shows", () => {
     const all = texts(layoutReport(input(charisma, charismaAnswers({ warmth: 2, competence: 5, dial: 3, footprint: 4 })), metrics));
     const at = (text: string) => all.findIndex((item) => item === text);

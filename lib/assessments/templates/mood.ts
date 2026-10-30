@@ -389,6 +389,8 @@ export function moodDefinition(): AssessmentDefinition {
       ],
       disclaimer: DISCLAIMER,
     },
+    // The practice receives every result (by email and in the admin), and the form says so.
+    privacy: { adminViewMode: "full" },
     navigation: { layout: "single_page", allowBack: true, showProgress: true },
     sections: [
       {

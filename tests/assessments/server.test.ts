@@ -410,6 +410,41 @@ describe("result email", () => {
     assert.match(full.text, /attached as a PDF/);
   });
 
+  it("sends the practice the full note and the PDF for everyone when the self-check is set up that way", async () => {
+    const doc = await publishedListening(store);
+    const def = structuredClone(doc.definition);
+    def.privacy = { adminViewMode: "full" };
+    await updateAssessment(store, doc.id, { definition: def });
+    await publishAssessment(store, doc.id, user);
+
+    const found = await getPublishedBySlug(store, doc.slug);
+    const form = toPublicForm(found!.version.definition);
+    assert.equal(form.practiceSeesResults, true);
+    assert.equal(form.shareWithPracticeOffered, false); // nothing to ask: the form tells people instead
+
+    await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: true, shareWithPractice: false } }), { wait });
+    assert.equal(mail.practice.length, 1);
+    const note = mail.practice[0];
+    assert.match(note.subject, /^New self-check result: .* \(Asha Verma\)$/);
+    assert.match(note.text, /Name: Asha Verma/);
+    assert.match(note.text, /Email: asha@example\.com/);
+    assert.match(note.text, /Assessment: /);
+    assert.match(note.text, /Questions: \d+ of \d+ questions answered/);
+    assert.match(note.text, /Completed: \d{1,2} \w+ \d{4}, \d{1,2}:\d{2} [ap]m IST/);
+    assert.match(note.text, /because this self-check is set up to send every result to the practice/);
+    assert.equal(note.attachments?.[0]?.contentType, "application/pdf");
+    assert.match(note.html, /#1F5C56/); // the site colours
+  });
+
+  it("tells the participant which assessment it was and how many questions they answered", async () => {
+    const doc = await publishedListening(store);
+    await submitAssessment(store, doc.slug, submitBody(), { wait });
+    const [email] = mail.sent;
+    assert.match(email.html, /Completed \d{1,2} \w+ \d{4} · \d+ of \d+ questions answered/);
+    assert.ok(email.html.includes(`>${doc.title}<`), "the assessment's name is the heading of the email");
+    assert.equal(email.attachments?.[0]?.contentType, "application/pdf");
+  });
+
   it("tells the practice's own inbox even when the assessment has no extra recipients", async () => {
     const doc = await publishedListening(store); // notifications off, no recipients
     await submitAssessment(store, doc.slug, submitBody({ consent: { storeResponses: true, emailResults: false, shareWithPractice: false } }), { wait });

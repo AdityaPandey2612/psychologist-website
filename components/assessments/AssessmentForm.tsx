@@ -553,7 +553,10 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
             <p className="mt-6 flex gap-2 text-sm leading-relaxed text-ink-soft">
               <Lock aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <span>
-                Your results are shown on a private link only you have. This is a self-reflection tool, not a diagnosis. Read our{" "}
+                {form.practiceSeesResults
+                  ? "Your results are shown to you on a private link, and your name, email and results are also sent to the practice. "
+                  : "Your results are shown on a private link only you have. "}
+                This is a self-reflection tool, not a diagnosis. Read our{" "}
                 <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-medium text-primary-dark underline underline-offset-4">
                   privacy policy
                 </a>

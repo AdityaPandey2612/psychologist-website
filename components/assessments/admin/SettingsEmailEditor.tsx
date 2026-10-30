@@ -63,8 +63,8 @@ export function SettingsEmailEditor({ definition, onChange }: EditorProps) {
               description="The practice inbox is always told. Addresses added here get the same note."
             />
             <Alert tone="info" className="mt-3">
-              <strong>Details only with consent.</strong> Participants see a separate, unticked checkbox — “Share my results with the practice”. For those who tick it, the note includes their name, email, result and PDF report.
-              For everyone else the note only says that someone completed the self-check.
+              <strong>Details with consent, or always in “Everything” mode.</strong> In the Privacy settings, “Everything” sends every note with the person&apos;s name, email, result, number of questions answered and PDF report, and the form tells people so.
+              Otherwise participants see a separate, unticked checkbox — “Share my results with the practice” — and the full note is sent only for those who tick it; for everyone else it only says that someone completed the self-check.
             </Alert>
 
             {email.adminNotify.enabled && (

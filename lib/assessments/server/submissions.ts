@@ -255,6 +255,7 @@ export async function getReportPdf(store: DocStore, token: string): Promise<{ by
       completedAt: submission.createdAt,
       result: submission.result,
       definition: version.definition,
+      answers: submission.answers,
     }),
   );
   return { bytes, filename: reportFileName(version.meta.title, submission.respondent.name) };

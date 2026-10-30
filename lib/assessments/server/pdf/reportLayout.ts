@@ -32,6 +32,7 @@ export const COLORS = {
   tint: "#f8e4bd",
   frame: "#9fbdb5",
   supportBg: "#fbeee5",
+  glance: "#eef4f1",
 };
 
 export type FontKey = "display" | "sans" | "sansBold";
@@ -57,6 +58,8 @@ export interface ReportInput {
   assessmentTitle: string;
   participantName: string;
   completedAt: string;
+  /** How many of the questions asked were answered; shown under the banner with the assessment's name. */
+  questions?: { answered: number; total: number };
   result: AssessmentResult;
   results: ResultsConfig;
   /** The zone map's settings (the four zone names), when the assessment has one. */
@@ -238,7 +241,26 @@ export function layoutReport(input: ReportInput, metrics: Metrics): Page[] {
   });
   const meta = [eyebrow === input.assessmentTitle ? "" : input.assessmentTitle, participant, dateLabel(input.completedAt)].filter(Boolean).join("  ·  ");
   flow.text(meta, PAGE.margin, HEADER_HEIGHT - 20, "sans", 9.5, COLORS.bandMuted);
-  flow.y = HEADER_HEIGHT + 30;
+
+  // --- which assessment this is, how many questions were answered, and when: always stated, on the first page
+  const date = dateLabel(input.completedAt);
+  const glance = [
+    { label: "Assessment", value: input.assessmentTitle, share: input.questions ? 0.5 : 0.68 },
+    ...(input.questions ? [{ label: "Questions answered", value: `${input.questions.answered} of ${input.questions.total}`, share: 0.24 }] : []),
+    ...(date ? [{ label: "Completed", value: date, share: input.questions ? 0.26 : 0.32 }] : []),
+  ];
+  const glanceTop = HEADER_HEIGHT + 22;
+  const glanceLines = glance.map((item) => flow.wrap(flow.clean(item.value), "sansBold", 11, CONTENT_WIDTH * item.share - 28).slice(0, 2));
+  const glanceHeight = 40 + Math.max(...glanceLines.map((lines) => lines.length)) * 15;
+  flow.op({ type: "rect", x: PAGE.margin, y: glanceTop, width: CONTENT_WIDTH, height: glanceHeight, fill: COLORS.glance, stroke: COLORS.line, strokeWidth: 0.8 });
+  let glanceX = PAGE.margin;
+  glance.forEach((item, index) => {
+    if (index > 0) flow.op({ type: "line", x1: glanceX, y1: glanceTop + 12, x2: glanceX, y2: glanceTop + glanceHeight - 12, stroke: COLORS.line, width: 0.8 });
+    flow.text(item.label.toUpperCase(), glanceX + 14, glanceTop + 21, "sansBold", 8, COLORS.accent);
+    flow.lines(glanceLines[index], glanceX + 14, glanceTop + 27, "sansBold", 11, COLORS.ink, 15);
+    glanceX += CONTENT_WIDTH * item.share;
+  });
+  flow.y = glanceTop + glanceHeight + 30;
 
   // --- building blocks
   const section = (title: string, bodyHeight = 40) => {
