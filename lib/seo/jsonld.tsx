@@ -173,12 +173,15 @@ export function TherapyJsonLd({
   name,
   description,
   path,
-  complementary
+  complementary,
+  areaServed = "Navi Mumbai"
 }: {
   name: string;
   description: string;
   path: string;
   complementary?: boolean;
+  /** Where the service is offered; the default is the practice's own area. */
+  areaServed?: string | string[];
 }) {
   const url = `${site.url}${path}`;
   return (
@@ -193,7 +196,7 @@ export function TherapyJsonLd({
               url,
               serviceType: name,
               provider: { "@id": ORGANIZATION_ID },
-              areaServed: "Navi Mumbai"
+              areaServed
             }
           : {
               "@context": "https://schema.org",

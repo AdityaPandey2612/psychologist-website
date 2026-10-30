@@ -714,6 +714,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { getTone, splitLede } from "@/lib/tones";
 import { conditionReading } from "@/lib/seo/internalLinks";
+import PastLifeRegressionPage from "@/components/conditions/PastLifeRegressionPage";
 
 export function generateStaticParams() {
   return conditions.map((c) => ({ slug: c.slug }));
@@ -732,6 +733,11 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 export default function ConditionPage({ params }: { params: { slug: string } }) {
   const condition = getCondition(params.slug);
   if (!condition) notFound();
+
+  // This page has its own layout and wording, supplied by the practice.
+  if (condition.slug === "best-past-life-regression-therapy-in-navi-mumbai") {
+    return <PastLifeRegressionPage condition={condition} />;
+  }
 
   const tone = getTone(condition.slug);
   const { lede, rest } = splitLede(condition.intro);

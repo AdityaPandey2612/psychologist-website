@@ -400,144 +400,87 @@ export const conditions: Condition[] = [
     name: "Past Life Regression Therapy",
     audience: "individual",
 
+    // The page itself is written in components/conditions/PastLifeRegressionPage.tsx (copy supplied by the practice);
+    // these fields feed the cards, the navigation, the search snippet and the FAQ structured data.
     shortDescription:
-      "A guided journey into deeper layers of memory, emotion, and subconscious experience for self-discovery, emotional healing, and personal growth.",
+      "A hypnosis-based way to explore unexplained fears and repeating patterns, in person in Mumbai and Navi Mumbai or online worldwide.",
 
-    metaTitle:
-      "Past Life Regression Therapy in Navi Mumbai & Mumbai",
+    metaTitle: "Past Life Regression Therapy: Mumbai, Navi Mumbai & Online",
 
     metaDescription:
-      "Guided past life regression therapy in Vashi and Belapur, Navi Mumbai, or online, for unexplained fears and repeating patterns. Book a session today.",
+      "Book past life regression therapy in Mumbai, Navi Mumbai or online from anywhere in the world, including the UK, US and Canada. 25+ years' experience.",
 
     image: "/images/conditions/past-life-regression-therapy.png",
-    imageAlt: "Placeholder — replace with a descriptive alt text for past life regression therapy",
+    imageAlt: "A person resting with their eyes closed during a guided relaxation session in a calm, softly lit therapy room",
     intro:
-      "Some fears don't seem to have a clear origin. Some patterns in relationships repeat, no matter how much you try to change them. Some feelings sit quietly beneath the surface, familiar, but hard to place. Past Life Regression Therapy offers a gentle, guided way to explore these deeper layers, connecting present-day emotions to their root, and creating space for genuine healing and clarity. At Chaitanya Raj in Vashi and Belapur, Navi Mumbai, we offer Past Life Regression sessions, in person and online, for clients across Mumbai, Navi Mumbai, and Thane. Led by Lt. Col. Rajesh Sharma (Retd), with over 25 years of experience in hypnotherapy and regression therapy, every session is guided at your pace, in a safe and supportive space.",
+      "Past life regression therapy (PLRT) is a hypnosis-based technique in which a person, in a guided relaxed state, explores narratives experienced as memories from a past life. Chaitanya Raj offers PLRT in person in Mumbai and Navi Mumbai (Vashi and CBD Belapur) and online worldwide, including the UK, US and Canada, with clinical hypnotherapist Lt Col Rajesh Sharma (Retd).",
 
     signs: [
-      "Fears or emotional reactions that seem to have no clear origin",
-      "Recurring patterns in relationships or life situations",
-      "Emotional blocks that feel difficult to understand or release",
-      "A desire for deeper self-discovery and personal insight"
+      "A fear or reaction you can't trace to anything that has happened to you",
+      "The same pattern turning up in different relationships or situations",
+      "A feeling of being stuck that logic and effort haven't shifted",
+      "Curiosity about what sits beneath it all"
     ],
 
-    process:
-      "A Past Life Regression session begins with a grounding conversation to understand what you are hoping to explore. You are then guided through gentle relaxation into a deeply meditative state, followed by a guided journey through relevant memories or experiences. Every session concludes with time for reflection and integration, helping you make sense of what came up.",
+    signsHeading: "Does any of this sound familiar?",
 
     approach:
-      "Our approach combines guided hypnotherapy and Past Life Regression techniques, shaped around what you are hoping to explore and heal. Every session is fully guided, paced to your comfort level, and followed by time for reflection and integration.",
-
-    approachPoints: [
-      "An initial conversation to understand your intention for the session",
-      "Gentle guided relaxation into a deep, meditative state",
-      "A fully guided regression experience paced to your comfort",
-      "A supportive, judgment-free space throughout the session",
-      "Time for reflection and integration after the experience",
-      "Ongoing support guided by 25+ years of clinical experience in hypnotherapy and regression work"
-    ],
-
-    benefits: [
-      {
-        title: "Understanding Unexplained Fears",
-        description:
-          "Explore fears, emotional reactions, or patterns that seem to have no clear origin in your present-day experiences."
-      },
-      {
-        title: "Exploring Repeating Life Patterns",
-        description:
-          "Gain deeper insight into recurring patterns in relationships, emotions, and life situations that seem difficult to change."
-      },
-      {
-        title: "Working Through Emotional Blocks",
-        description:
-          "Explore the deeper emotional experiences that may be connected to feelings of being stuck, held back, or unable to move forward."
-      },
-      {
-        title: "Connecting With Your Inner Self",
-        description:
-          "Create space for deeper self-reflection and a greater understanding of your emotions, experiences, and personal journey."
-      },
-      {
-        title: "Exploring the Roots of Emotional Pain",
-        description:
-          "Look beyond surface-level symptoms and explore experiences that may be connected to unresolved emotional patterns."
-      },
-      {
-        title: "Inner Child Healing",
-        description:
-          "Reconnect with earlier emotional experiences and create space to understand, acknowledge, and nurture parts of yourself that may still need attention."
-      },
-      {
-        title: "Finding Greater Clarity",
-        description:
-          "Use guided exploration and reflection to gain a different perspective on personal experiences, relationships, and the questions you carry."
-      },
-      {
-        title: "Personal Growth & Self-Discovery",
-        description:
-          "Explore your inner world with curiosity and openness as part of a deeper journey of personal growth and self-understanding."
-      }
-    ],
-
-    variants: [
-      {
-        title: "What Is Past Life Regression Therapy?",
-        description:
-          "Past Life Regression Therapy is a guided hypnotherapy technique that helps you access deeper layers of memory and subconscious experience, believed by many traditions to include past lives. The goal is practical: identifying the root of a present-day pattern, fear, or emotional block, and working through it at its source."
-      },
-      {
-        title: "Guided Past Life Regression Sessions",
-        description:
-          "Every session is fully guided; you are never left to navigate the experience alone. Your therapist walks with you throughout, creating a calm and safe space for whatever surfaces. Sessions are paced according to your comfort level and include clear reflection and integration afterward."
-      },
-      {
-        title: "Past Life Regression in Mumbai, Navi Mumbai & Thane",
-        description:
-          "Sessions are available in person at our Vashi and Belapur, Navi Mumbai centre, easily accessible for clients across Mumbai, Navi Mumbai, and Thane. Online Past Life Regression sessions are also available for clients who prefer to experience the session from the comfort of their own space."
-      },
-      {
-        title: "Online Past Life Regression Therapy",
-        description:
-          "Online sessions follow the same guided structure as in-person sessions. Many clients find that experiencing the session from a familiar and comfortable environment supports relaxation and allows them to engage fully with the process."
-      }
-    ],
-
-    locations: [
-      "In-person sessions at our Vashi and Belapur, Navi Mumbai centre",
-      "Online sessions from anywhere",
-      "Sessions available for clients across Mumbai, Navi Mumbai, and Thane",
-      "Flexible scheduling to suit your availability"
-    ],
+      "Past life regression therapy (PLRT) is offered as a complementary approach, not a substitute for psychological or medical treatment, and only after an honest conversation about what it involves.",
 
     faqs: [
       {
-        question: "What happens during a Past Life Regression session?",
+        question: "What is past life regression therapy?",
         answer:
-          "You are guided into a deeply relaxed, meditative state and then gently guided through relevant memories or experiences connected to what you are exploring. Every session ends with time to reflect and make sense of what came up."
+          "Past life regression therapy (PLRT) is a hypnosis-based technique. In a guided, relaxed state, you explore narratives and imagery experienced as memories from a past life. It sits outside mainstream evidence-based psychology, and practitioners understand its effects as symbolic rather than literal. It is offered as a complementary approach, never as a replacement for psychological or medical care."
       },
       {
-        question: "Is Past Life Regression the same as hypnosis?",
+        question: "Is past life regression real?",
         answer:
-          "Past Life Regression uses hypnotherapy techniques to reach a deeply relaxed state, allowing access to subconscious memory and experience. You remain aware and in control throughout the session."
+          "It can't be verified, and there is no scientific proof that the experiences are literal past lives. Practitioners generally treat what surfaces as symbolic or narrative. What matters in practice is whether the process helps you understand and reframe a fear or pattern. You don't need to believe in past lives to explore it, and we never promise a particular outcome."
       },
       {
-        question: "Can Past Life Regression be done online?",
+        question: "Can past life regression be done online?",
         answer:
-          "Yes. Online sessions follow the same guided structure as in-person sessions, and many clients find that the comfort of their own space supports the experience well."
+          "Yes, from anywhere in the world. Online sessions follow the same four stages as in-person ones: a grounding conversation, guided relaxation, the regression itself and an integration conversation. You need a private, quiet space, a stable internet connection and headphones. Some hypnotherapy work suits in-person sessions better, and Lt Col Sharma will tell you honestly if that applies to you."
       },
       {
-        question: "How many sessions are recommended?",
+        question: "Does online past life regression work for people in the UK, US, Canada or elsewhere?",
         answer:
-          "Many clients find value in a single session, while others choose a short series to explore a specific pattern more deeply. This is discussed together based on what you are hoping to work through."
+          "Online sessions are open to clients anywhere in the world, including the UK, US and Canada, and we have worked with online clients in Ireland, the UK and the US. Sessions are scheduled across the time difference. We can't promise results for any individual."
       },
       {
-        question: "Is a Past Life Regression session confidential?",
+        question: "How is past life regression different from hypnotherapy?",
         answer:
-          "Yes, every session is completely confidential. What you share and experience stays between you and your therapist."
+          "Hypnotherapy uses guided relaxation and focused attention to work with habits, fears and emotions in the present. Past life regression uses the same hypnotic state but directs the exploration towards narratives experienced as past-life memories. Both are led by a trained therapist, and PLRT is offered as a complementary approach after an honest conversation about what it involves."
+      },
+      {
+        question: "What happens during a past life regression session?",
+        answer:
+          "A session begins with a grounding conversation about what you want to explore. You are then guided into deep relaxation, stay aware throughout, and can stop at any point. The regression follows at your pace. The session closes with time to come back fully and reflect, which helps you make sense of what came up."
+      },
+      {
+        question: "How many sessions do I need?",
+        answer:
+          "Some people find value in one session; others choose a short series to explore a specific pattern in more depth. There is no fixed number. We decide together after your first conversation, based on what you hope to explore, and you can stop whenever you choose."
+      },
+      {
+        question: "Is past life regression therapy safe?",
+        answer:
+          "Sessions are fully guided and paced to your comfort, and you can stop at any time. Strong emotions can come up, which is why every session includes grounding and integration time. If you take medication, are under psychiatric care or are going through a crisis, tell us first so we can advise honestly on whether and when PLRT is suitable."
+      },
+      {
+        question: "How much does past life regression therapy cost?",
+        answer:
+          "Fees are listed on our fees page and are the same online and in person. A short consultation is available if you would like to talk through what PLRT involves before booking a full session. Contact us on +91 96284 93677 to ask about current fees and availability."
+      },
+      {
+        question: "Do you offer past life regression therapy in Mumbai?",
+        answer:
+          "Yes. In-person sessions are held at our clinics in Vashi (215, 2nd Floor, Gold City, Sector 19 D) and CBD Belapur, Navi Mumbai, and clients also travel to us from across Mumbai and Thane. If you live elsewhere, online sessions are available worldwide."
       }
     ],
 
-    relatedTherapies: ["clinical-hypnotherapy"]
+    relatedTherapies: ["clinical-hypnotherapy", "age-regression", "ego-state-therapy"]
   },
   // {
   //   slug: "leaderhsipa and team building "
