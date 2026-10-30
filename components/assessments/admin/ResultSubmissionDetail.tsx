@@ -14,6 +14,7 @@ export interface SubmissionDetailData extends SubmissionRow {
   peerResponses: number;
   emailError?: string;
   emailAttempts: number;
+  practiceNote?: { status: "sending" | "sent" | "failed"; error?: string } | null;
 }
 
 function SkillBar({ name, score, band }: { name: string; score: number | null; band?: string }) {
@@ -158,7 +159,7 @@ export function ResultSubmissionDetail({
                     <span className="text-sm font-semibold text-primary-dark">Results email</span>
                     <EmailStatusBadge status={detail.email.status} />
                   </div>
-                  {canRetryEmail(detail.email.status) && (
+                  {(canRetryEmail(detail.email.status) || detail.practiceNote?.status === "failed") && (
                     <button type="button" onClick={onRetryEmail} disabled={busy !== null} className="btn-outline px-4 py-1.5 text-sm disabled:opacity-60">
                       {busy === "email" && <Spinner label="Sending" className="h-4 w-4" />}
                       Retry email
@@ -168,6 +169,14 @@ export function ResultSubmissionDetail({
                 <p className="mt-2 text-sm text-ink-soft">{detail.email.message}</p>
                 {detail.emailError && detail.email.status === "failed" && <p className="mt-1 text-sm text-accent-ink">Last error: {detail.emailError}</p>}
                 {detail.emailAttempts > 0 && <p className="mt-1 text-xs text-ink-soft">Sending attempts so far: {detail.emailAttempts}</p>}
+                {detail.practiceNote && (
+                  <p className="mt-3 border-t border-primary/10 pt-3 text-sm text-ink-soft">
+                    <span className="font-semibold text-primary-dark">Note to the practice:</span>{" "}
+                    {detail.practiceNote.status === "sent" ? "sent" : detail.practiceNote.status === "sending" ? "being sent" : "not sent"}
+                    {detail.practiceNote.status === "failed" && detail.practiceNote.error ? ` (${detail.practiceNote.error})` : ""}
+                    {detail.practiceNote.status === "failed" ? ". Use Retry email to send it again." : "."}
+                  </p>
+                )}
               </section>
 
               <section aria-label="Answers">

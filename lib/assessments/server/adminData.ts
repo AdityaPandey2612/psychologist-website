@@ -4,12 +4,13 @@ import type {
   AdminViewMode,
   AssessmentDoc,
   AssessmentVersionDoc,
+  EmailRecordDoc,
   PeerResponseDoc,
   SubmissionDoc,
   SubmissionEmailState,
 } from "../types";
 import { COL } from "./config";
-import { deliverResultEmail, type DeliveryOptions } from "./emailService";
+import { deliverAdminNotification, deliverResultEmail, type DeliveryOptions } from "./emailService";
 import { ApiError, conflict, notFound } from "./http";
 import { getAssessment, listAssessments } from "./service";
 import { describeEmail } from "./submissions";
@@ -183,6 +184,7 @@ export async function getSubmissionDetail(store: DocStore, assessmentId: string,
     : null;
 
   const peerCount = await store.count(COL.peers, [["submissionId", submissionId]]);
+  const note = await store.get<EmailRecordDoc>(COL.emails, `${submissionId}_admin`);
   return {
     ...toRow(mode, submission),
     result: submission.result,
@@ -190,6 +192,8 @@ export async function getSubmissionDetail(store: DocStore, assessmentId: string,
     peerResponses: peerCount,
     emailError: submission.email.error,
     emailAttempts: submission.email.attempts,
+    /** How the note to the practice went (null when none was made, e.g. for older submissions). */
+    practiceNote: note ? { status: note.status, error: note.status === "failed" ? note.error : undefined } : null,
   };
 }
 
@@ -200,6 +204,12 @@ export async function retrySubmissionEmail(store: DocStore, assessmentId: string
   const version = await store.get<AssessmentVersionDoc>(COL.versions, submission.versionId);
   if (!version) throw notFound("Assessment version not found.");
   const state = await deliverResultEmail(store, submission, version, options);
+  // The note to the practice is sent again only if it failed or was interrupted; one that went out is never repeated.
+  try {
+    await deliverAdminNotification(store, submission, version, { ...options, retryOnly: true });
+  } catch (error) {
+    console.error("[assessments] Retrying the note to the practice failed:", error instanceof Error ? error.message : "unknown error");
+  }
   return { status: state.status, message: describeEmail(state) };
 }
 

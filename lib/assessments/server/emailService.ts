@@ -18,6 +18,11 @@ import type { DocStore } from "./store";
 export const MAX_ATTEMPTS = 6;
 const IN_PROGRESS_MS = 60_000;
 const RETRY_DELAY_MS = 700;
+/** One address is emailed at most this many results in a day, so the form cannot be used to flood someone's inbox. */
+export const MAX_RESULT_EMAILS_PER_ADDRESS = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Messages being handed to the mail server at the same moment, per server instance (Gmail refuses many parallel connections). */
+const MAX_CONCURRENT_SENDS = 3;
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -27,17 +32,51 @@ export interface DeliveryOptions {
   wait?: (ms: number) => Promise<void>;
 }
 
-async function sendWithRetry(message: MailMessage, wait: (ms: number) => Promise<void>): Promise<SendOutcome & { attempts: number }> {
+let activeSends = 0;
+const waitingSends: Array<() => void> = [];
+
+/** Runs the task when one of the few send slots is free; a finishing send hands its slot straight to the next in line. */
+async function withSendSlot<T>(task: () => Promise<T>): Promise<T> {
+  if (activeSends >= MAX_CONCURRENT_SENDS) await new Promise<void>((resolve) => waitingSends.push(resolve));
+  else activeSends += 1;
+  try {
+    return await task();
+  } finally {
+    const next = waitingSends.shift();
+    if (next) next();
+    else activeSends -= 1;
+  }
+}
+
+/** One try at the mail server. A provider that throws (instead of reporting a failure) is turned into a failure. */
+async function trySend(message: MailMessage): Promise<SendOutcome> {
   const provider = getMailProvider();
-  if (!provider) return { ok: false, retryable: false, error: "Email is not set up on this site yet.", attempts: 0 };
-  let outcome = await provider.send(message);
+  if (!provider) return { ok: false, retryable: false, error: "Email is not set up on this site yet." };
+  try {
+    return await withSendSlot(() => provider.send(message));
+  } catch (error) {
+    console.error("[assessments] The mail provider threw:", error instanceof Error ? error.message : "unknown error");
+    return { ok: false, retryable: false, error: "The email could not be sent." };
+  }
+}
+
+async function sendWithRetry(message: MailMessage, wait: (ms: number) => Promise<void>): Promise<SendOutcome & { attempts: number }> {
+  let outcome = await trySend(message);
   let attempts = 1;
   if (!outcome.ok && outcome.retryable) {
     await wait(RETRY_DELAY_MS);
-    outcome = await provider.send(message);
+    outcome = await trySend(message);
     attempts = 2;
   }
   return { ...outcome, attempts };
+}
+
+/** How many results were already emailed to this address in the last day (not counting `exceptId`). */
+async function recentResultEmailsTo(store: DocStore, address: string, now: Date, exceptId: string): Promise<number> {
+  const rows = await store.query<EmailRecordDoc>(COL.emails, { where: [["to", address]], limit: 100 });
+  return rows.filter(
+    (r) => r.kind === "result" && r.id !== exceptId && (r.status === "sent" || r.status === "sending") && now.getTime() - Date.parse(r.createdAt) < DAY_MS,
+  ).length;
 }
 
 async function updateSubmissionEmail(store: DocStore, submissionId: string, patch: Partial<SubmissionEmailState>): Promise<SubmissionEmailState> {
@@ -130,26 +169,48 @@ export async function deliverResultEmail(
     });
   }
 
-  const attachments = await reportAttachment(submission, version);
-  const rendered = renderResultEmail({
-    attached: Boolean(attachments),
-    name: submission.respondent.name,
-    assessmentTitle: version.meta.title,
-    completedAt: new Date(submission.createdAt),
-    questions: questionCounts(version.definition, submission.answers),
-    result: submission.result,
-    definition: version.definition,
-    resultUrl: `${publicBaseUrl()}/assessments/results/${submission.accessToken}`,
-    siteName: SITE_NAME,
-    logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
-  });
-
-  const outcome = await sendWithRetry(
-    { to: submission.respondent.email, subject: rendered.subject, html: rendered.html, text: rendered.text, ...(attachments ? { attachments } : {}) },
-    wait,
-  );
-  const stamp = now().toISOString();
   const attempts = record?.attempts ?? 1;
+
+  // Emailing one address over and over is how a form gets used to flood someone's inbox: stop at a few a day.
+  if ((await recentResultEmailsTo(store, submission.respondent.email, now(), recordId)) >= MAX_RESULT_EMAILS_PER_ADDRESS) {
+    const error = "We've already emailed this address several times today, so we haven't sent another. Your results stay available on this page.";
+    const stamp = now().toISOString();
+    await store.transact<EmailRecordDoc>(COL.emails, recordId, (cur) => (cur ? { ...cur, status: "failed", attempts: MAX_ATTEMPTS, error, updatedAt: stamp } : undefined));
+    return updateSubmissionEmail(store, submission.id, { status: "failed", attempts: MAX_ATTEMPTS, lastAttemptAt: stamp, error });
+  }
+
+  // Whatever goes wrong from here (the PDF, the template, the mail server), the record ends as "failed", never stuck on "sending".
+  let rendered = { subject: "" };
+  let outcome: SendOutcome;
+  try {
+    const attachments = await reportAttachment(submission, version);
+    // Someone whose data was deleted (at their request) while this was being prepared gets no email.
+    if (!(await store.get(COL.submissions, submission.id))) {
+      await store.delete(COL.emails, recordId);
+      return { status: "failed", attempts: 0, error: "Those results no longer exist." };
+    }
+    const email = renderResultEmail({
+      attached: Boolean(attachments),
+      name: submission.respondent.name,
+      assessmentTitle: version.meta.title,
+      completedAt: new Date(submission.createdAt),
+      questions: questionCounts(version.definition, submission.answers),
+      result: submission.result,
+      definition: version.definition,
+      resultUrl: `${publicBaseUrl()}/assessments/results/${submission.accessToken}`,
+      siteName: SITE_NAME,
+      logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
+    });
+    rendered = email;
+    outcome = await sendWithRetry(
+      { to: submission.respondent.email, subject: email.subject, html: email.html, text: email.text, ...(attachments ? { attachments } : {}) },
+      wait,
+    );
+  } catch (error) {
+    console.error("[assessments] Preparing a result email failed:", error instanceof Error ? error.message : "unknown error");
+    outcome = { ok: false, retryable: false, error: "The email could not be sent." };
+  }
+  const stamp = now().toISOString();
 
   await store.transact<EmailRecordDoc>(COL.emails, recordId, (cur) =>
     cur
@@ -182,7 +243,7 @@ export async function deliverAdminNotification(
   store: DocStore,
   submission: SubmissionDoc,
   version: AssessmentVersionDoc,
-  options: DeliveryOptions = {},
+  options: DeliveryOptions & { retryOnly?: boolean } = {},
 ): Promise<void> {
   if (!getMailProvider()) return;
   const cfg = version.definition.email.adminNotify;
@@ -194,43 +255,66 @@ export async function deliverAdminNotification(
   const now = options.now ?? (() => new Date());
   const wait = options.wait ?? sleep;
 
+  // One record per submission. The first caller claims it; it can be claimed again only when the note failed or the
+  // sender was interrupted (nothing happened for a minute). `retryOnly` (the admin's retry) never starts a first note.
   const recordId = `${submission.id}_admin`;
-  const created = await store.create(COL.emails, recordId, {
-    id: recordId,
-    submissionId: submission.id,
-    assessmentId: submission.assessmentId,
-    kind: "admin_notification",
-    to: recipients.join(", "),
-    subject: "",
-    status: "sending",
-    attempts: 1,
-    createdAt: now().toISOString(),
-    updatedAt: now().toISOString(),
-  } satisfies EmailRecordDoc);
-  if (!created) return; // already sent (or in flight) for this submission
-
-  const attachments = shared ? await reportAttachment(submission, version) : undefined;
-  const rendered = renderAdminNotification({
-    name: submission.respondent.name,
-    email: submission.respondent.email,
-    assessmentTitle: version.meta.title,
-    completedAt: new Date(submission.createdAt),
-    result: submission.result,
-    siteName: SITE_NAME,
-    shared,
-    reason: agreed ? "agreed" : "always",
-    questions: questionCounts(version.definition, submission.answers),
-    attached: Boolean(attachments),
-    adminUrl: `${publicBaseUrl()}/admin/assessments/${submission.assessmentId}/submissions`,
-    logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
+  let won = false;
+  await store.transact<EmailRecordDoc>(COL.emails, recordId, (cur) => {
+    won = false;
+    if (cur?.status === "sent") return undefined;
+    if (cur?.status === "sending" && now().getTime() - Date.parse(cur.updatedAt) < IN_PROGRESS_MS) return undefined;
+    if (!cur && options.retryOnly) return undefined;
+    if ((cur?.attempts ?? 0) >= MAX_ATTEMPTS) return undefined;
+    won = true;
+    const stamp = now().toISOString();
+    return {
+      id: recordId,
+      submissionId: submission.id,
+      assessmentId: submission.assessmentId,
+      kind: "admin_notification",
+      to: recipients.join(", "),
+      subject: cur?.subject ?? "",
+      status: "sending",
+      attempts: (cur?.attempts ?? 0) + 1,
+      createdAt: cur?.createdAt ?? stamp,
+      updatedAt: stamp,
+    } satisfies EmailRecordDoc;
   });
-  const outcomes = await Promise.all(
-    recipients.map((to) => sendWithRetry({ to, subject: rendered.subject, html: rendered.html, text: rendered.text, ...(attachments ? { attachments } : {}) }, wait)),
-  );
-  const failed = outcomes.find((o) => !o.ok);
+  if (!won) return;
+
+  let subject = "";
+  let failure: string | undefined;
+  try {
+    const attachments = shared ? await reportAttachment(submission, version) : undefined;
+    if (!(await store.get(COL.submissions, submission.id))) {
+      await store.delete(COL.emails, recordId);
+      return;
+    }
+    const rendered = renderAdminNotification({
+      name: submission.respondent.name,
+      email: submission.respondent.email,
+      assessmentTitle: version.meta.title,
+      completedAt: new Date(submission.createdAt),
+      result: submission.result,
+      siteName: SITE_NAME,
+      shared,
+      reason: agreed ? "agreed" : "always",
+      questions: questionCounts(version.definition, submission.answers),
+      attached: Boolean(attachments),
+      adminUrl: `${publicBaseUrl()}/admin/assessments/${submission.assessmentId}/submissions`,
+      logoUrl: `${publicBaseUrl()}/logo-transparent.png`,
+    });
+    subject = rendered.subject;
+    const outcomes = await Promise.all(
+      recipients.map((to) => sendWithRetry({ to, subject: rendered.subject, html: rendered.html, text: rendered.text, ...(attachments ? { attachments } : {}) }, wait)),
+    );
+    const failed = outcomes.find((o) => !o.ok);
+    if (failed && !failed.ok) failure = failed.error;
+  } catch (error) {
+    console.error("[assessments] Preparing the note to the practice failed:", error instanceof Error ? error.message : "unknown error");
+    failure = "The note could not be sent.";
+  }
   await store.transact<EmailRecordDoc>(COL.emails, recordId, (cur) =>
-    cur
-      ? { ...cur, subject: rendered.subject, status: failed ? "failed" : "sent", error: failed && !failed.ok ? failed.error : undefined, updatedAt: now().toISOString() }
-      : undefined,
+    cur ? { ...cur, subject, status: failure ? "failed" : "sent", error: failure, updatedAt: now().toISOString() } : undefined,
   );
 }

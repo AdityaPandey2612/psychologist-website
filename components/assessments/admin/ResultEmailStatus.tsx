@@ -16,5 +16,5 @@ export function EmailStatusBadge({ status }: { status: EmailStatus }) {
   return <Badge tone={tone}>{label}</Badge>;
 }
 
-/** A retry makes sense when the participant asked for an email that hasn't been accepted by the mail server. */
-export const canRetryEmail = (status: EmailStatus) => status === "failed" || status === "not_configured";
+/** A retry makes sense when an email hasn't been accepted by the mail server (one that is still being sent is never started twice). */
+export const canRetryEmail = (status: EmailStatus) => status === "failed" || status === "not_configured" || status === "pending";

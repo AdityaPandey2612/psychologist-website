@@ -82,6 +82,42 @@ export function isValidEmail(value: unknown): value is string {
   return EMAIL_PATTERN.test(email);
 }
 
+// Domains people most often mistype, and other real domains that look like one of them (so a real address is never "corrected").
+const COMMON_DOMAINS = ["gmail.com", "yahoo.com", "yahoo.co.in", "outlook.com", "hotmail.com", "live.com", "icloud.com", "rediffmail.com", "protonmail.com", "ymail.com", "aol.com"];
+const OTHER_REAL_DOMAINS = [
+  "mail.com", "gmx.com", "gmx.net", "gmx.de", "zoho.com", "proton.me", "pm.me", "me.com", "mac.com", "msn.com", "yahoo.in", "yahoo.co.uk", "yahoo.fr", "yahoo.de",
+  "outlook.in", "hotmail.co.uk", "hotmail.in", "hotmail.fr", "live.in", "live.co.uk", "googlemail.com", "rocketmail.com", "mail.ru", "yandex.com", "qq.com", "163.com", "126.com",
+];
+
+/** Edit distance where swapping two neighbouring letters (gmial) counts as one edit. */
+function editDistance(a: string, b: string): number {
+  const d: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+  }
+  return d[a.length][b.length];
+}
+
+/**
+ * For an address like asha@gmial.com, the address the person probably meant (asha@gmail.com), or null when the
+ * domain is a known one, or nothing common is a single mistake away. Only a hint: the person decides.
+ */
+export function suggestEmailFix(value: string): string | null {
+  const email = value.trim().toLowerCase();
+  const at = email.lastIndexOf("@");
+  if (at < 1) return null;
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  if (!domain || COMMON_DOMAINS.includes(domain) || OTHER_REAL_DOMAINS.includes(domain)) return null;
+  const close = COMMON_DOMAINS.filter((known) => editDistance(domain, known) === 1);
+  return close.length === 1 ? `${local}@${close[0]}` : null;
+}
+
 export function isIsoDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const time = Date.parse(`${value}T00:00:00Z`);

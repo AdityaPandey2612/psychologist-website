@@ -207,10 +207,30 @@ export interface ResultView {
   };
 }
 
+/** A result still "pending" this long after it was saved was probably never started (the server stopped right after saving). */
+const STUCK_AFTER_MS = 25_000;
+const STUCK_UNTIL_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Starts the emails of a result that has been "pending" for too long. Safe to call on every visit: the delivery records
+ * are claimed one at a time, so an email that is already being sent, or was sent, is never started again.
+ */
+function pickUpStuckEmails(store: DocStore, submission: SubmissionDoc, version: AssessmentVersionDoc, options: DeliveryOptions): Promise<void> | undefined {
+  if (submission.email.status !== "pending") return undefined;
+  const age = (options.now?.() ?? new Date()).getTime() - Date.parse(submission.createdAt);
+  if (!(age >= STUCK_AFTER_MS && age <= STUCK_UNTIL_MS)) return undefined;
+  return runInBackground("pick up stuck emails", async () => {
+    await deliverResultEmail(store, submission, version, options);
+    await deliverAdminNotification(store, submission, version, options);
+  });
+}
+
 /** The participant's private result page data. Answers themselves are deliberately not returned. */
-export async function getResultView(store: DocStore, token: string): Promise<ResultView> {
+export async function getResultView(store: DocStore, token: string, options: DeliveryOptions = {}): Promise<ResultView> {
   const submission = await findByToken(store, token);
   const version = await versionFor(store, submission);
+  const pickedUp = pickUpStuckEmails(store, submission, version, options);
+  if (pickedUp && isInlineBackground()) await pickedUp;
   const def = version.definition;
   const firstName = submission.respondent.name.split(/\s+/)[0] || submission.respondent.name;
   const exhausted = submission.email.attempts >= MAX_ATTEMPTS;

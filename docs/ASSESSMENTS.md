@@ -63,6 +63,13 @@ Without any sign-in the platform still works: participants see their results on 
   completed it. Addresses added under Settings -> Email are told as well.
 * **The PDF report** (the download, the attachment for the participant and the one for the practice) states, on its first page,
   which assessment it is, how many questions were answered ("21 of 21") and the date.
+* **Safeguards** (all covered by `tests/assessments/email-stress.test.ts`): one delivery record per email, claimed atomically, so a
+  double click, many parallel requests, a "try again" during a send or an admin retry can never send the same email twice; a send
+  that dies halfway is picked up again after a minute, and a result still "pending" 25 seconds after it was saved (the server
+  stopped before starting) is started when its page is opened; a provider that crashes leaves "failed", never "pending" for ever;
+  the note to the practice is retried the same way and the admin sees how it went; one address is emailed at most 5 results a day
+  (so the form cannot be used to flood someone), at most 3 messages go to the mail server at the same moment, nobody whose data
+  was deleted is emailed afterwards, and the form asks "Did you mean ...@gmail.com?" once for a likely typo.
 * Both emails use the site colours and logo, and go out **after the response**: the participant sees their results at once and the
   results page shows "on their way", then "accepted for delivery" (or the failure, with a retry button) a few seconds later.
 

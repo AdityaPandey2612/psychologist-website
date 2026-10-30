@@ -93,11 +93,18 @@ export class MemoryStore implements DocStore {
     return (await this.query(collection, { where })).length;
   }
 
+  /**
+   * Read, decide, write, with nothing in between: two transactions on the same document can never both see the old
+   * value (Firestore's transactions give the same guarantee), so a "first one wins" claim really has one winner.
+   */
   async transact<T extends object>(collection: string, id: string, fn: (current: T | null) => T | undefined): Promise<T | null> {
-    const current = await this.get<T>(collection, id);
+    const table = this.table(collection);
+    const stored = table[id];
+    const current = stored === undefined ? null : clone(stored as T);
     const next = fn(current);
     if (next === undefined) return current;
-    await this.set(collection, id, next);
+    table[id] = clone(next);
+    this.persist();
     return clone(next);
   }
 }

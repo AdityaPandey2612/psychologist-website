@@ -14,6 +14,12 @@ function platformWaitUntil(): WaitUntil | undefined {
 }
 
 let inline = false;
+const running = new Set<Promise<void>>();
+
+/** Test hook: resolves when every task started so far has finished. */
+export async function drainBackgroundForTests(): Promise<void> {
+  while (running.size > 0) await Promise.all([...running]);
+}
 
 /** Test hook: wait for the work instead of leaving it in the background. */
 export function setInlineBackgroundForTests(on: boolean): void {
@@ -29,9 +35,11 @@ export function isInlineBackground(): boolean {
  * (sending an email) keeps its own record of success or failure.
  */
 export function runInBackground(label: string, task: () => Promise<void>): Promise<void> {
-  const running = task().catch((error: unknown) => {
+  const started = task().catch((error: unknown) => {
     console.error(`[assessments] Background task "${label}" failed:`, error instanceof Error ? error.message : "unknown error");
   });
-  platformWaitUntil()?.(running);
-  return running;
+  running.add(started);
+  void started.finally(() => running.delete(started));
+  platformWaitUntil()?.(started);
+  return started;
 }

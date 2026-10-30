@@ -8,7 +8,7 @@ import { ApiClientError, apiFetch } from "@/lib/assessments/client/api";
 import { clearDraft, draftKey, newIdempotencyKey, readDraft, useDebouncedDraftSave } from "@/lib/assessments/client/useAssessmentDraft";
 import { computeVisibility } from "@/lib/assessments/conditions";
 import type { SubmitResponse } from "@/lib/assessments/server/submissions";
-import { fillTokens, isValidEmail } from "@/lib/assessments/text";
+import { fillTokens, isValidEmail, suggestEmailFix } from "@/lib/assessments/text";
 import type { AnswerValue, Answers, AssessmentResult, ResultsConfig } from "@/lib/assessments/types";
 import { validateAnswers } from "@/lib/assessments/validation";
 import AssessmentProgress from "./AssessmentProgress";
@@ -72,6 +72,9 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
   const [answers, setAnswers] = useState<Answers>({});
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  // "Did you mean asha@gmail.com?" is asked once for an address that looks like a typo of a common one.
+  const [emailHint, setEmailHint] = useState<string | null>(null);
+  const [keepEmail, setKeepEmail] = useState("");
   const [consent, setConsent] = useState<Consent>(DEFAULT_CONSENT);
   const [website, setWebsite] = useState("");
   const [stepId, setStepId] = useState<string>(preview ? "intro" : "details");
@@ -219,11 +222,14 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
     if (!name.trim()) found.name = "Please enter your name.";
     if (!isValidEmail(email.trim().toLowerCase())) found.email = "Please enter a valid email address.";
     if (!consent.storeResponses) found.consent = "Please agree so we can use your answers to create your results.";
+    const typed = email.trim().toLowerCase();
+    const fix = !found.email && form.emailEnabled && keepEmail !== typed ? suggestEmailFix(typed) : null;
+    setEmailHint(fix);
     setDetailErrors(found);
     if (found.name) document.getElementById("details-name")?.focus();
-    else if (found.email) document.getElementById("details-email")?.focus();
+    else if (found.email || fix) document.getElementById("details-email")?.focus();
     else if (found.consent) document.getElementById("details-consent")?.focus();
-    return Object.keys(found).length === 0;
+    return Object.keys(found).length === 0 && !fix;
   }
 
   function goTo(id: string) {
@@ -354,6 +360,8 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
     setAnswers({});
     setName("");
     setEmail("");
+    setEmailHint(null);
+    setKeepEmail("");
     setConsent(DEFAULT_CONSENT);
     setErrors({});
     setDetailErrors({});
@@ -476,6 +484,7 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
+                    setEmailHint(null);
                     setDetailErrors((d) => ({ ...d, email: undefined }));
                   }}
                   aria-invalid={detailErrors.email ? true : undefined}
@@ -483,6 +492,33 @@ export default function AssessmentForm({ assessment, version, form, preview }: A
                   className={cx(inputClass, "mt-1.5")}
                 />
                 {form.emailEnabled && <p className="mt-1.5 text-sm text-ink-soft">Your results, with a PDF copy, will be emailed to this address, so please check it is right.</p>}
+                {emailHint && (
+                  <div role="alert" className="mt-1 flex flex-wrap items-center gap-x-2 text-sm font-medium text-accent-ink">
+                    <span>
+                      Did you mean <strong>{emailHint}</strong>?
+                    </span>
+                    <button
+                      type="button"
+                      className="min-h-11 px-1 font-semibold underline underline-offset-4"
+                      onClick={() => {
+                        setEmail(emailHint);
+                        setEmailHint(null);
+                      }}
+                    >
+                      Yes, use it
+                    </button>
+                    <button
+                      type="button"
+                      className="min-h-11 px-1 font-semibold underline underline-offset-4"
+                      onClick={() => {
+                        setKeepEmail(email.trim().toLowerCase());
+                        setEmailHint(null);
+                      }}
+                    >
+                      No, keep mine
+                    </button>
+                  </div>
+                )}
                 {detailErrors.email && (
                   <p id="details-email-err" role="alert" className="mt-1.5 text-sm font-medium text-accent-ink">
                     {detailErrors.email}
