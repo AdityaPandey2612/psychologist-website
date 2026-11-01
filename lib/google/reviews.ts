@@ -14,9 +14,14 @@ export interface GoogleReview {
     userRatingsTotal: number;
   }
   
+  const HARDCODED_PLACE_ID = "ChIJ3VM4dLDD5zsRTSObFJTQ_WI";
+  const HARDCODED_PLACES_API_KEY = ""; // paste the Google Places API key here
+
   export async function getGoogleReviews(): Promise<PlaceReviewsResult | null> {
-    const placeId = process.env.GOOGLE_PLACE_ID;
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    // Kept in source so the reviews work without extra Vercel settings; the environment variables win when set.
+    // The API key is a secret: only keep it here while the repository stays private.
+    const placeId = process.env.GOOGLE_PLACE_ID || HARDCODED_PLACE_ID;
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY || HARDCODED_PLACES_API_KEY;
   
     if (!placeId || !apiKey) return null;
   
