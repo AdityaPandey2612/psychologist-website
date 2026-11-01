@@ -45,7 +45,7 @@ export const site = {
     postalCode: "400703",
     country: "IN"
   },
-  geo: { lat: 19.0771, lng: 72.9987 },
+  geo: { lat: 19.0833555, lng: 73.0074068 },
   hours: "Mon–Sat, 10:00 AM – 7:00 PM",
   social: {
     facebook: "https://www.facebook.com/CRmentalhealthservices",
@@ -63,11 +63,11 @@ export const site = {
         region: "Maharashtra",
         postalCode: "400703",
       },
-      geo: { lat: 19.0771, lng: 72.9987 },
-      // There is no Google listing for this clinic, only a dropped pin, and a
-      // name search shows no marker, so the map is pinned by coordinates.
-      mapQuery: "19.0771,72.9987",
-      mapUrl: "https://www.google.com/maps/search/?api=1&query=19.0771%2C72.9987",
+      geo: { lat: 19.0833555, lng: 73.0074068 },
+      // The pin of the clinic's Google listing ("ChaitanyaRaj", Gold City, Sector 19D, Vashi).
+      mapQuery: "19.0833555,73.0074068",
+      mapUrl:
+        "https://www.google.com/maps/place/ChaitanyaRaj/@19.0833555,73.0074068,17z/data=!3m1!4b1!4m6!3m5!1s0x3be7c103e11cf071:0xf5d2c704ff8b1343!8m2!3d19.0833555!4d73.0074068!16s%2Fg%2F11qm0fv1_f",
     },
     {
       name: "Belapur",
