@@ -68,7 +68,7 @@ export default async function Testimonials() {
   const data = await getGoogleReviews();
 
   // When Google's reviews cannot be fetched, show the saved five-star ones instead of nothing.
-  const live = data?.reviews.filter((review) => review.rating >= 4) ?? [];
+  const live = data?.reviews.filter((review) => review.rating === 5) ?? [];
   const usingFallback = live.length === 0;
   const topReviews = usingFallback ? FALLBACK_REVIEWS : live;
 
