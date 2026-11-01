@@ -79,7 +79,7 @@ export default async function Testimonials() {
     <Section
       eyebrow="What clients say"
       title="Real feedback from real clients"
-      className="overflow-hidden rounded-3xl bg-surface-soft/60"
+      className="overflow-hidden rounded-3xl bg-surface-soft"
     >
       <div className="relative -mx-6 md:-mx-10">
         {/* fade edges */}
