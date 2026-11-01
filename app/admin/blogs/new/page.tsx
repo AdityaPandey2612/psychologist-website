@@ -660,6 +660,7 @@ import { createPost } from "@/lib/firebase/blogs";
 import { conditions } from "@/lib/data/conditions";
 import { therapies } from "@/lib/data/therapies";
 import "react-quill-new/dist/quill.snow.css";
+import { referencesFromText, referencesToText } from "@/lib/blog/references";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -692,6 +693,7 @@ export default function NewBlogPostPage() {
   const [relatedTherapies, setRelatedTherapies] = useState<string[]>([]);
 
   const [faqs, setFaqs] = useState<{ tempId: number; q: string; a: string }[]>([]);
+  const [sourcesText, setSourcesText] = useState("");
   const faqIdRef = useRef(0);
 
   const [loading, setLoading] = useState(false);
@@ -759,6 +761,7 @@ export default function NewBlogPostPage() {
         faqs: faqs
           .filter((f) => f.q.trim() && f.a.trim())
           .map(({ q, a }) => ({ q: q.trim(), a: a.trim() })),
+        references: referencesFromText(sourcesText),
       });
 
       router.push("/admin/blogs");
@@ -976,6 +979,21 @@ export default function NewBlogPostPage() {
                   })}
                 </div>
               )}
+            </div>
+
+            <div className="rounded-2xl border border-primary-dark/10 bg-sand/50 p-6 space-y-3">
+              <p className="text-sm font-semibold text-primary-dark">Sources</p>
+              <p className="text-xs text-ink-soft/70">
+                Health articles should name where their facts come from. One source per line, as <code>Title | https://link</code> (for example
+                the WHO, NHS, NIMH, a journal article). They are shown under the article and in its search data.
+              </p>
+              <textarea
+                value={sourcesText}
+                onChange={(e) => setSourcesText(e.target.value)}
+                rows={5}
+                className="w-full rounded-xl border border-primary-dark/15 bg-white p-3 text-sm"
+                placeholder={"World Health Organization: Depression | https://www.who.int/news-room/fact-sheets/detail/depression"}
+              />
             </div>
 
             <div className="rounded-2xl border border-primary-dark/10 bg-sand/50 p-6 space-y-5">

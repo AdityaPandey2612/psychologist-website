@@ -16,6 +16,7 @@ import {
   publicBlogSlug
 } from "@/lib/blog/seo";
 import { conditions } from "@/lib/data/conditions";
+import { site } from "@/lib/data/site";
 import { therapies } from "@/lib/data/therapies";
 import FAQAccordion from "@/components/FAQAccordion";
 
@@ -96,6 +97,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         path={path}
         datePublished={post.publishedDate}
         image={post.coverImageUrl}
+        references={post.references}
       />
       <BreadcrumbJsonLd
         items={[
@@ -125,8 +127,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <h1 className="mt-5 text-[1.9rem] leading-[1.15] tracking-tight sm:text-5xl sm:leading-[1.1] [text-wrap:balance]">
             {title}
           </h1>
-          <div className="mt-6 flex items-center gap-3 text-sm text-ink-soft">
+          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
             <span aria-hidden="true" className="h-px w-10 bg-gold" />
+            <span>
+              By{" "}
+              <Link href="/about/the-founder" rel="author" className="font-medium text-primary-dark underline underline-offset-4">
+                {site.founder}
+              </Link>
+              , Clinical Hypnotherapist and Counselling Psychologist
+            </span>
+            <span aria-hidden="true">·</span>
             <time dateTime={post.publishedDate}>{formatBlogDate(post.publishedDate)}</time>
           </div>
         </header>
@@ -151,6 +161,23 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             className="prose sm:prose-lg blog-content max-w-none text-ink/90 prose-headings:font-display prose-headings:tracking-tight prose-headings:text-primary-dark prose-h2:mb-4 prose-h2:mt-12 prose-h2:text-2xl sm:prose-h2:text-3xl prose-h3:text-xl prose-p:leading-7 sm:prose-p:leading-8 prose-p:text-ink/90 prose-a:font-medium prose-a:text-accent-ink prose-a:underline-offset-4 prose-strong:text-ink prose-ul:my-5 prose-li:marker:text-accent prose-blockquote:rounded-r-xl prose-blockquote:border-l-4 prose-blockquote:border-gold prose-blockquote:bg-surface-soft/60 prose-blockquote:py-1 prose-blockquote:not-italic prose-img:rounded-2xl prose-hr:border-primary/15"
             dangerouslySetInnerHTML={{ __html: prepareBlogHtml(post.content, title) }}
           />
+
+          {(post.references?.length ?? 0) > 0 && (
+            <section className="mt-12 border-t border-primary/10 pt-8" aria-labelledby="sources-h">
+              <h2 id="sources-h" className="eyebrow mb-3">
+                Sources
+              </h2>
+              <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-ink-soft">
+                {post.references!.map((r) => (
+                  <li key={r.url}>
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary-dark underline underline-offset-4 hover:text-accent-ink">
+                      {r.title}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
 
           {faqs.length > 0 && (
             <section className="mt-14 rounded-3xl border border-primary/10 bg-surface p-6 shadow-[0_1px_2px_rgba(18,58,54,0.05)] sm:p-8">
