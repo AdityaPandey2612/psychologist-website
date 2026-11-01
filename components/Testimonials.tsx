@@ -61,15 +61,16 @@
 
 
 import Section from "@/components/Section";
+import { FALLBACK_REVIEWS } from "@/lib/google/fallbackReviews";
 import { getGoogleReviews } from "@/lib/google/reviews";
 
 export default async function Testimonials() {
   const data = await getGoogleReviews();
 
-  if (!data) return null;
-
-  const topReviews = data.reviews.filter((review) => review.rating >= 4);
-  if (topReviews.length === 0) return null;
+  // When Google's reviews cannot be fetched, show the saved five-star ones instead of nothing.
+  const live = data?.reviews.filter((review) => review.rating >= 4) ?? [];
+  const usingFallback = live.length === 0;
+  const topReviews = usingFallback ? FALLBACK_REVIEWS : live;
 
   // duplicate the list so the marquee loops seamlessly
   const loopReviews = [...topReviews, ...topReviews];
@@ -89,7 +90,7 @@ export default async function Testimonials() {
           <div className="flex shrink-0 animate-marquee gap-6 group-hover:[animation-play-state:paused]">
             {loopReviews.map((review, i) => (
               <div
-                key={`${review.time}-${i}`}
+                key={`${review.author_name}-${i}`}
                 className="relative flex w-[320px] shrink-0 flex-col gap-4 rounded-2xl border border-primary/10 bg-white p-7 shadow-sm"
               >
                 <span className="font-display text-6xl leading-none text-primary/15">
@@ -101,6 +102,11 @@ export default async function Testimonials() {
                 </p>
 
                 <div className="mt-auto flex items-center gap-3 border-t border-primary/10 pt-4">
+                  {!review.profile_photo_url && (
+                    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-lg text-primary-dark">
+                      {review.author_name.trim().charAt(0).toUpperCase()}
+                    </span>
+                  )}
                   {review.profile_photo_url && (
                     <img
                       src={review.profile_photo_url}
@@ -127,7 +133,7 @@ export default async function Testimonials() {
       </div>
 
       <p className="mt-8 text-center text-xs text-ink-soft">
-        {data.rating.toFixed(1)} ★ average from {data.userRatingsTotal} Google reviews
+        {usingFallback || !data ? "Reviews from our Google Maps listing" : `${data.rating.toFixed(1)} ★ average from ${data.userRatingsTotal} Google reviews`}
       </p>
     </Section>
   );
