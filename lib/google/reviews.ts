@@ -16,7 +16,7 @@ export interface GoogleReview {
   
   // Both clinics: Vashi and CBD Belapur (the place IDs come from their Google Maps listings).
   const HARDCODED_PLACE_IDS = ["ChIJcfAc4QPB5zsRQxOL_wTH0vU", "ChIJ3VM4dLDD5zsRTSObFJTQ_WI"];
-  const HARDCODED_PLACES_API_KEY = ""; // paste the Google Places API key here
+  const HARDCODED_PLACES_API_KEY = "AIzaSyAnlRCJZGqDdfsMUr3fsdYDDChiWazgl3k"; // restrict this key to the Places API in Google Cloud; replace it if the repository ever becomes public
 
   async function fetchPlace(placeId: string, apiKey: string): Promise<PlaceReviewsResult | null> {
     const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
