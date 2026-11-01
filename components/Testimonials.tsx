@@ -102,7 +102,7 @@ export default async function Testimonials() {
                   "
                 </span>
 
-                <p className="-mt-8 text-sm leading-relaxed text-ink-soft">
+                <p className="-mt-8 line-clamp-6 text-sm leading-relaxed text-ink-soft">
                   {review.text}
                 </p>
 
