@@ -61,16 +61,21 @@
 
 
 import Section from "@/components/Section";
-import { FALLBACK_REVIEWS } from "@/lib/google/fallbackReviews";
+// The saved reviews are switched off for now; to use them again, uncomment this import and the lines marked "fallback".
+// import { FALLBACK_REVIEWS } from "@/lib/google/fallbackReviews";
 import { getGoogleReviews } from "@/lib/google/reviews";
 
 export default async function Testimonials() {
   const data = await getGoogleReviews();
 
-  // When Google's reviews cannot be fetched, show the saved five-star ones instead of nothing.
+  // Only the live five-star Google reviews are shown. Nothing is shown when they cannot be fetched.
   const live = data?.reviews.filter((review) => review.rating === 5) ?? [];
-  const usingFallback = live.length === 0;
-  const topReviews = usingFallback ? FALLBACK_REVIEWS : live;
+  if (!data || live.length === 0) return null;
+  const usingFallback = false;
+  const topReviews = live;
+  // fallback: when Google gives nothing, show the saved reviews instead of nothing:
+  // const usingFallback = live.length === 0;
+  // const topReviews = usingFallback ? FALLBACK_REVIEWS : live;
 
   // duplicate the list so the marquee loops seamlessly
   const loopReviews = [...topReviews, ...topReviews];
