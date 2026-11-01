@@ -36,6 +36,18 @@ export function cleanText(text: string) {
 
 // Next.js serialises the root canonical without a trailing slash, so the
 // sitemap and structured data use the same form for the homepage.
+/** The section a page belongs to, shown on its social-sharing image. */
+export function ogLabel(path: string) {
+  if (path.startsWith("/conditions")) return "Condition";
+  if (path.startsWith("/therapies")) return "Therapy";
+  if (path.startsWith("/case-studies")) return "Case study";
+  if (path.startsWith("/training")) return "Training";
+  if (path.startsWith("/blog")) return "Blog";
+  if (path.startsWith("/about")) return "About";
+  if (path.startsWith("/corporate")) return "Corporate wellness";
+  return "Chaitanya Raj";
+}
+
 export function canonicalUrl(path: string) {
   return path === "/" ? site.url : `${site.url}${path}`;
 }
@@ -52,8 +64,10 @@ export function buildMetadata({
   modifiedTime
 }: BuildMetadataArgs): Metadata {
   const url = canonicalUrl(path);
-  const ogImage = image ?? DEFAULT_OG_IMAGE;
   const pageTitle = absoluteTitle ? cleanText(title) : cleanTitle(title);
+  // A page without its own picture gets one made from its title (the home page keeps the default).
+  const generated = path !== "/" && !image;
+  const ogImage = image ?? (generated ? `${site.url}/og?title=${encodeURIComponent(pageTitle)}&label=${encodeURIComponent(ogLabel(path))}` : DEFAULT_OG_IMAGE);
   const desc = cleanText(description);
   // Keep the brand suffix only when the full title still fits in search results.
   const useTemplate = !absoluteTitle && pageTitle.length + BRAND_SUFFIX.length <= TITLE_LIMIT;
@@ -70,7 +84,7 @@ export function buildMetadata({
       description: desc,
       url,
       siteName: site.name,
-      // Only the default image is known to be 1200×630.
+      // The default and the generated images are 1200×630; a page's own picture can be any size.
       images: [image ? { url: ogImage, alt: pageTitle } : { url: ogImage, width: 1200, height: 630, alt: pageTitle }],
       locale: "en_IN",
       type,
