@@ -89,9 +89,9 @@ export interface GoogleReview {
 
   /** The reviews of every clinic's listing together (newest first), or null when none could be fetched. */
   export async function getGoogleReviews(): Promise<PlaceReviewsResult | null> {
-    const fromEnv = (process.env.GOOGLE_PLACE_IDS || process.env.GOOGLE_PLACE_ID || "").split(",").map((id) => id.trim()).filter(Boolean);
-    const placeIds = fromEnv.length ? fromEnv : HARDCODED_PLACE_IDS;
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY || HARDCODED_PLACES_API_KEY;
+    // The values written in this file are used first, so an old or wrong value in the Vercel settings cannot break the reviews.
+    const placeIds = HARDCODED_PLACE_IDS;
+    const apiKey = HARDCODED_PLACES_API_KEY || process.env.GOOGLE_PLACES_API_KEY;
     if (!placeIds.length || !apiKey) return null;
 
     const places = (await Promise.all(placeIds.map((id) => fetchPlace(id, apiKey)))).filter((p): p is PlaceReviewsResult => p !== null);
