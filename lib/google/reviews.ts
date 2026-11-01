@@ -18,7 +18,45 @@ export interface GoogleReview {
   const HARDCODED_PLACE_IDS = ["ChIJcfAc4QPB5zsRQxOL_wTH0vU", "ChIJ3VM4dLDD5zsRTSObFJTQ_WI"];
   const HARDCODED_PLACES_API_KEY = "AIzaSyAnlRCJZGqDdfsMUr3fsdYDDChiWazgl3k"; // restrict this key to the Places API in Google Cloud; replace it if the repository ever becomes public
 
-  async function fetchPlace(placeId: string, apiKey: string): Promise<PlaceReviewsResult | null> {
+  interface NewApiReview {
+    rating?: number;
+    text?: { text?: string };
+    originalText?: { text?: string };
+    relativePublishTimeDescription?: string;
+    publishTime?: string;
+    authorAttribution?: { displayName?: string; uri?: string; photoUri?: string };
+  }
+
+  /** Places API (New): the one that is enabled on the project (the legacy "Places API" is not). */
+  async function fetchPlaceNew(placeId: string, apiKey: string): Promise<PlaceReviewsResult | null> {
+    try {
+      const res = await fetch(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=en`, {
+        headers: { "X-Goog-Api-Key": apiKey, "X-Goog-FieldMask": "rating,userRatingCount,reviews" },
+        next: { revalidate: 60 * 60 * 24 }, // cache 24h — don't hit Google on every request
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        console.error("Places API (New) error:", placeId, data.error?.status ?? res.status, data.error?.message ?? "");
+        return null;
+      }
+      const reviews: GoogleReview[] = ((data.reviews ?? []) as NewApiReview[]).map((r) => ({
+        author_name: r.authorAttribution?.displayName ?? "Google user",
+        author_url: r.authorAttribution?.uri,
+        profile_photo_url: r.authorAttribution?.photoUri,
+        rating: r.rating ?? 0,
+        relative_time_description: r.relativePublishTimeDescription ?? "",
+        text: r.originalText?.text ?? r.text?.text ?? "",
+        time: r.publishTime ? Math.floor(Date.parse(r.publishTime) / 1000) : 0,
+      }));
+      return { reviews, rating: data.rating ?? 0, userRatingsTotal: data.userRatingCount ?? 0 };
+    } catch (error) {
+      console.error("Failed to fetch Google reviews (New):", error);
+      return null;
+    }
+  }
+
+  /** The legacy Places API, tried when the new one gives nothing. */
+  async function fetchPlaceLegacy(placeId: string, apiKey: string): Promise<PlaceReviewsResult | null> {
     const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
     url.searchParams.set("place_id", placeId);
     url.searchParams.set("fields", "reviews,rating,user_ratings_total");
@@ -26,9 +64,7 @@ export interface GoogleReview {
     url.searchParams.set("key", apiKey);
 
     try {
-      const res = await fetch(url.toString(), {
-        next: { revalidate: 60 * 60 * 24 }, // cache 24h — don't hit Google on every request
-      });
+      const res = await fetch(url.toString(), { next: { revalidate: 60 * 60 * 24 } });
       const data = await res.json();
       if (data.status !== "OK") {
         console.error("Places API error:", placeId, data.status);
@@ -43,6 +79,12 @@ export interface GoogleReview {
       console.error("Failed to fetch Google reviews:", error);
       return null;
     }
+  }
+
+  async function fetchPlace(placeId: string, apiKey: string): Promise<PlaceReviewsResult | null> {
+    const fromNew = await fetchPlaceNew(placeId, apiKey);
+    if (fromNew && fromNew.reviews.length > 0) return fromNew;
+    return (await fetchPlaceLegacy(placeId, apiKey)) ?? fromNew;
   }
 
   /** The reviews of every clinic's listing together (newest first), or null when none could be fetched. */
