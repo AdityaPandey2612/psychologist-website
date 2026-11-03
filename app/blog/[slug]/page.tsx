@@ -130,7 +130,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
             <span aria-hidden="true" className="h-px w-10 bg-gold" />
             <span>
-              By{" "}
+              Written and clinically reviewed by{" "}
               <Link href="/about/the-founder" rel="author" className="font-medium text-primary-dark underline underline-offset-4">
                 {site.founder}
               </Link>
