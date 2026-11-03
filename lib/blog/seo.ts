@@ -1,3 +1,4 @@
+import { useWwwLinks } from "./links";
 import { cache } from "react";
 import { getPostBySlug, getPublishedPosts, type BlogPost } from "@/lib/firebase/blogs";
 import { cleanTitle } from "@/lib/seo/metadata";
@@ -131,7 +132,7 @@ const plainText = (html: string) =>
 // between words become normal spaces so lines can wrap on small screens.
 export function prepareBlogHtml(html: string, title: string) {
   const heading = plainText(title);
-  let out = html
+  let out = useWwwLinks(html)
     // Empty headings left behind by the editor (e.g. <h2><br></h2>).
     .replace(/<h([1-6])\b[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/h\1>/gi, "")
     .replace(/<h1\b([^>]*)>([\s\S]*?)<\/h1>/gi, (_, attrs: string, inner: string) =>

@@ -109,7 +109,7 @@ export const conditions: Condition[] = [
       {
         question: "Is anxiety therapy confidential?",
         answer:
-          "Yes, every session is completely confidential. What you share stays between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -178,7 +178,7 @@ export const conditions: Condition[] = [
       {
         question: "Is OCD therapy confidential?",
         answer:
-          "Yes, every session is completely confidential. What you share stays between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -247,7 +247,7 @@ export const conditions: Condition[] = [
       {
         question: "Is depression counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["behaviour-modification-therapy", "cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -316,7 +316,7 @@ export const conditions: Condition[] = [
       {
         question: "Is relationship or couples counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -549,7 +549,7 @@ export const conditions: Condition[] = [
       {
         question: "Is stress and burnout counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["mindfulness-based-therapy", "cognitive-behavioural-therapy"]
@@ -618,7 +618,7 @@ export const conditions: Condition[] = [
       {
         question: "Is phobia treatment confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -687,7 +687,7 @@ export const conditions: Condition[] = [
       {
         question: "Is grief counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["ego-state-therapy", "cognitive-behavioural-therapy"]
@@ -756,7 +756,7 @@ export const conditions: Condition[] = [
       {
         question: "Is trauma and PTSD counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["clinical-hypnotherapy", "ego-state-therapy"]
@@ -825,7 +825,7 @@ export const conditions: Condition[] = [
       {
         question: "Is sleep disorder counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -894,7 +894,7 @@ export const conditions: Condition[] = [
       {
         question: "Is addiction counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["behaviour-modification-therapy", "cognitive-behavioural-therapy"]
@@ -906,7 +906,7 @@ export const conditions: Condition[] = [
     shortDescription: "Difficulties with desire, performance, or intimacy that carry a psychological component.",
     metaTitle: "Sexual Dysfunction Counselling in Vashi, Navi Mumbai",
     metaDescription:
-      "Discreet psychological counselling for difficulties with desire, performance or intimacy, in Vashi, Navi Mumbai. Fully confidential. Book a session.",
+      "Discreet psychological counselling for difficulties with desire, performance or intimacy, in Vashi, Navi Mumbai. Confidential. Book a session.",
     image: "/images/conditions/sexual-dysfunction-counselling-navi-mumbai.png",
     imageAlt: "Placeholder — replace with a descriptive alt text for sexual dysfunction counselling navi mumbai",
     intro:
@@ -963,7 +963,7 @@ export const conditions: Condition[] = [
       {
         question: "Is this kind of counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "ego-state-therapy"]
@@ -1032,7 +1032,7 @@ export const conditions: Condition[] = [
       {
         question: "Is this counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["cognitive-behavioural-therapy", "clinical-hypnotherapy"]
@@ -1101,7 +1101,7 @@ export const conditions: Condition[] = [
       {
         question: "Is this counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["ego-state-therapy", "clinical-hypnotherapy"]
@@ -1170,7 +1170,7 @@ export const conditions: Condition[] = [
       {
         question: "Is this counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["ego-state-therapy", "cognitive-behavioural-therapy"]
@@ -1239,7 +1239,7 @@ export const conditions: Condition[] = [
       {
         question: "Is anger management counselling confidential?",
         answer:
-          "Yes, every session is completely confidential, held between you and your therapist."
+          "Yes. What you share stays between you and your therapist, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
       }
     ],
     relatedTherapies: ["behaviour-modification-therapy", "cognitive-behavioural-therapy"]

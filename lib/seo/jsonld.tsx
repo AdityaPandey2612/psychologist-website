@@ -53,6 +53,7 @@ export function LocalBusinessJsonLd() {
         founder: { "@id": FOUNDER_ID },
         department: branches.map((branch) => ({
           "@type": "MedicalClinic",
+          "@id": `${site.url}/#clinic-${branch.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
           name: `${site.name}, ${branch.name}`,
           telephone: site.phone,
           address: postalAddress(branch.address),

@@ -237,7 +237,7 @@ export const founder = {
       question: "Is a consultation confidential?",
 
       answer:
-        "Yes, every session is completely confidential, whether individual or part of a corporate program."
+        "Yes. Sessions, whether individual or part of a corporate programme, are confidential, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
     }
   ]
 };

@@ -48,6 +48,23 @@ export function ogLabel(path: string) {
   return "Chaitanya Raj";
 }
 
+const DESCRIPTION_LIMIT = 155;
+
+/**
+ * A meta description that fits a search snippet: left alone when it already does, otherwise cut at the last
+ * sentence (or clause) that still leaves most of it, or at a word with an ellipsis.
+ */
+export function fitDescription(text: string, limit = DESCRIPTION_LIMIT) {
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const boundary = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("? "), cut.lastIndexOf("! "));
+  if (boundary >= limit * 0.6) return cut.slice(0, boundary + 1);
+  const clause = Math.max(cut.lastIndexOf(", "), cut.lastIndexOf(" — "), cut.lastIndexOf("; "));
+  if (clause >= limit * 0.6) return `${cut.slice(0, clause).replace(/[,;—\s]+$/, "")}.`;
+  const word = cut.lastIndexOf(" ");
+  return `${cut.slice(0, word > 0 ? word : limit).replace(/[,;:\s]+$/, "")}…`;
+}
+
 export function canonicalUrl(path: string) {
   return path === "/" ? site.url : `${site.url}${path}`;
 }
@@ -68,7 +85,7 @@ export function buildMetadata({
   // A page without its own picture gets one made from its title (the home page keeps the default).
   const generated = path !== "/" && !image;
   const ogImage = image ?? (generated ? `${site.url}/og?title=${encodeURIComponent(pageTitle)}&label=${encodeURIComponent(ogLabel(path))}` : DEFAULT_OG_IMAGE);
-  const desc = cleanText(description);
+  const desc = fitDescription(cleanText(description));
   // Keep the brand suffix only when the full title still fits in search results.
   const useTemplate = !absoluteTitle && pageTitle.length + BRAND_SUFFIX.length <= TITLE_LIMIT;
 

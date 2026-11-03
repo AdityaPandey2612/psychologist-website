@@ -264,52 +264,46 @@ export const revalidate = 3600;
 
 type Entry = MetadataRoute.Sitemap[number];
 
-const entry = (
-  path: string,
-  changeFrequency: Entry["changeFrequency"],
-  priority: number,
-  lastModified?: string
-): Entry => ({
+// Only lastModified is given, and only when it is a real date: Google ignores changefreq and priority.
+const entry = (path: string, lastModified?: string): Entry => ({
   url: canonicalUrl(path),
-  changeFrequency,
-  priority,
   ...(lastModified ? { lastModified } : {}),
 });
 
 // Indexable routes only. Left out on purpose: /privacy-policy (noindex), the
 // hidden /about/our-team and /about/vastu-consultation pages, /admin and /api.
 const staticPages: MetadataRoute.Sitemap = [
-  entry("/", "monthly", 1),
-  entry("/about", "monthly", 0.8),
-  entry("/about/the-founder", "monthly", 0.8),
-  entry("/about/chaitanya-raj", "monthly", 0.7),
-  entry("/about/myths-and-facts-about-hypnotherapy", "monthly", 0.7),
-  entry("/about/media-highlights", "monthly", 0.6),
-  entry("/conditions", "monthly", 0.9),
-  entry("/therapies", "monthly", 0.9),
-  entry("/counselling-navi-mumbai", "monthly", 0.9),
-  entry("/couples-counselling-navi-mumbai", "monthly", 0.9),
-  entry("/hypnotherapy-navi-mumbai", "monthly", 0.9),
-  entry("/online-therapy-international-clients", "monthly", 0.9),
-  entry("/corporate-wellness-programs-navi-mumbai", "monthly", 0.8),
-  entry("/training-and-mentorship", "monthly", 0.8),
-  entry("/case-studies", "monthly", 0.7),
-  entry("/blog", "weekly", 0.8),
-  entry("/gallery", "monthly", 0.6),
-  entry("/fees", "monthly", 0.6),
-  entry("/faq", "monthly", 0.6),
-  entry("/testimonials", "monthly", 0.6),
-  entry("/contact", "monthly", 0.8),
-  entry("/assessments", "weekly", 0.7),
+  entry("/"),
+  entry("/about"),
+  entry("/about/the-founder"),
+  entry("/about/chaitanya-raj"),
+  entry("/about/myths-and-facts-about-hypnotherapy"),
+  entry("/about/media-highlights"),
+  entry("/conditions"),
+  entry("/therapies"),
+  entry("/counselling-navi-mumbai"),
+  entry("/couples-counselling-navi-mumbai"),
+  entry("/hypnotherapy-navi-mumbai"),
+  entry("/online-therapy-international-clients"),
+  entry("/corporate-wellness-programs-navi-mumbai"),
+  entry("/training-and-mentorship"),
+  entry("/case-studies"),
+  entry("/blog"),
+  entry("/gallery"),
+  entry("/fees"),
+  entry("/faq"),
+  entry("/testimonials"),
+  entry("/contact"),
+  entry("/assessments"),
 ];
 
 const isIsoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value));
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const conditionPages = conditions.map((c) => entry(`/conditions/${c.slug}`, "monthly", 0.8));
-  const therapyPages = therapies.map((t) => entry(`/therapies/${t.slug}`, "monthly", 0.7));
-  const trainingPages = trainingPrograms.map((p) => entry(`/training-and-mentorship/${p.slug}`, "monthly", 0.7));
-  const caseStudyPages = caseStudies.map((c) => entry(`/case-studies/${c.slug}`, "yearly", 0.6));
+  const conditionPages = conditions.map((c) => entry(`/conditions/${c.slug}`));
+  const therapyPages = therapies.map((t) => entry(`/therapies/${t.slug}`));
+  const trainingPages = trainingPrograms.map((p) => entry(`/training-and-mentorship/${p.slug}`));
+  const caseStudyPages = caseStudies.map((c) => entry(`/case-studies/${c.slug}`));
 
   // Blog posts live in Firestore. The CMS records a publish date but no
   // modification date, so lastModified is the publish date.
@@ -317,7 +311,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const posts = await getBlogPosts();
     blogPages = posts.map((post) =>
-      entry(blogPath(post.id), "yearly", 0.6, isIsoDate(post.publishedDate) ? post.publishedDate : undefined)
+      entry(blogPath(post.id), isIsoDate(post.publishedDate) ? post.publishedDate : undefined)
     );
   } catch (error) {
     console.error("Sitemap: failed to load blog posts:", error);
@@ -327,7 +321,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let assessmentPages: MetadataRoute.Sitemap = [];
   try {
     const published = await listPublished(await getStore());
-    assessmentPages = published.map((a) => entry(`/assessments/${a.slug}`, "monthly", 0.6, a.publishedAt.slice(0, 10)));
+    assessmentPages = published.map((a) => entry(`/assessments/${a.slug}`, a.publishedAt.slice(0, 10)));
   } catch (error) {
     if (!(error instanceof StoreNotConfiguredError)) console.error("Sitemap: failed to load assessments:", error);
   }

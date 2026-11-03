@@ -971,7 +971,7 @@
 //             {
 //               question: "Is therapy confidential in India?",
 //               answer:
-//                 "Yes, therapy in India is bound by professional confidentiality standards. At Chaitanya Raj Psychology & Counselling in Navi Mumbai, every conversation, from the first enquiry through ongoing sessions, is kept strictly confidential."
+//                 "Yes, therapy in India is bound by professional confidentiality standards. At Chaitanya Raj Psychology & Counselling in Navi Mumbai, every conversation, from the first enquiry through ongoing sessions, is kept confidential, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
 //             },
 //             {
 //               question: "Is clinical hypnotherapy safe, and how is it different from talk therapy?",
@@ -1765,7 +1765,7 @@ export default async function HomePage() {
             {
               question: "Is therapy confidential in India?",
               answer:
-                "Yes, therapy in India is bound by professional confidentiality standards. At Chaitanya Raj Psychology & Counselling in Navi Mumbai, every conversation, from the first enquiry through ongoing sessions, is kept strictly confidential."
+                "Yes, therapy in India is bound by professional confidentiality standards. At Chaitanya Raj Psychology & Counselling in Navi Mumbai, every conversation, from the first enquiry through ongoing sessions, is kept confidential, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
             },
             {
               question: "Is clinical hypnotherapy safe, and how is it different from talk therapy?",

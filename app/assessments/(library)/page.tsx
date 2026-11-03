@@ -12,7 +12,7 @@ export const revalidate = 60;
 
 export const metadata = buildMetadata({
   title: "Self-Assessments",
-  description: "Self-assessments by Chaitanya Raj.",
+  description: "Self-assessments by Chaitanya Raj. Start with the Mood Self-Assessment, a 5–7 minute, 21-question reflection with a private results summary.",
   path: "/assessments",
 });
 
