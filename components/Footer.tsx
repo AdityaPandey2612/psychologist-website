@@ -219,6 +219,18 @@ export default function Footer() {
           © {new Date().getFullYear()} {site.name}. All rights reserved.
         </p>
         <AnalyticsPreferencesButton className="mt-1 inline-block py-1 underline underline-offset-4 hover:text-gold" />
+        <p className="mt-1">
+          Website by{" "}
+          <a
+            href="https://www.vishvajeetshukla.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Opus 5.5"
+            className="inline-block py-1 underline underline-offset-4 hover:text-gold"
+          >
+            Vishvajeet Shukla
+          </a>
+        </p>
       </div>
     </footer>
   );
