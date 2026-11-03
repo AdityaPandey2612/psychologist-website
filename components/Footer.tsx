@@ -228,7 +228,7 @@ export default function Footer() {
             title="Opus 5.5"
             className="inline-block py-1 underline underline-offset-4 hover:text-gold"
           >
-            Vishvajeet Shukla
+            vishvajeetshukla.in
           </a>
         </p>
       </div>
