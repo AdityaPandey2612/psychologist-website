@@ -587,8 +587,8 @@ const nav: NavItem[] = [
     ]
   },
   {
-    label: "Services",
-    short: "Services",
+    label: "Online Services",
+    short: "Online Services",
     href: "/online-therapy-international-clients"
   },
   {
