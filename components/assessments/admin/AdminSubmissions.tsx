@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Download, Lock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, FileSpreadsheet, Lock } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { adminFetch, ApiClientError } from "@/lib/assessments/client/api";
 import type { AdminViewMode } from "@/lib/assessments/types";
@@ -86,6 +86,7 @@ export function AdminSubmissions({ id }: { id: string }) {
   const [detailError, setDetailError] = useState("");
   const [busy, setBusy] = useState<"delete" | "email" | null>(null);
   const [rowBusy, setRowBusy] = useState<string | null>(null);
+  const [exportingAll, setExportingAll] = useState(false);
 
   const base = `/api/admin/assessments/${id}`;
 
@@ -182,6 +183,48 @@ export function AdminSubmissions({ id }: { id: string }) {
     }
   }
 
+  const handleExportAllDetailed = async () => {
+    try {
+      setExportingAll(true);
+      setError("");
+      const { auth } = await import("@/lib/firebase/auth");
+      await auth.authStateReady();
+      const user = auth.currentUser;
+      if (!user) throw new Error("Please sign in to the admin area.");
+      const token = await user.getIdToken();
+      const res = await fetch(`${base}/submissions/export`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        let msg = "Failed to export submissions.";
+        try {
+          const err = await res.json();
+          msg = err?.error?.message || err?.message || msg;
+        } catch {
+          // ignore
+        }
+        throw new Error(msg);
+      }
+      const disposition = res.headers.get("content-disposition") || "";
+      const match = /filename="([^"]+)"/.exec(disposition);
+      const filename = match?.[1] || `${title || "assessment"}-all-submissions-detailed.csv`;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setNotice({ tone: "success", text: "All submissions and answers exported successfully. You can open the file directly in Microsoft Excel." });
+    } catch (e: any) {
+      setError(e?.message || "Failed to download export.");
+    } finally {
+      setExportingAll(false);
+    }
+  };
+
   const mode = data?.mode;
   const rows = data?.rows ?? [];
   const total = data?.total ?? 0;
@@ -200,10 +243,34 @@ export function AdminSubmissions({ id }: { id: string }) {
           <Link href={`/admin/assessments/${id}/analytics`} className="btn-outline px-5 py-2 text-sm">
             Analytics
           </Link>
+          <button
+            type="button"
+            disabled={exportingAll || privacyBlocked}
+            className="btn-primary flex items-center gap-2 px-5 py-2 text-sm shadow-sm"
+            onClick={handleExportAllDetailed}
+            title="Download full report of all submissions with every question and selected answer for Excel"
+          >
+            {exportingAll ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <FileSpreadsheet aria-hidden="true" className="h-4 w-4" />
+                <span>Export All with Answers (Excel)</span>
+              </>
+            )}
+          </button>
           {rows.length > 0 && (
-            <button type="button" className="btn-outline px-5 py-2 text-sm" onClick={() => exportCsv(rows, title)}>
-              <Download aria-hidden="true" className="h-4 w-4" />
-              Export this page (CSV)
+            <button
+              type="button"
+              className="btn-outline flex items-center gap-1.5 px-4 py-2 text-xs"
+              onClick={() => exportCsv(rows, title)}
+              title="Export only the 25 rows visible on this page"
+            >
+              <Download aria-hidden="true" className="h-3.5 w-3.5" />
+              Page only (CSV)
             </button>
           )}
         </>

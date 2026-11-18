@@ -132,9 +132,18 @@ export function setAdminVerifierForTests(fn: AdminVerifier | undefined): void {
 export async function requireAdmin(req: NextRequest | Request): Promise<AdminIdentity> {
   const header = req.headers.get("authorization") ?? "";
   const match = /^Bearer\s+(\S+)$/i.exec(header);
-  if (!match) throw new ApiError(401, "unauthorized", "Please sign in to the admin area.");
+  let rawToken = match ? match[1] : undefined;
+  if (!rawToken && req.url) {
+    try {
+      const url = new URL(req.url);
+      rawToken = url.searchParams.get("token") || undefined;
+    } catch {
+      // not a valid url
+    }
+  }
+  if (!rawToken) throw new ApiError(401, "unauthorized", "Please sign in to the admin area.");
 
-  const verified = await (verifierOverride ?? verifyFirebaseIdToken)(match[1]);
+  const verified = await (verifierOverride ?? verifyFirebaseIdToken)(rawToken);
   const allowlist = adminAllowlist();
   if (!isAllowed(verified, allowlist)) throw new ApiError(403, "forbidden", "This account is not allowed to manage assessments.");
 

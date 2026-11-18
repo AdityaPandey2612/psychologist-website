@@ -223,6 +223,202 @@ export async function deleteSubmission(store: DocStore, assessmentId: string, su
   await store.delete(COL.submissions, submissionId);
 }
 
+/** Neutralise spreadsheet formulas and quote a CSV cell. */
+function csvCell(value: string | number | null | undefined): string {
+  let text = value === null || value === undefined ? "" : String(value);
+  if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+/**
+ * Exports all submissions of an assessment to a detailed CSV for Excel,
+ * containing participant details, overall scores, result levels, and
+ * the exact answer chosen for every question.
+ */
+export async function exportAllSubmissionsCsv(store: DocStore, assessmentId: string): Promise<{ filename: string; csv: string }> {
+  const doc = await getAssessment(store, assessmentId);
+  const mode = doc.definition.privacy.adminViewMode;
+  if (mode === "none") {
+    throw new ApiError(403, "privacy", "Listing individual submissions is switched off in this assessment's privacy settings.");
+  }
+
+  const submissions = await allSubmissions(store, assessmentId);
+
+  // Load versions of all submissions
+  const versions = new Map<string, AssessmentVersionDoc | null>();
+  for (const s of submissions) {
+    if (!versions.has(s.versionId)) {
+      versions.set(s.versionId, await store.get<AssessmentVersionDoc>(COL.versions, s.versionId));
+    }
+  }
+
+  interface ExportQuestion {
+    id: string;
+    label: string;
+    sectionTitle?: string;
+    choicesMap: Map<string, string>;
+  }
+
+  const questionsMap = new Map<string, ExportQuestion>();
+  const questionOrder: string[] = [];
+
+  const sortedVersions = [...versions.values()]
+    .filter((v): v is AssessmentVersionDoc => Boolean(v))
+    .sort((a, b) => b.version - a.version);
+
+  const primarySections = sortedVersions[0]?.definition.sections ?? doc.definition.sections;
+  for (const sec of primarySections) {
+    for (const q of sec.questions) {
+      if (q.type === "info") continue;
+      if (!questionsMap.has(q.id)) {
+        questionOrder.push(q.id);
+        const choicesMap = new Map<string, string>();
+        if (q.choices) {
+          for (const c of q.choices) {
+            choicesMap.set(c.id, c.label);
+          }
+        }
+        questionsMap.set(q.id, {
+          id: q.id,
+          label: q.label,
+          sectionTitle: sec.title,
+          choicesMap,
+        });
+      }
+    }
+  }
+
+  for (const v of sortedVersions) {
+    for (const sec of v.definition.sections) {
+      for (const q of sec.questions) {
+        if (q.type === "info") continue;
+        if (!questionsMap.has(q.id)) {
+          questionOrder.push(q.id);
+          const choicesMap = new Map<string, string>();
+          if (q.choices) {
+            for (const c of q.choices) {
+              choicesMap.set(c.id, c.label);
+            }
+          }
+          questionsMap.set(q.id, {
+            id: q.id,
+            label: q.label,
+            sectionTitle: sec.title,
+            choicesMap,
+          });
+        } else {
+          const existing = questionsMap.get(q.id)!;
+          if (q.choices) {
+            for (const c of q.choices) {
+              if (!existing.choicesMap.has(c.id)) {
+                existing.choicesMap.set(c.id, c.label);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const skills = doc.definition.scoring?.skills ?? [];
+
+  const headers = [
+    "Submission ID",
+    "Date (IST)",
+    "Date (UTC)",
+    "Participant Name",
+    "Participant Email",
+    "Overall Score (%)",
+    "Raw Score",
+    "Result Level / Category",
+    "Agreed to Share with Practice",
+    "Email Status",
+    "Version",
+  ];
+
+  for (const skill of skills) {
+    headers.push(`Score: ${skill.name} (%)`);
+  }
+
+  questionOrder.forEach((qid, idx) => {
+    const q = questionsMap.get(qid)!;
+    headers.push(`Q${idx + 1}: ${q.label}`);
+  });
+
+  function formatAnswer(rawAns: unknown, choicesMap: Map<string, string>): string {
+    if (rawAns === undefined || rawAns === null || rawAns === "") return "-";
+    if (Array.isArray(rawAns)) {
+      return (
+        rawAns
+          .map((item) => choicesMap.get(String(item)) ?? String(item))
+          .join("; ") || "-"
+      );
+    }
+    if (typeof rawAns === "boolean") {
+      return rawAns ? "Yes" : "No";
+    }
+    const strAns = String(rawAns);
+    if (strAns.toLowerCase() === "true" || strAns === "yes") return "Yes";
+    if (strAns.toLowerCase() === "false" || strAns === "no") return "No";
+    return choicesMap.get(strAns) ?? strAns;
+  }
+
+  const rows = submissions.map((s) => {
+    const identity = canSeeIdentity(mode, s);
+    const dateObj = new Date(s.createdAt);
+    const istDate = !isNaN(dateObj.getTime())
+      ? dateObj.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", hour12: true })
+      : s.createdAt;
+
+    const row: (string | number | null | undefined)[] = [
+      s.id,
+      istDate,
+      s.createdAt,
+      identity ? (s.respondent.name || "Anonymous") : "Hidden (Anonymous)",
+      identity ? (s.respondent.email || "-") : "Hidden (Anonymous)",
+      s.result.overall !== null && s.result.overall !== undefined ? `${s.result.overall}%` : "N/A",
+      s.result.display ? `${s.result.display.score} / ${s.result.display.max}` : "-",
+      s.result.zone?.label ?? s.result.level?.label ?? "N/A",
+      s.consent.shareWithPractice ? "Yes" : "No",
+      s.email.status,
+      `v${s.version}`,
+    ];
+
+    for (const skill of skills) {
+      const skillRes = s.result.skills?.find((k) => k.id === skill.id);
+      row.push(skillRes && skillRes.score !== undefined && skillRes.score !== null ? `${skillRes.score}%` : "-");
+    }
+
+    for (const qid of questionOrder) {
+      const q = questionsMap.get(qid)!;
+      if (!identity) {
+        row.push("Hidden by privacy settings");
+      } else {
+        row.push(formatAnswer(s.answers[qid], q.choicesMap));
+      }
+    }
+
+    return row;
+  });
+
+  const csv = `\ufeff${[
+    headers.map(csvCell).join(","),
+    ...rows.map((r) => r.map(csvCell).join(",")),
+  ].join("\r\n")}`;
+
+  const rawTitle = doc.title || doc.slug || "assessment";
+  const cleanTitle =
+    rawTitle
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "assessment";
+
+  return {
+    filename: `${cleanTitle}-all-submissions-detailed.csv`,
+    csv,
+  };
+}
+
 // ------------------------------------------------------------------ analytics
 
 const BUCKETS = Array.from({ length: 10 }, (_, i) => ({ from: i * 10, to: i === 9 ? 100 : i * 10 + 9 }));

@@ -3,7 +3,7 @@ import "./setup";
 import { beforeEach, describe, it } from "node:test";
 import { NextRequest } from "next/server";
 import { GET as pdfRoute } from "../../app/api/assessments/results/[token]/pdf/route";
-import { getQuestionStats, listSubmissions } from "../../lib/assessments/server/adminData";
+import { exportAllSubmissionsCsv, getQuestionStats, listSubmissions } from "../../lib/assessments/server/adminData";
 import { COL } from "../../lib/assessments/server/config";
 import { deliverResultEmail } from "../../lib/assessments/server/emailService";
 import { ApiError } from "../../lib/assessments/server/http";
@@ -378,3 +378,48 @@ describe("thumbnails", () => {
     assert.equal(foreign.assessment.thumbnailUrl, undefined, "only our own storage addresses are kept");
   });
 });
+
+describe("exporting all submissions to CSV / Excel", () => {
+  async function seed(mode: "full" | "consented_only" | "anonymous" = "full") {
+    const doc = await publishedCharisma((d) => ({
+      ...d,
+      definition: { ...d.definition, privacy: { adminViewMode: mode }, email: { ...d.definition.email, adminNotify: { enabled: true, recipients: ["owner@example.com"] } } },
+    }));
+    let minute = 0;
+    const people: Array<[string, string, Record<string, number>, boolean]> = [
+      ["Asha Verma", "asha@example.com", { warmth: 5, competence: 2 }, true],
+      ["Ravi Menon", "ravi@sample.org", { warmth: 5, competence: 5 }, false],
+    ];
+    for (const [name, email, by, shares] of people) {
+      minute += 1;
+      await submitAssessment(store, doc.slug, body({ name, email, answers: levels(by), consent: { storeResponses: true, emailResults: false, shareWithPractice: shares } }), { wait, now: () => new Date(Date.UTC(2026, 9, 25, 5, minute)) });
+    }
+    return doc;
+  }
+
+  it("exports all submissions with user details, scores and questions/answers", async () => {
+    const doc = await seed();
+    const { filename, csv } = await exportAllSubmissionsCsv(store, doc.id);
+    assert.ok(filename.endsWith("-all-submissions-detailed.csv"));
+    assert.ok(csv.startsWith("\ufeff"), "includes UTF-8 BOM for Excel");
+    assert.ok(csv.includes("Submission ID"));
+    assert.ok(csv.includes("Participant Name"));
+    assert.ok(csv.includes("Asha Verma"));
+    assert.ok(csv.includes("Q1:"));
+  });
+
+  it("respects privacy mode by concealing identities when anonymous", async () => {
+    const doc = await seed("anonymous");
+    const { csv } = await exportAllSubmissionsCsv(store, doc.id);
+    assert.equal(csv.includes("Asha Verma"), false);
+    assert.ok(csv.includes("Hidden (Anonymous)"));
+  });
+
+  it("handles assessments with no submissions", async () => {
+    const doc = await publishedCharisma();
+    const { filename, csv } = await exportAllSubmissionsCsv(store, doc.id);
+    assert.ok(filename.includes("detailed.csv"));
+    assert.ok(csv.includes("Submission ID"));
+  });
+});
+
