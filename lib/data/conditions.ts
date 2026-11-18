@@ -411,7 +411,7 @@ export const conditions: Condition[] = [
       "Book past life regression therapy in Mumbai, Navi Mumbai or online from anywhere in the world, including the UK, US and Canada. 25+ years' experience.",
 
     image: "/images/conditions/past-life-regression-therapy.png",
-    imageAlt: "A person resting with their eyes closed during a guided relaxation session in a calm, softly lit therapy room",
+    imageAlt: "Lt Col Rajesh Sharma conducting a clinical hypnotherapy and past life regression session in Navi Mumbai",
     intro:
       "Past life regression therapy (PLRT) is a hypnosis-based technique in which a person, in a guided relaxed state, explores narratives experienced as memories from a past life. Chaitanya Raj offers PLRT in person in Mumbai and Navi Mumbai (Vashi and CBD Belapur) and online worldwide, including the UK, US and Canada, with clinical hypnotherapist Lt Col Rajesh Sharma (Retd).",
 

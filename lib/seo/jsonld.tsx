@@ -83,7 +83,7 @@ export function PersonJsonLd() {
         "@type": "Person",
         "@id": FOUNDER_ID,
         name: site.founder,
-        jobTitle: "Clinical Hypnotherapist & Counselling Psychologist",
+        jobTitle: "Psychologist",
         worksFor: { "@id": ORGANIZATION_ID },
         url: `${site.url}/about/the-founder`,
         sameAs: [site.social.linkedin]
@@ -163,7 +163,7 @@ export function ArticleJsonLd({
         // The CMS doesn't store edit dates, so the publish date is the latest known change.
         dateModified: datePublished,
         // Written by the practitioner; the Person entry is the one described on the founder page.
-        author: { "@type": "Person", "@id": FOUNDER_ID, name: site.founder, jobTitle: "Clinical Hypnotherapist & Counselling Psychologist", url: `${site.url}/about/the-founder` },
+        author: { "@type": "Person", "@id": FOUNDER_ID, name: site.founder, jobTitle: "Psychologist", url: `${site.url}/about/the-founder` },
         publisher: { "@id": ORGANIZATION_ID, "@type": "Organization", name: site.name, logo: { "@type": "ImageObject", url: `${site.url}/logo.png` } },
         ...(references?.length ? { citation: references.map((r) => ({ "@type": "CreativeWork", name: r.title, url: r.url })) } : {})
       }}

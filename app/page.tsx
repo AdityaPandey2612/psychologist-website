@@ -1257,8 +1257,7 @@ export default async function HomePage() {
 
         <div className="space-y-5 text-lg leading-relaxed text-ink-soft md:col-span-3">
           <p>
-            {site.name} is led by {site.founder}, a{" "}
-            {site.founderCredentials}.
+            {site.name} is led by {site.founder}, {site.founderCredentials}.
             Two decades of structured, disciplined service before entering
             full-time clinical practice shape the way sessions are run here
             methodical, unhurried, and focused on what actually helps.

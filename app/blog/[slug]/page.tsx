@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <Link href="/about/the-founder" rel="author" className="font-medium text-primary-dark underline underline-offset-4">
                 {site.founder}
               </Link>
-              , Clinical Hypnotherapist and Counselling Psychologist
+              , Psychologist & Clinical Hypnotherapist
             </span>
             <span aria-hidden="true">·</span>
             <time dateTime={post.publishedDate}>{formatBlogDate(post.publishedDate)}</time>

@@ -83,17 +83,17 @@ export const founder = {
 
   name: "Lt Col Rajesh Sharma (Retd)",
 
-  title: "Clinical Hypnotherapist & Counselling Psychologist[Gold Medalist]",
+  title: "Psychologist & Clinical Hypnotherapist",
 
   qualifications:
-    "Post Graduate in Clinical Psychology and Clinical Hypnotherapy (Gold Medalist)| Registered with the National Commission for Allied and Healthcare Professions (NCAHP) Academy Of Hypnosis Lifetime Membership 202301LM000034",
+    "MA Psychology (Chattrapati Shivaji Maharaj University) | PGDCH (Charotar University of Science and Technology) | Registered with NCAHP (Enrolment No. 99712872701307) | Lifetime Member, Academy of Hypnosis India (202301LM000034)",
 
   seo: {
     metaTitle:
-      "Meet Our Founder and Lead Psychologist [Gold Medalist] | Lt Col Rajesh Sharma (Retd) | NCAHP Registered | Chaitanya Raj",
+      "Meet Our Founder and Lead Psychologist | Lt Col Rajesh Sharma (Retd) | NCAHP Registered | Chaitanya Raj",
 
     metaDescription:
-      "Meet Lt Col Rajesh Sharma (Retd), Post Graduate in Clinical Psychology and Clinical Hypnotherapy [Gold Medalist], registered with the National Commission for Allied and Healthcare Professions (NCAHP). 25+ years supporting individuals and organisations across Navi Mumbai.",
+      "Meet Lt Col Rajesh Sharma (Retd), Psychologist (MA Psychology, PGDCH), registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307). 25+ years supporting individuals and organisations across Navi Mumbai.",
 
     slug: "founder"
   },
@@ -104,9 +104,9 @@ export const founder = {
     "Lt Col Rajesh Sharma (Retd), Founder and Lead Psychologist at Chaitanya Raj in Navi Mumbai",
 
   bio: [
-    "I’m the founder of Chaitanya Raj, a psychotherapy, psychological counselling, and hypnotherapy centre in Vashi, Navi Mumbai, devoted to helping people overcome past trauma, psychological barriers, and fears, so they can lead fulfilling, satisfying lives.",
+    "I’m the founder of Chaitanya Raj, a psychology, counselling, and hypnotherapy centre in Vashi, Navi Mumbai, devoted to helping people overcome past trauma, psychological barriers, and fears, so they can lead fulfilling, satisfying lives.",
 
-    "My years in the Indian Army shaped how I think about wellbeing. Keeping soldiers physically and mentally strong was never optional, it was essential to getting the best out of them. That experience sparked a lifelong interest in psychology, theology, and behavioural philosophy, which eventually became a full career in clinical psychology and hypnotherapy. I am registered with the National Commission for Allied and Healthcare Professions (NCAHP), India’s statutory body governing allied and healthcare professionals.",
+    "My years in the Indian Army shaped how I think about wellbeing. Keeping soldiers physically and mentally strong was never optional, it was essential to getting the best out of them. That experience sparked a lifelong interest in psychology, theology, and behavioural philosophy, leading to an MA in Psychology from Chattrapati Shivaji Maharaj University and a Post Graduate Diploma in Clinical Hypnosis (PGDCH) from Charotar University of Science and Technology. I am registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307, Category: Integrated Behaviour Health Counsellor, Sub-category: Community Care Behavioural Health Science and Other Professionals).",
 
     "Since then, I’ve worked as a psychologist and counsellor with a wide range of individuals, including doctors, corporate professionals, business owners, homemakers, sports professionals, and students, through personal consultations and group sessions.",
 
@@ -201,14 +201,14 @@ export const founder = {
       question: "What is Lt Col Rajesh Sharma’s background?",
 
       answer:
-        "He is a Post Graduate in Clinical Psychology and Clinical Hypnotherapy [Gold Medalist], registered with the National Commission for Allied and Healthcare Professions (NCAHP), Academy Of Hypnosis Lifetime Membership 202301LM000034, with over 25 years of experience following a career in the Indian Army."
+        "He is a Psychologist holding an MA in Psychology from Chattrapati Shivaji Maharaj University (Panvel, Navi Mumbai) and a Post Graduate Diploma in Clinical Hypnosis (PGDCH) from Charotar University of Science and Technology. He is registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307) and holds Lifetime Professional Membership with the Academy of Hypnosis, India (Membership No. 202301LM000034), with over 25 years of experience following his career in the Indian Army."
     },
 
     {
       question: "Is Lt Col Rajesh Sharma a registered professional?",
 
       answer:
-        "Yes, he is registered with the National Commission for Allied and Healthcare Professions (NCAHP), India’s statutory regulatory body for allied and healthcare professionals, Academy Of Hypnosis Lifetime Membership 202301LM000034."
+        "Yes, he is registered with the National Commission for Allied and Healthcare Professions (NCAHP) under Enrolment No. 99712872701307 (Category: Integrated Behaviour Health Counsellor, Sub-category: Community Care Behavioural Health Science and Other Professionals) and is a Lifetime Professional Member of the Academy of Hypnosis, India (Membership No. 202301LM000034)."
     },
 
     {

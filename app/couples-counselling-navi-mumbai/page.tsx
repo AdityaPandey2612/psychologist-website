@@ -191,17 +191,17 @@ export default function CouplesCounsellingPage() {
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-[0.8fr_1.2fr] md:px-10">
           <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] border border-primary/10">
-            <Image src="/founder.jpg" alt="Lt Col Rajesh Sharma, couple counselling practitioner" fill className="object-cover" sizes="(max-width: 768px) 100vw, 40vw" />
+            <Image src="/images/clinic/couples-family-counselling.jpg" alt="Lt Col Rajesh Sharma conducting a couple and relationship counselling session at Chaitanya Raj clinic" fill className="object-cover" sizes="(max-width: 768px) 100vw, 40vw" />
           </div>
           <div>
             <p className="eyebrow">Meet your practitioner</p>
             <h2 className="mt-4 text-4xl leading-tight md:text-5xl">Experienced, structured and focused on both perspectives.</h2>
             <div className="mt-6 space-y-5 text-lg leading-relaxed text-ink-soft">
               <p>
-                Lt Col Rajesh Sharma (Retd) is a Post Graduate in Clinical Psychology and Clinical Hypnotherapy (Gold Medalist), with 25+ years of clinical experience working with people through a wide range of psychological and relationship concerns.
+                Lt Col Rajesh Sharma (Retd) is a Psychologist holding an MA in Psychology from Chattrapati Shivaji Maharaj University and a PGDCH from Charotar University of Science and Technology, with 25+ years of experience working with people through a wide range of psychological and relationship concerns.
               </p>
               <p>
-                He is registered with the National Commission for Allied and Healthcare Professions (NCAHP), and holds a Lifetime Membership with the Academy Of Hypnosis.
+                He is registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307, Category: Integrated Behaviour Health Counsellor) and holds a Lifetime Professional Membership with the Academy of Hypnosis, India (Membership No. 202301LM000034).
               </p>
               <p>
                 Couple counselling is conducted in a structured, confidential setting, with the focus on understanding both partners' perspectives.

@@ -48,7 +48,13 @@ const clinics = [
 
 const needs = ["A private, quiet space where you won't be interrupted", "A stable internet connection", "Headphones"];
 
-const credentials = ["MA Clinical Psychology (Gold Medalist)", "PG Diploma in Clinical Hypnosis", "25+ years of practice"];
+const credentials = [
+  "MA Psychology, Chattrapati Shivaji Maharaj University",
+  "PGDCH, Charotar University of Science and Technology",
+  "Registered with NCAHP (Enrolment No. 99712872701307)",
+  "Lifetime Professional Member, Academy of Hypnosis, India (No. 202301LM000034)",
+  "25+ years of practice"
+];
 
 const beforeYouBegin = [
   "If you take medication or are under the care of a doctor or psychiatrist, tell us at your first session.",
@@ -185,10 +191,10 @@ export default function PastLifeRegressionPage({ condition }: { condition: Condi
                 <table className="w-full text-left">
                   <tbody className="divide-y divide-primary/10">
                     {[
-                      ["Practitioner", "Lt Col Rajesh Sharma (Retd), Clinical Hypnotherapist and Counselling Psychologist"],
+                      ["Practitioner", "Lt Col Rajesh Sharma (Retd), Psychologist & Clinical Hypnotherapist"],
                       [
-                        "Qualifications",
-                        "MA Clinical Psychology (Gold Medalist); PG Diploma in Clinical Hypnosis; Lifetime Member, Academy of Hypnosis (no. 202301LM000034)"
+                        "Qualifications & Registration",
+                        "MA Psychology (Chattrapati Shivaji Maharaj University); PGDCH (Charotar University of Science and Technology); NCAHP Reg. No. 99712872701307; Lifetime Member, Academy of Hypnosis (no. 202301LM000034)"
                       ],
                       ["Experience", "25+ years of practice"],
                       ["Formats", "In person, or online"],
@@ -319,10 +325,20 @@ export default function PastLifeRegressionPage({ condition }: { condition: Condi
               <h2 id="who-leads-h" className={h2}>
                 Who leads your sessions
               </h2>
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-primary/10">
+                <Image
+                  src="/images/clinic/counselling-consultation-desk.jpg"
+                  alt="Lt Col Rajesh Sharma (Retd) in session at Chaitanya Raj clinic in Navi Mumbai"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 66vw"
+                  className="object-cover"
+                />
+              </div>
               <p className="leading-relaxed text-ink-soft">
-                Chaitanya Raj Psychology &amp; Counselling is led by Lt Col Rajesh Sharma (Retd), Clinical Hypnotherapist and Counselling
-                Psychologist. The practice combines evidence-based talk therapy with clinical hypnotherapy, recognised by the Academy of Hypnosis,
-                India&apos;s only professional hypnotherapy academy. Lt Col Sharma is a Lifetime Member (membership no. 202301LM000034).
+                Chaitanya Raj Psychology &amp; Counselling is led by Lt Col Rajesh Sharma (Retd), Psychologist and Clinical Hypnotherapist.
+                He is registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307,
+                Category: Integrated Behaviour Health Counsellor) and is a Lifetime Professional Member of the Academy of Hypnosis,
+                India&apos;s only professional hypnotherapy academy (Membership No. 202301LM000034).
               </p>
               <Bullets items={credentials} tone={tone} />
               <p className="leading-relaxed text-ink-soft">

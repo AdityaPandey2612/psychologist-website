@@ -1,4 +1,5 @@
 import Section from "@/components/Section";
+import Image from "next/image";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
@@ -68,6 +69,48 @@ export default function ChaitanyaRajPage() {
           )}
 
           <Link href="/contact" className="btn-primary inline-flex mt-4">Book a consultation</Link>
+        </div>
+
+        <div className="mt-16">
+          <h2 className="text-2xl font-display text-primary-dark mb-6">Inside Our Clinic & Sessions</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="overflow-hidden rounded-2xl border border-primary/10 bg-surface">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="/images/clinic/counselling-consultation-desk.jpg"
+                  alt="Dr. Sharma during a psychological counselling consultation at Chaitanya Raj clinic"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
+              <p className="p-4 text-sm text-ink-soft">One-on-one consultation with Lt Col Rajesh Sharma at our Vashi clinic</p>
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-primary/10 bg-surface">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="/images/clinic/past-life-regression-session.jpg"
+                  alt="Clinical hypnotherapy and past life regression session in Navi Mumbai"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
+              <p className="p-4 text-sm text-ink-soft">Clinical hypnotherapy & past life regression therapy suite</p>
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-primary/10 bg-surface">
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src="/images/clinic/couples-family-counselling.jpg"
+                  alt="Couples and relationship counselling consultation at Chaitanya Raj"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
+              <p className="p-4 text-sm text-ink-soft">Couples and relationship counselling sessions</p>
+            </div>
+          </div>
         </div>
       </Section>
     </>

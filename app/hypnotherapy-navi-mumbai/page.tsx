@@ -1126,8 +1126,8 @@ export default function HypnotherapyPage() {
             <div className="absolute -bottom-6 -left-6 h-40 w-40 rounded-[2rem] bg-primary/10" />
             <div className="relative aspect-[5/4] overflow-hidden rounded-[2rem] bg-primary-dark shadow-xl">
               <Image
-                src="/founder.jpg"
-                alt={`${site.founder}, hypnotherapist in Navi Mumbai`}
+                src="/images/clinic/hypnotherapy-session-recliner.jpg"
+                alt={`${site.founder} conducting a clinical hypnotherapy session at Chaitanya Raj in Navi Mumbai`}
                 fill
                 priority
                 className="object-cover"

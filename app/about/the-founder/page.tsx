@@ -400,7 +400,7 @@ export const metadata = buildMetadata({
   title:
     "Lt Col Rajesh Sharma (Retd) | Psychologist, Navi Mumbai",
   description:
-    "Meet Lt Col Rajesh Sharma (Retd), NCAHP-registered clinical psychologist and hypnotherapist in Navi Mumbai, with 25+ years of practice. Read his story.",
+    "Meet Lt Col Rajesh Sharma (Retd), NCAHP-registered psychologist and hypnotherapist in Navi Mumbai, with 25+ years of practice. Read his story.",
   path: "/about/the-founder"
 });
 
