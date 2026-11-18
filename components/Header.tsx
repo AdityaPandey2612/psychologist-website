@@ -550,7 +550,8 @@ import { trainingPrograms } from "@/lib/data/training";
 import { caseStudies } from "@/lib/data/caseStudies";
 
 type NavChild = { label: string; href: string; group?: string };
-type NavItem = { label: string; href: string; children?: NavChild[] };
+// `short` is shown between 1280px and 1535px, where the full labels don't fit.
+type NavItem = { label: string; short?: string; href: string; children?: NavChild[] };
 
 const issuesChildren: NavChild[] = [
   ...conditions
@@ -586,7 +587,8 @@ const nav: NavItem[] = [
     ]
   },
   {
-    label: "International Clients",
+    label: "Online Services",
+    short: "Online Services",
     href: "/online-therapy-international-clients"
   },
   {
@@ -595,10 +597,12 @@ const nav: NavItem[] = [
   },
   {
     label: "Corporate Programs",
+    short: "Corporate",
     href: "/corporate-wellness-programs-navi-mumbai"
   },
   {
     label: "Training and Mentorship",
+    short: "Training",
     href: "/training-and-mentorship",
     children: trainingPrograms.map((t) => ({ label: t.name, href: `/training-and-mentorship/${t.slug}` }))
   },
@@ -640,21 +644,28 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-primary/10">
-      <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-screen-2xl px-6 py-4 flex items-center justify-between gap-4">
         <Link href="/" className="font-display text-3xl text-primary-dark shrink-0 leading-none">
           {site.shortName}
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0.5 font-body text-sm text-ink flex-1 justify-center whitespace-nowrap">
-          {nav.map((item) => (
+        <nav aria-label="Main" className="hidden xl:flex items-center font-body text-sm text-ink flex-1 justify-center whitespace-nowrap">
+          {nav.map((item, index) => (
             <div key={item.label} className="relative group">
               <Link
                 href={item.href}
                 onClick={item.label === "About" ? handleAboutClick : undefined}
-                className="px-2.5 py-2 inline-flex items-center gap-1 hover:text-accent rounded-md whitespace-nowrap"
+                className="px-2 py-2 inline-flex items-center gap-1 hover:text-accent-ink rounded-md whitespace-nowrap"
               >
-                {item.label}
+                {item.short ? (
+                  <>
+                    <span className="2xl:hidden">{item.short}</span>
+                    <span className="hidden 2xl:inline">{item.label}</span>
+                  </>
+                ) : (
+                  item.label
+                )}
                 {item.children && (
                   <svg width="10" height="10" viewBox="0 0 10 10" className="mt-0.5 opacity-60">
                     <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
@@ -668,8 +679,9 @@ export default function Header() {
 
                 return (
                   <div
-                    className="invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0
-                               transition-all duration-150 absolute left-0 top-full pt-2 z-50"
+                    // The last menus open leftwards so they stay inside the viewport.
+                    className={`invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0
+                               transition-all duration-150 absolute ${index >= nav.length - 2 ? "right-0" : "left-0"} top-full pt-2 z-50`}
                   >
                     <div
                       className={`flex bg-surface rounded-xl border border-primary/10
@@ -687,7 +699,7 @@ export default function Header() {
                           }`}
                         >
                           {/* {groupLabel && (
-                            <li className="px-4 pt-2 pb-1 text-xs font-medium uppercase tracking-wide text-ink-soft/80">
+                            <li className="px-4 pt-2 pb-1 text-xs font-medium uppercase tracking-wide text-ink-soft">
                               {groupLabel}
                             </li>
                           )} */}
@@ -700,7 +712,7 @@ export default function Header() {
                             <li key={child.href}>
                               <Link
                                 href={child.href}
-                                className="block px-4 py-2.5 text-sm text-ink hover:bg-surface-soft hover:text-accent"
+                                className="block px-4 py-3 text-sm text-ink hover:bg-surface-soft hover:text-accent-ink"
                               >
                                 {child.label}
                               </Link>
@@ -722,9 +734,10 @@ export default function Header() {
           </Link>
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="lg:hidden p-2 -mr-2"
+            className="xl:hidden p-2.5 -mr-2.5"
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               {mobileOpen ? (
@@ -739,7 +752,7 @@ export default function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="lg:hidden border-t border-primary/10 bg-bg px-6 py-4 max-h-[75vh] overflow-y-auto">
+        <nav id="mobile-nav" aria-label="Main" className="xl:hidden border-t border-primary/10 bg-bg px-6 py-4 max-h-[75vh] overflow-y-auto">
           {nav.map((item) => (
             <div key={item.label} className="border-b border-primary/10 last:border-0">
               <div className="flex items-center justify-between">
@@ -758,8 +771,9 @@ export default function Header() {
                     onClick={() =>
                       setMobileSection((s) => (s === item.label ? null : item.label))
                     }
-                    className="p-3 text-ink"
+                    className="flex h-11 w-11 items-center justify-center text-ink"
                     aria-label={`Toggle ${item.label} submenu`}
+                    aria-expanded={mobileSection === item.label}
                   >
                     <svg
                       width="12"
@@ -777,7 +791,7 @@ export default function Header() {
                   {groupChildren(item.children).map(([groupLabel, groupItems]) => (
                     <ul key={groupLabel || item.label}>
                       {/* {groupLabel && (
-                        <li className="pt-2 pb-1 text-xs font-medium uppercase tracking-wide text-ink-soft/80">
+                        <li className="pt-2 pb-1 text-xs font-medium uppercase tracking-wide text-ink-soft">
                           {groupLabel}
                         </li>
                       )} */}
@@ -790,7 +804,7 @@ export default function Header() {
                         <li key={child.href}>
                           <Link
                             href={child.href}
-                            className="block py-2 text-sm text-ink hover:text-accent"
+                            className="block py-3 text-sm text-ink hover:text-accent-ink"
                             onClick={() => setMobileOpen(false)}
                           >
                             {child.label}

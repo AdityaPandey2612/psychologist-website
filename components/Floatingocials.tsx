@@ -273,17 +273,15 @@
 // }
 
 
-"use client";
+import type { ReactElement } from "react";
+import { socialLinks, type SocialName } from "@/lib/data/socialLinks";
+import AssessmentFloatingButton from "@/components/assessments/AssessmentFloatingButton";
 
-import Link from "next/link";
-
-const socials = [
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/rajmeditation?igsh=dngxbGI2anU4emFm&utm_source=qr",
+const styles: Record<SocialName, { bg: string | null; icon: ReactElement }> = {
+  Instagram: {
     bg: null,
     icon: (
-      <svg viewBox="0 0 44 44" width="44" height="44">
+      <svg viewBox="0 0 44 44" width="44" height="44" aria-hidden="true">
         <defs>
           <linearGradient id="instagramGradient" x1="0%" y1="100%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FFDD55" />
@@ -306,64 +304,66 @@ const socials = [
       </svg>
     ),
   },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/channel/UCkg_00o4qZyzbbes3JJRibA",
+  YouTube: {
     bg: "#FF0000",
     icon: (
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="#ffffff" aria-hidden="true">
         <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81zM9.75 15.57V8.43L15.82 12z" />
       </svg>
     ),
   },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/lt-col-rajesh-sharma-retd-06b4621b7?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+  LinkedIn: {
     bg: "#0A66C2",
     icon: (
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff" aria-hidden="true">
         <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.86 0-2.15 1.45-2.15 2.94v5.66H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56z" />
       </svg>
     ),
   },
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/CRmentalhealthservices",
+  Facebook: {
     bg: "#1877F2",
     icon: (
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff" aria-hidden="true">
         <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.62.77-1.62 1.56V12h2.77l-.44 2.89h-2.33v6.99A10 10 0 0 0 22 12z" />
       </svg>
     ),
   },
-];
+};
 
+// z-30 keeps the open mobile menu (header, z-40) and the consent banner above it.
 export default function FloatingSocials() {
   return (
-    <div className="fixed right-4 top-1/2 z-50 flex -translate-y-1/2 flex-col gap-3">
-      {socials.map(({ name, href, icon, bg }) => (
-        <Link
+    <>
+    <aside aria-label="Social media" className="fixed right-4 top-1/2 z-30 flex -translate-y-1/2 flex-col gap-3">
+      {socialLinks.map(({ name, href }) => (
+        <a
           key={name}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={name}
-          className="group relative flex h-11 w-11 items-center justify-center"
+          aria-label={`${name} (opens in a new tab)`}
+          className="group relative flex h-11 w-11 items-center justify-center rounded-full"
         >
           {/* tooltip */}
-          <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-md bg-primary-dark px-3 py-1.5 text-sm text-white opacity-0 shadow-md transition-all duration-200 group-hover:opacity-100 group-hover:mr-4">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-md bg-primary-dark px-3 py-1.5 text-sm text-white opacity-0 shadow-md transition-all duration-200 group-hover:opacity-100 group-hover:mr-4 group-focus-visible:opacity-100"
+          >
             {name}
           </span>
 
           {/* icon circle */}
           <span
-            style={bg ? { background: bg } : undefined}
+            style={styles[name].bg ? { background: styles[name].bg } : undefined}
             className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full shadow-md transition group-hover:-translate-y-0.5 group-hover:shadow-lg"
           >
-            {icon}
+            {styles[name].icon}
           </span>
-        </Link>
+        </a>
       ))}
-    </div>
+    </aside>
+    {/* Client component: hides itself on /admin and /assessments, and steps aside for the footer. */}
+    <AssessmentFloatingButton />
+    </>
   );
 }

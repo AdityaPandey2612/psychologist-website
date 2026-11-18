@@ -713,6 +713,8 @@ import { getTherapy } from "@/lib/data/therapies";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { getTone, splitLede } from "@/lib/tones";
+import { conditionReading } from "@/lib/seo/internalLinks";
+import PastLifeRegressionPage from "@/components/conditions/PastLifeRegressionPage";
 
 export function generateStaticParams() {
   return conditions.map((c) => ({ slug: c.slug }));
@@ -732,8 +734,14 @@ export default function ConditionPage({ params }: { params: { slug: string } }) 
   const condition = getCondition(params.slug);
   if (!condition) notFound();
 
+  // This page has its own layout and wording, supplied by the practice.
+  if (condition.slug === "best-past-life-regression-therapy-in-navi-mumbai") {
+    return <PastLifeRegressionPage condition={condition} />;
+  }
+
   const tone = getTone(condition.slug);
   const { lede, rest } = splitLede(condition.intro);
+  const reading = conditionReading[condition.slug] ?? [];
 
   const faqJsonLd = condition.faqs?.length
     ? {
@@ -886,16 +894,17 @@ export default function ConditionPage({ params }: { params: { slug: string } }) 
             </Link>
           </div>
 
-          <aside className="card p-6 h-fit">
-            <p className="eyebrow mb-3">Related therapies</p>
+          <div className="space-y-6 h-fit">
+          <aside className="card p-6" aria-labelledby="related-therapies">
+            <h2 id="related-therapies" className="eyebrow mb-3">Related therapies</h2>
             <div className="divider mb-4" />
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {condition.relatedTherapies.map((slug) => {
                 const therapy = getTherapy(slug);
                 if (!therapy) return null;
                 return (
                   <li key={slug}>
-                    <Link href={`/therapies/${slug}`} className="text-primary-dark hover:text-accent font-medium">
+                    <Link href={`/therapies/${slug}`} className="inline-flex min-h-11 items-center text-primary-dark hover:text-accent-ink font-medium">
                       {therapy.name}
                     </Link>
                   </li>
@@ -903,6 +912,23 @@ export default function ConditionPage({ params }: { params: { slug: string } }) 
               })}
             </ul>
           </aside>
+
+          {reading.length > 0 && (
+            <aside className="card p-6" aria-labelledby="further-reading">
+              <h2 id="further-reading" className="eyebrow mb-3">Further reading</h2>
+              <div className="divider mb-4" />
+              <ul className="space-y-1">
+                {reading.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="inline-flex min-h-11 items-center text-primary-dark hover:text-accent-ink font-medium">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          )}
+          </div>
         </div>
       </Section>
     </>

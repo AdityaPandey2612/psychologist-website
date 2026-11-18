@@ -387,6 +387,8 @@ export type BlogFAQ = {
   a: string;
 };
 
+export type BlogReference = { title: string; url: string };
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -400,7 +402,10 @@ export type BlogPost = {
   metaDescription?: string;
   focusKeyword?: string;
   relatedConditions?: string[];
+  relatedTherapies?: string[];
   faqs?: BlogFAQ[];
+  /** Sources the article draws on (research, health bodies); shown under the article and in its structured data. */
+  references?: BlogReference[];
 };
 
 function slugify(text: string): string {
@@ -457,7 +462,9 @@ export async function createPost(data: {
   metaDescription?: string;
   focusKeyword?: string;
   relatedConditions?: string[];
+  relatedTherapies?: string[];
   faqs?: BlogFAQ[];
+  references?: BlogReference[];
 }): Promise<string> {
   const finalSlug = data.slug?.trim() ? slugify(data.slug) : slugify(data.title);
 
@@ -472,7 +479,9 @@ export async function createPost(data: {
     metaDescription: data.metaDescription || data.excerpt,
     focusKeyword: data.focusKeyword || "",
     relatedConditions: data.relatedConditions || [],
+    relatedTherapies: data.relatedTherapies || [],
     faqs: data.faqs || [],
+    references: data.references || [],
     createdAt: serverTimestamp(),
   };
 
@@ -497,7 +506,9 @@ export async function updatePost(
     metaDescription?: string;
     focusKeyword?: string;
     relatedConditions?: string[];
+    relatedTherapies?: string[];
     faqs?: BlogFAQ[];
+    references?: BlogReference[];
   }
 ) {
   const payload: Record<string, any> = {
@@ -510,7 +521,9 @@ export async function updatePost(
     metaDescription: data.metaDescription || data.excerpt,
     focusKeyword: data.focusKeyword || "",
     relatedConditions: data.relatedConditions || [],
+    relatedTherapies: data.relatedTherapies || [],
     faqs: data.faqs || [],
+    references: data.references || [],
   };
   if (data.coverImageUrl) payload.coverImageUrl = data.coverImageUrl;
   return updateDoc(doc(db, "blogs", slug), payload);

@@ -4,15 +4,15 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { ConditionFAQ } from "@/lib/data/conditions";
 
-export default function FAQAccordion({ faqs }: { faqs: ConditionFAQ[] }) {
+/** `headingAs` puts each question in a heading of that level (a button inside it), so the questions show in the page outline. */
+export default function FAQAccordion({ faqs, headingAs }: { faqs: ConditionFAQ[]; headingAs?: "h3" }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <div className="divide-y divide-ink-soft/15">
       {faqs.map((f, i) => {
         const isOpen = openIndex === i;
-        return (
-          <div key={f.question}>
+        const trigger = (
             <button
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : i)}
@@ -26,6 +26,10 @@ export default function FAQAccordion({ faqs }: { faqs: ConditionFAQ[] }) {
                 }`}
               />
             </button>
+        );
+        return (
+          <div key={f.question}>
+            {headingAs ? <h3 className="font-body text-base font-normal leading-normal text-ink">{trigger}</h3> : trigger}
             <div
               className={`grid overflow-hidden transition-all duration-200 ease-in-out ${
                 isOpen ? "grid-rows-[1fr] opacity-100 pb-4" : "grid-rows-[0fr] opacity-0"

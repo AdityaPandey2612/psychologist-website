@@ -61,15 +61,21 @@
 
 
 import Section from "@/components/Section";
+// The saved reviews are switched off for now; to use them again, uncomment this import and the lines marked "fallback".
+// import { FALLBACK_REVIEWS } from "@/lib/google/fallbackReviews";
 import { getGoogleReviews } from "@/lib/google/reviews";
 
 export default async function Testimonials() {
   const data = await getGoogleReviews();
 
-  if (!data) return null;
-
-  const topReviews = data.reviews.filter((review) => review.rating >= 4);
-  if (topReviews.length === 0) return null;
+  // Only the live five-star Google reviews are shown. Nothing is shown when they cannot be fetched.
+  const live = data?.reviews.filter((review) => review.rating === 5) ?? [];
+  if (!data || live.length === 0) return null;
+  const usingFallback = false;
+  const topReviews = live;
+  // fallback: when Google gives nothing, show the saved reviews instead of nothing:
+  // const usingFallback = live.length === 0;
+  // const topReviews = usingFallback ? FALLBACK_REVIEWS : live;
 
   // duplicate the list so the marquee loops seamlessly
   const loopReviews = [...topReviews, ...topReviews];
@@ -78,7 +84,7 @@ export default async function Testimonials() {
     <Section
       eyebrow="What clients say"
       title="Real feedback from real clients"
-      className="overflow-hidden rounded-3xl bg-surface-soft/60"
+      className="overflow-hidden rounded-3xl bg-surface-soft"
     >
       <div className="relative -mx-6 md:-mx-10">
         {/* fade edges */}
@@ -89,18 +95,23 @@ export default async function Testimonials() {
           <div className="flex shrink-0 animate-marquee gap-6 group-hover:[animation-play-state:paused]">
             {loopReviews.map((review, i) => (
               <div
-                key={`${review.time}-${i}`}
+                key={`${review.author_name}-${i}`}
                 className="relative flex w-[320px] shrink-0 flex-col gap-4 rounded-2xl border border-primary/10 bg-white p-7 shadow-sm"
               >
                 <span className="font-display text-6xl leading-none text-primary/15">
                   "
                 </span>
 
-                <p className="-mt-8 text-sm leading-relaxed text-ink-soft">
+                <p className="-mt-8 line-clamp-6 text-sm leading-relaxed text-ink-soft">
                   {review.text}
                 </p>
 
                 <div className="mt-auto flex items-center gap-3 border-t border-primary/10 pt-4">
+                  {!review.profile_photo_url && (
+                    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-lg text-primary-dark">
+                      {review.author_name.trim().charAt(0).toUpperCase()}
+                    </span>
+                  )}
                   {review.profile_photo_url && (
                     <img
                       src={review.profile_photo_url}
@@ -113,7 +124,7 @@ export default async function Testimonials() {
                     <p className="text-sm font-medium text-primary-dark">
                       {review.author_name}
                     </p>
-                    <div className="flex text-accent text-xs">
+                    <div className="flex text-accent-ink text-xs">
                       {Array.from({ length: 5 }).map((_, star) => (
                         <span key={star}>{star < review.rating ? "★" : "☆"}</span>
                       ))}
@@ -126,8 +137,8 @@ export default async function Testimonials() {
         </div>
       </div>
 
-      <p className="mt-8 text-center text-xs text-ink-soft/60">
-        {data.rating.toFixed(1)} ★ average from {data.userRatingsTotal} Google reviews
+      <p className="mt-8 text-center text-xs text-ink-soft">
+        {usingFallback || !data ? "Reviews from our Google Maps listing" : `${data.rating.toFixed(1)} ★ average from ${data.userRatingsTotal} Google reviews`}
       </p>
     </Section>
   );

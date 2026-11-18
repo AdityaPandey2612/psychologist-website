@@ -391,6 +391,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import Section from "@/components/Section";
+import LocationMap from "@/components/LocationMap";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { PersonJsonLd, BreadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { founder } from "@/lib/data/about";
@@ -399,7 +400,7 @@ export const metadata = buildMetadata({
   title:
     "Lt Col Rajesh Sharma (Retd) | Psychologist, Navi Mumbai",
   description:
-    "Meet Lt Col Rajesh Sharma (Retd), NCAHP-registered clinical psychologist and hypnotherapist in Navi Mumbai, with 25+ years of practice. Read his story.",
+    "Meet Lt Col Rajesh Sharma (Retd), NCAHP-registered psychologist and hypnotherapist in Navi Mumbai, with 25+ years of practice. Read his story.",
   path: "/about/the-founder"
 });
 
@@ -458,7 +459,7 @@ export default function FounderPage() {
               Founder & Lead Psychologist
             </p>
 
-            <h1 className="max-w-3xl text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+            <h1 className="max-w-3xl text-5xl leading-[1.05] text-primary-dark break-words md:text-7xl">
               Meet Our Founder
             </h1>
 
@@ -808,6 +809,14 @@ export default function FounderPage() {
 
         </div>
 
+      </Section>
+
+      {/* =====================================================
+          LOCATIONS
+      ====================================================== */}
+
+      <Section eyebrow="Find us" title="Where you can meet him">
+        <LocationMap />
       </Section>
 
       {/* =====================================================

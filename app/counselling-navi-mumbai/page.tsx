@@ -1124,7 +1124,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { site } from "@/lib/data/site";
 
 export const metadata = buildMetadata({
-  title: "Counselling in Navi Mumbai | Chaitanya Raj",
+  title: "Counselling in Navi Mumbai: Vashi & Belapur",
   description:
     "Counselling in Vashi and Belapur, Navi Mumbai. Evidence-based support for anxiety, stress, relationships and more, led by 25+ years of experience.",
   path: "/counselling-navi-mumbai"
@@ -1267,10 +1267,11 @@ const faqs = [
 ];
 
 const credentials = [
-  "MA Clinical Psychology, Gold Medalist",
-  "PG Diploma, Clinical Hypnosis",
+  "MA Psychology, Chattrapati Shivaji Maharaj University, Panvel",
+  "PGDCH, Charotar University of Science and Technology",
+  "Registered with NCAHP (Enrolment No. 99712872701307, Category: Integrated Behaviour Health Counsellor)",
   "Lifetime Professional Member, Academy of Hypnosis India (Ref: 202301LM000034)",
-  "25+ years of clinical practice"
+  "25+ years of practice"
 ];
 
 export default function CounsellingPage() {
@@ -1284,7 +1285,7 @@ export default function CounsellingPage() {
           <div className="max-w-3xl">
             <p className="eyebrow">Professional Counselling · Vashi &amp; Belapur, Navi Mumbai</p>
 
-            <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark md:text-7xl">
+            <h1 className="mt-5 text-5xl leading-[1.05] text-primary-dark break-words md:text-7xl">
               Counselling in Navi Mumbai
             </h1>
 
@@ -1316,8 +1317,8 @@ export default function CounsellingPage() {
             <div className="absolute -bottom-6 -left-6 h-40 w-40 rounded-[2rem] bg-primary/10" />
             <div className="relative aspect-[5/4] overflow-hidden rounded-[2rem] bg-primary-dark shadow-xl">
               <Image
-                src="/founder.jpg"
-                alt="Counselling session in Navi Mumbai with Lt Col Rajesh Sharma"
+                src="/images/clinic/counselling-consultation-desk.jpg"
+                alt="Counselling session at Chaitanya Raj clinic in Navi Mumbai with Lt Col Rajesh Sharma"
                 fill
                 priority
                 className="object-cover"
@@ -1445,7 +1446,7 @@ export default function CounsellingPage() {
                 </p>
                 <Link
                   href={item.href}
-                  className="font-mono text-xs uppercase tracking-widest text-accent mt-1"
+                  className="font-mono text-xs uppercase tracking-widest text-accent-ink mt-1"
                 >
                   {item.linkText} →
                 </Link>

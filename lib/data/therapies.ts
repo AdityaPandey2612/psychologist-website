@@ -444,6 +444,11 @@
 export type Therapy = {
   slug: string;
   name: string;
+  // Page heading when it should differ from the card/nav name.
+  heading?: string;
+  // Techniques the practice itself describes as complementary or outside
+  // mainstream clinical psychology; marked up as a Service, not a treatment.
+  complementary?: boolean;
   shortDescription: string;
   metaTitle: string;
   metaDescription: string;
@@ -522,25 +527,9 @@ export const therapies: Therapy[] = [
     goodFor: ["trauma-ptsd-counselling-navi-mumbai", "grief-counselling-navi-mumbai"]
   },
   {
-    slug: "past-life-regression-technique",
-    name: "Past-Life Regression Therapy (PLRT)",
-    shortDescription: "A guided hypnotic technique exploring past-life narratives believed to influence present-day patterns.",
-    metaTitle: "How Past Life Regression Therapy Works | The Technique",
-    metaDescription:
-      "A plain explanation of the past life regression technique: how a session is structured, what the induction involves and how integration follows. Learn more.",
-    intro:
-      "PLRT is a hypnosis-based technique in which a client, in a guided relaxed state, explores narratives experienced as memories from a past life. It sits outside mainstream evidence-based psychology and its effects are understood by practitioners as symbolic or narrative rather than literal — many clients find the process helps surface and reframe deep-seated fears or patterns that talk therapy alone hasn't shifted, regardless of how the phenomenon itself is interpreted.",
-    whatToExpect: [
-      "A clear, honest conversation about what PLRT is and isn't before beginning",
-      "A guided hypnotic relaxation state, with you fully aware and able to stop at any point",
-      "Space to explore whatever narrative or imagery arises",
-      "A grounding and integration conversation afterward"
-    ],
-    goodFor: []
-  },
-  {
     slug: "spirit-release-therapy",
     name: "Spirit Release Therapy (SRT)",
+    complementary: true,
     shortDescription: "A hypnotherapy-based technique some clients use to work through a felt sense of external attachment or influence.",
     metaTitle: "Spirit Release Therapy (SRT) | What a Session Involves",
     metaDescription:
@@ -592,6 +581,7 @@ export const therapies: Therapy[] = [
   {
     slug: "energy-exchange",
     name: "Energy Exchange",
+    complementary: true,
     shortDescription: "A complementary relaxation-based technique used alongside talk therapy for stress relief.",
     metaTitle: "Energy Exchange Therapy in Navi Mumbai | Chaitanya Raj",
     metaDescription:
@@ -608,6 +598,7 @@ export const therapies: Therapy[] = [
   {
     slug: "quantum-therapy",
     name: "Quantum Therapy",
+    complementary: true,
     shortDescription: "A guided visualisation technique some clients use to explore beliefs at a deeper, symbolic level.",
     metaTitle: "Quantum Therapy in Navi Mumbai | Chaitanya Raj",
     metaDescription:
@@ -624,10 +615,13 @@ export const therapies: Therapy[] = [
   {
     slug: "couples-and-relationship-counselling",
     name: "Couples & Relationship Counselling",
+    // The service page for couples is /couples-counselling-navi-mumbai; this
+    // page explains the method so the two don't compete for the same searches.
+    heading: "How Couples & Relationship Counselling Works",
     shortDescription: "Structured support for communication breakdowns, conflict, or disconnection.",
-    metaTitle: "Couples Counselling in Navi Mumbai | Chaitanya Raj",
+    metaTitle: "How Couples Counselling Sessions Work",
     metaDescription:
-      "Couples and relationship counselling in Vashi, Navi Mumbai, for communication, conflict and rebuilding connection.",
+      "How couples and relationship counselling sessions are structured at Chaitanya Raj: joint sessions, the cycle behind repeated conflict and de-escalation tools.",
     intro:
       "Relationship difficulties rarely stem from one issue — they build from patterns of communication, unmet expectations, and cycles that are hard to see from inside them. Sessions create a structured, neutral space to work through these patterns together.",
     whatToExpect: [
@@ -642,9 +636,9 @@ export const therapies: Therapy[] = [
     slug: "mindfulness-based-therapy",
     name: "Mindfulness-Based Therapy",
     shortDescription: "Practical techniques for staying grounded under chronic stress or overwhelm.",
-    metaTitle: "Mindfulness-Based Therapy in Navi Mumbai | Chaitanya Raj",
+    metaTitle: "Mindfulness-Based Therapy in Navi Mumbai",
     metaDescription:
-      "Mindfulness-based therapy in Vashi, Navi Mumbai, for chronic stress, burnout and staying grounded under pressure.",
+      "Mindfulness-based therapy in Vashi, Navi Mumbai: practical, in-session skills for chronic stress, burnout and staying grounded, often combined with CBT.",
     intro:
       "Mindfulness-based approaches build practical, teachable skills for staying present rather than swept up in stress or rumination — a useful complement to CBT for people dealing with chronic pressure or burnout.",
     whatToExpect: [

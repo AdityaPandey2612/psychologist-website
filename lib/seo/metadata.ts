@@ -7,38 +7,110 @@ type BuildMetadataArgs = {
   path: string; // e.g. "/conditions/anxiety"
   image?: string;
   noIndex?: boolean;
+  // Use the title exactly as given, without the "| Chaitanya Raj" suffix.
+  absoluteTitle?: boolean;
+  type?: "website" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
 };
+
+// The root layout's title template appends " | Chaitanya Raj".
+const BRAND_SUFFIX = ` | ${site.shortName}`;
+const TITLE_LIMIT = 60;
+
+export const DEFAULT_OG_IMAGE = `${site.url}/og-default.jpg`;
+
+// Collapses whitespace and drops brand segments that some page and CMS titles
+// already carry, so the template never produces "| Chaitanya Raj | Chaitanya Raj".
+export function cleanTitle(title: string) {
+  return title
+    .split("|")
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter((part) => part && !/^chaitanya raj(\s+psychology(\s*&\s*counselling)?)?$/i.test(part))
+    .join(" | ");
+}
+
+export function cleanText(text: string) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+// Next.js serialises the root canonical without a trailing slash, so the
+// sitemap and structured data use the same form for the homepage.
+/** The section a page belongs to, shown on its social-sharing image. */
+export function ogLabel(path: string) {
+  if (path.startsWith("/conditions")) return "Condition";
+  if (path.startsWith("/therapies")) return "Therapy";
+  if (path.startsWith("/case-studies")) return "Case study";
+  if (path.startsWith("/training")) return "Training";
+  if (path.startsWith("/blog")) return "Blog";
+  if (path.startsWith("/about")) return "About";
+  if (path.startsWith("/corporate")) return "Corporate wellness";
+  return "Chaitanya Raj";
+}
+
+const DESCRIPTION_LIMIT = 155;
+
+/**
+ * A meta description that fits a search snippet: left alone when it already does, otherwise cut at the last
+ * sentence (or clause) that still leaves most of it, or at a word with an ellipsis.
+ */
+export function fitDescription(text: string, limit = DESCRIPTION_LIMIT) {
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const boundary = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("? "), cut.lastIndexOf("! "));
+  if (boundary >= limit * 0.6) return cut.slice(0, boundary + 1);
+  const clause = Math.max(cut.lastIndexOf(", "), cut.lastIndexOf(" — "), cut.lastIndexOf("; "));
+  if (clause >= limit * 0.6) return `${cut.slice(0, clause).replace(/[,;—\s]+$/, "")}.`;
+  const word = cut.lastIndexOf(" ");
+  return `${cut.slice(0, word > 0 ? word : limit).replace(/[,;:\s]+$/, "")}…`;
+}
+
+export function canonicalUrl(path: string) {
+  return path === "/" ? site.url : `${site.url}${path}`;
+}
 
 export function buildMetadata({
   title,
   description,
   path,
   image,
-  noIndex
+  noIndex,
+  absoluteTitle,
+  type = "website",
+  publishedTime,
+  modifiedTime
 }: BuildMetadataArgs): Metadata {
-  const url = `${site.url}${path}`;
-  const ogImage = image ?? `${site.url}/og-default.jpg`;
+  const url = canonicalUrl(path);
+  const pageTitle = absoluteTitle ? cleanText(title) : cleanTitle(title);
+  // A page without its own picture gets one made from its title (the home page keeps the default).
+  const generated = path !== "/" && !image;
+  const ogImage = image ?? (generated ? `${site.url}/og?title=${encodeURIComponent(pageTitle)}&label=${encodeURIComponent(ogLabel(path))}` : DEFAULT_OG_IMAGE);
+  const desc = fitDescription(cleanText(description));
+  // Keep the brand suffix only when the full title still fits in search results.
+  const useTemplate = !absoluteTitle && pageTitle.length + BRAND_SUFFIX.length <= TITLE_LIMIT;
 
   return {
-    title,
-    description,
+    title: useTemplate ? pageTitle : { absolute: pageTitle },
+    description: desc,
     alternates: { canonical: url },
     robots: noIndex
-      ? { index: false, follow: false }
+      ? { index: false, follow: true }
       : { index: true, follow: true },
     openGraph: {
-      title,
-      description,
+      title: pageTitle,
+      description: desc,
       url,
       siteName: site.name,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      // The default and the generated images are 1200×630; a page's own picture can be any size.
+      images: [image ? { url: ogImage, alt: pageTitle } : { url: ogImage, width: 1200, height: 630, alt: pageTitle }],
       locale: "en_IN",
-      type: "website"
+      type,
+      ...(type === "article" ? { publishedTime, modifiedTime } : {})
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: pageTitle,
+      description: desc,
       images: [ogImage]
     }
   };

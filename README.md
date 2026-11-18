@@ -75,3 +75,10 @@ time (`generateStaticParams`), so hosting is essentially free at this scale.
       `lib/data/caseStudies.ts` (real, consented, anonymised case studies) before launch.
 - [ ] Set up Google Analytics 4 + Search Console (add GA4 script to `app/layout.tsx`).
 - [ ] Add real Open Graph images (`/public/og-default.jpg`, 1200×630) and a favicon/logo.
+
+## Assessments
+
+Admin-managed self-reflection assessments live at `/assessments` (public) and `/admin/assessments` (admin).
+They need Firebase Admin credentials and, to email results, SMTP settings — see [docs/ASSESSMENTS.md](docs/ASSESSMENTS.md)
+and [docs/assessments.env.example](docs/assessments.env.example). `npm test` runs the scoring, logic, versioning,
+email and privacy tests.

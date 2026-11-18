@@ -79,6 +79,11 @@ import Link from "next/link";
 import { site } from "@/lib/data/site";
 import { conditions } from "@/lib/data/conditions";
 import { therapies } from "@/lib/data/therapies";
+import AnalyticsPreferencesButton from "@/components/AnalyticsPreferencesButton";
+
+// py-0.5 gives every link a 24px target (WCAG 2.2 AA); space-y-1 keeps the
+// original 28px rhythm between rows.
+const linkClass = "inline-block py-0.5 hover:text-gold";
 
 export default function Footer() {
   const individualConditions = conditions.filter((c) => c.audience !== "corporate").slice(0, 6);
@@ -94,10 +99,10 @@ export default function Footer() {
 
         <div>
           <p className="eyebrow text-gold mb-3">Conditions</p>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {individualConditions.map((c) => (
               <li key={c.slug}>
-                <Link href={`/conditions/${c.slug}`} className="text-surface-soft/80 hover:text-gold">
+                <Link href={`/conditions/${c.slug}`} className={`text-surface-soft/80 ${linkClass}`}>
                   {c.name}
                 </Link>
               </li>
@@ -107,10 +112,10 @@ export default function Footer() {
           {corporateConditions.length > 0 && (
             <>
               <p className="eyebrow text-gold mb-3 mt-6">For Organisations</p>
-              <ul className="space-y-2">
+              <ul className="space-y-1">
                 {corporateConditions.map((c) => (
                   <li key={c.slug}>
-                    <Link href={`/conditions/${c.slug}`} className="text-surface-soft/80 hover:text-gold">
+                    <Link href={`/conditions/${c.slug}`} className={`text-surface-soft/80 ${linkClass}`}>
                       {c.name}
                     </Link>
                   </li>
@@ -120,7 +125,7 @@ export default function Footer() {
           )}
 
           <p className="pt-2">
-            <Link href="/conditions" className="text-surface-soft/60 hover:text-gold text-xs">
+            <Link href="/conditions" className="inline-block py-1 text-xs text-surface-soft/70 hover:text-gold">
               View all conditions →
             </Link>
           </p>
@@ -128,65 +133,80 @@ export default function Footer() {
 
         <div>
           <p className="eyebrow text-gold mb-3">Therapies</p>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {therapies.slice(0, 6).map((t) => (
               <li key={t.slug}>
-                <Link href={`/therapies/${t.slug}`} className="text-surface-soft/80 hover:text-gold">
+                <Link href={`/therapies/${t.slug}`} className={`text-surface-soft/80 ${linkClass}`}>
                   {t.name}
                 </Link>
               </li>
             ))}
           </ul>
+
+          <p className="pt-2">
+            <Link href="/therapies" className="inline-block py-1 text-xs text-surface-soft/70 hover:text-gold">
+              View all therapies →
+            </Link>
+          </p>
         </div>
 
         <div>
           <p className="eyebrow text-gold mb-3">Practice</p>
-          <ul className="space-y-2 text-surface-soft/80">
+          <ul className="space-y-1 text-surface-soft/80">
             <li>
-              <Link href="/about" className="hover:text-gold">About</Link>
+              <Link href="/about" className={linkClass}>About</Link>
             </li>
             <li>
-              <Link href="/gallery" className="hover:text-gold">Gallery</Link>
+              <Link href="/gallery" className={linkClass}>Gallery</Link>
             </li>
             <li>
-              <Link href="/blog" className="hover:text-gold">Blog</Link>
+              <Link href="/blog" className={linkClass}>Blog</Link>
             </li>
             <li>
-              <Link href="/training-and-mentorship" className="hover:text-gold">Training and Mentorship</Link>
+              <Link href="/training-and-mentorship" className={linkClass}>Training and Mentorship</Link>
             </li>
             <li>
-              <Link href="/case-studies" className="hover:text-gold">Case Studies</Link>
+              <Link href="/case-studies" className={linkClass}>Case Studies</Link>
             </li>
             <li>
-              <Link href="/corporate-wellness-programs-navi-mumbai" className="hover:text-gold">
+              <Link href="/corporate-wellness-programs-navi-mumbai" className={linkClass}>
                 Corporate Wellness
               </Link>
             </li>
             <li>
-              <Link href="/privacy-policy" className="hover:text-gold">
+              <Link href="/fees" className={linkClass}>Fees</Link>
+            </li>
+            <li>
+              <Link href="/faq" className={linkClass}>FAQs</Link>
+            </li>
+            <li>
+              <Link href="/testimonials" className={linkClass}>Testimonials</Link>
+            </li>
+            <li>
+              <Link href="/privacy-policy" className={linkClass}>
                 Privacy Policy
               </Link>
             </li>
           </ul>
         </div>
 
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <p className="eyebrow text-gold mb-3">Get in touch</p>
-          <ul className="space-y-2 text-surface-soft/80">
-            <li>{site.address.street}</li>
-            <li>{site.address.locality}</li>
+          <ul className="space-y-1 text-surface-soft/80">
+            <li className="py-0.5">{site.address.street}</li>
+            <li className="py-0.5">{site.address.locality}</li>
             <li>
-              <a href={`tel:${site.phone}`} className="hover:text-gold">
+              <a href={`tel:${site.phone}`} className={linkClass}>
                 {site.phoneDisplay}
               </a>
             </li>
             <li>
-              <a href={`mailto:${site.email}`} className="hover:text-gold">
+              <a href={`mailto:${site.email}`} className={`${linkClass} [overflow-wrap:anywhere]`}>
                 {site.email}
               </a>
             </li>
             <li className="pt-2">
-              <Link href="/contact" className="btn-primary inline-flex text-xs py-2 px-4">
+              <Link href="/contact" className="btn-primary inline-flex min-h-11 text-xs py-2 px-4">
                 Book a session
               </Link>
             </li>
@@ -194,8 +214,23 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-surface-soft/10 py-5 text-center text-xs text-surface-soft/50">
-        © {new Date().getFullYear()} {site.name}. All rights reserved.
+      <div className="border-t border-surface-soft/10 py-5 text-center text-xs text-surface-soft/70">
+        <p>
+          © {new Date().getFullYear()} {site.name}. All rights reserved.
+        </p>
+        <AnalyticsPreferencesButton className="mt-1 inline-block py-1 underline underline-offset-4 hover:text-gold" />
+        <p className="mt-1 text-primary-dark">
+          Website by{" "}
+          <a
+            href="https://www.vishvajeetshukla.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Opus 5.5"
+            className="inline-block py-1 text-primary-dark hover:text-primary-dark no-underline"
+          >
+            vishvajeetshukla.in
+          </a>
+        </p>
       </div>
     </footer>
   );

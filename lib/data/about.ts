@@ -83,17 +83,17 @@ export const founder = {
 
   name: "Lt Col Rajesh Sharma (Retd)",
 
-  title: "Clinical Hypnotherapist & Counselling Psychologist[Gold Medalist]",
+  title: "Psychologist & Clinical Hypnotherapist",
 
   qualifications:
-    "Post Graduate in Clinical Psychology and Clinical Hypnotherapy (Gold Medalist)| Registered with the National Commission for Allied and Healthcare Professions (NCAHP) Academy Of Hypnosis Lifetime Membership 202301LM000034",
+    "MA Psychology (Chattrapati Shivaji Maharaj University) | PGDCH (Charotar University of Science and Technology) | Registered with NCAHP (Enrolment No. 99712872701307) | Lifetime Member, Academy of Hypnosis India (202301LM000034)",
 
   seo: {
     metaTitle:
-      "Meet Our Founder and Lead Psychologist [Gold Medalist] | Lt Col Rajesh Sharma (Retd) | NCAHP Registered | Chaitanya Raj",
+      "Meet Our Founder and Lead Psychologist | Lt Col Rajesh Sharma (Retd) | NCAHP Registered | Chaitanya Raj",
 
     metaDescription:
-      "Meet Lt Col Rajesh Sharma (Retd), Post Graduate in Clinical Psychology and Clinical Hypnotherapy [Gold Medalist], registered with the National Commission for Allied and Healthcare Professions (NCAHP). 25+ years supporting individuals and organisations across Navi Mumbai.",
+      "Meet Lt Col Rajesh Sharma (Retd), Psychologist (MA Psychology, PGDCH), registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307). 25+ years supporting individuals and organisations across Navi Mumbai.",
 
     slug: "founder"
   },
@@ -104,9 +104,9 @@ export const founder = {
     "Lt Col Rajesh Sharma (Retd), Founder and Lead Psychologist at Chaitanya Raj in Navi Mumbai",
 
   bio: [
-    "I’m the founder of Chaitanya Raj, a psychotherapy, psychological counselling, and hypnotherapy centre in Vashi, Navi Mumbai, devoted to helping people overcome past trauma, psychological barriers, and fears, so they can lead fulfilling, satisfying lives.",
+    "I’m the founder of Chaitanya Raj, a psychology, counselling, and hypnotherapy centre in Vashi, Navi Mumbai, devoted to helping people overcome past trauma, psychological barriers, and fears, so they can lead fulfilling, satisfying lives.",
 
-    "My years in the Indian Army shaped how I think about wellbeing. Keeping soldiers physically and mentally strong was never optional, it was essential to getting the best out of them. That experience sparked a lifelong interest in psychology, theology, and behavioural philosophy, which eventually became a full career in clinical psychology and hypnotherapy. I am registered with the National Commission for Allied and Healthcare Professions (NCAHP), India’s statutory body governing allied and healthcare professionals.",
+    "My years in the Indian Army shaped how I think about wellbeing. Keeping soldiers physically and mentally strong was never optional, it was essential to getting the best out of them. That experience sparked a lifelong interest in psychology, theology, and behavioural philosophy, leading to an MA in Psychology from Chattrapati Shivaji Maharaj University and a Post Graduate Diploma in Clinical Hypnosis (PGDCH) from Charotar University of Science and Technology. I am registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307, Category: Integrated Behaviour Health Counsellor, Sub-category: Community Care Behavioural Health Science and Other Professionals).",
 
     "Since then, I’ve worked as a psychologist and counsellor with a wide range of individuals, including doctors, corporate professionals, business owners, homemakers, sports professionals, and students, through personal consultations and group sessions.",
 
@@ -201,14 +201,14 @@ export const founder = {
       question: "What is Lt Col Rajesh Sharma’s background?",
 
       answer:
-        "He is a Post Graduate in Clinical Psychology and Clinical Hypnotherapy [Gold Medalist], registered with the National Commission for Allied and Healthcare Professions (NCAHP), Academy Of Hypnosis Lifetime Membership 202301LM000034, with over 25 years of experience following a career in the Indian Army."
+        "He is a Psychologist holding an MA in Psychology from Chattrapati Shivaji Maharaj University (Panvel, Navi Mumbai) and a Post Graduate Diploma in Clinical Hypnosis (PGDCH) from Charotar University of Science and Technology. He is registered with the National Commission for Allied and Healthcare Professions (NCAHP Enrolment No. 99712872701307) and holds Lifetime Professional Membership with the Academy of Hypnosis, India (Membership No. 202301LM000034), with over 25 years of experience following his career in the Indian Army."
     },
 
     {
       question: "Is Lt Col Rajesh Sharma a registered professional?",
 
       answer:
-        "Yes, he is registered with the National Commission for Allied and Healthcare Professions (NCAHP), India’s statutory regulatory body for allied and healthcare professionals, Academy Of Hypnosis Lifetime Membership 202301LM000034."
+        "Yes, he is registered with the National Commission for Allied and Healthcare Professions (NCAHP) under Enrolment No. 99712872701307 (Category: Integrated Behaviour Health Counsellor, Sub-category: Community Care Behavioural Health Science and Other Professionals) and is a Lifetime Professional Member of the Academy of Hypnosis, India (Membership No. 202301LM000034)."
     },
 
     {
@@ -237,7 +237,7 @@ export const founder = {
       question: "Is a consultation confidential?",
 
       answer:
-        "Yes, every session is completely confidential, whether individual or part of a corporate program."
+        "Yes. Sessions, whether individual or part of a corporate programme, are confidential, with the limited exceptions required by professional ethics and the law, such as a serious risk of harm to you or someone else."
     }
   ]
 };
@@ -276,39 +276,38 @@ export const mediaHighlights = [
 
 export const hypnotherapyMyths = [
   {
-    myth:
-      "Hypnotherapy means losing control or being made to do things against your will.",
+    myth: "Hypnotherapy means losing control or being made to do things against your will.",
 
     fact:
-      "In clinical hypnotherapy, you remain aware and in control throughout. It is a state of focused, guided relaxation — not the loss-of-control experience associated with stage hypnosis, and you can stop at any point."
+      "In clinical hypnotherapy you stay awake and aware throughout, and you keep control of how you respond. Research shows people can resist suggestions they don't want to follow, and you can end the session whenever you wish. The loss-of-control images people associate with hypnosis come from stage shows and films, not clinical practice."
   },
 
   {
     myth: "Only certain kinds of people can be hypnotised.",
 
     fact:
-      "Most people can enter a hypnotic state to some degree with a trained practitioner. Depth of response varies, but it isn't a fixed personality trait limited to a small group."
+      "Most people respond to hypnotic suggestion to a moderate or high degree, while a smaller group respond less. Responsiveness is not linked to weakness, gullibility or low intelligence. Expectations and willingness to take part make a real difference, and responsiveness can improve with understanding and practice."
   },
 
   {
-    myth: "You could get 'stuck' in hypnosis.",
+    myth: "You could get \"stuck\" in hypnosis.",
 
     fact:
-      "A hypnotic state is simply a state of deep relaxation and focused attention. It always ends naturally, whether or not the session is formally 'closed' by the practitioner."
+      "Hypnosis is not sleep or unconsciousness. You remain aware of your surroundings and in control of your responses, so you can come out of it whenever you choose."
   },
 
   {
     myth: "Hypnotherapy is not a recognised clinical technique.",
 
     fact:
-      "Clinical hypnotherapy is recognised by the British Psychological Society as an effective therapeutic technique when practised by a trained clinician, and is used alongside — not instead of — established approaches like CBT."
+      "Hypnosis has been studied in clinical research for decades. Reviews of trials show benefits for conditions such as chronic pain, irritable bowel syndrome, anxiety and depression, and adding hypnosis to cognitive behavioural therapy (CBT) has been found to improve outcomes compared with CBT alone. It is not a cure-all, not everyone benefits, and it is best used alongside established treatments, not instead of them."
   },
 
   {
     myth: "You won't remember anything from the session.",
 
     fact:
-      "Most clients remember the session clearly. Hypnotic amnesia is uncommon and not a goal of clinical hypnotherapy."
+      "Most clients stay aware during hypnosis and remember their sessions. Temporary forgetting can happen only when it is specifically suggested, and it is not a goal of our sessions."
   }
 ];
 

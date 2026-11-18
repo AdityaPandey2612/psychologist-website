@@ -14,7 +14,7 @@ const aboutLinks = [
 ];
 
 export const metadata = buildMetadata({
-  title: "About | Chaitanya Raj Psychology & Counselling",
+  title: "About Our Practice in Vashi, Navi Mumbai",
   description:
     "Meet Lt. Col. Rajesh Sharma (Retd.), clinical hypnotherapist and counselling psychologist with over 25 years of experience in Navi Mumbai.",
   path: "/about"
@@ -24,10 +24,12 @@ export default function AboutPage() {
   return (
     <>
       <PersonJsonLd />
-      <Section eyebrow="About" title="A practice built on discipline and care">
+      <Section eyebrow="About" title="A practice built on discipline and care" titleAs="h1">
         <div className="max-w-2xl space-y-6 text-ink-soft text-lg leading-relaxed">
           <p>
-            {site.name} was founded by {site.founder}, a {site.founderCredentials.toLowerCase()}.
+            {site.name} was founded by {site.founder}, a psychologist with over 25 years of practice,
+            holding an MA in Psychology from Chattrapati Shivaji Maharaj University and a PGDCH from
+            Charotar University of Science and Technology, registered with the NCAHP (Enrolment No. 99712872701307).
             Two decades of structured, disciplined service before entering full-time clinical
             practice shape the way sessions are run here — methodical, unhurried, and focused
             on what actually helps.
